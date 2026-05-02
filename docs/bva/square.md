@@ -33,14 +33,15 @@
     - **Expected output**: `Square` created successfully. `occupant` defaults to `null`.
     - **Implemented at** constructor_validMinimumBoundaries_createsSquare
 
-- **TC2: Valid Maximum Boundaries** (x)
+- **TC2: Valid Maximum Boundaries** (V)
     - **State of the system**: System instantiates `Square` with `file = 'h'`, `rank = 8`.
     - **Expected output**: `Square` created successfully. `occupant` defaults to `null`.
     - **Implemented at** constructor_validMaximumBoundaries_createsSquare
 
-- **TC3: Invalid File (Out of bounds)** (x)
+- **TC3: Invalid File (Out of bounds)** (V)
     - **State of the system**: System instantiates `Square` with `file = 'i'`, `rank = 1`.
     - **Expected output**: Throws `IllegalArgumentException`.
+    - **Implemented at** constructor_invalidFile_throwsException
 
 - **TC4: Invalid Rank (Out of bounds)** (x)
     - **State of the system**: System instantiates `Square` with `file = 'a'`, `rank = 9`.

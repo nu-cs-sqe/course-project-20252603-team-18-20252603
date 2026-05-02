@@ -25,4 +25,12 @@ class SquareTest {
         assertEquals(8, square.getRank());
         assertTrue(square.isEmpty());
     }
+
+    @Test
+    void constructor_invalidFile_throwsException() {
+        // TC3: Invalid File (Out of bounds)
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Square('i', 1);
+        }, "Should throw exception for file 'i'");
+    }
 }
