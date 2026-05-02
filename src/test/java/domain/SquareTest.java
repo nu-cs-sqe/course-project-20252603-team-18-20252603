@@ -18,7 +18,6 @@ class SquareTest {
 
     @Test
     void constructor_validMaximumBoundaries_createsSquare() {
-        // TC2: Valid Max Boundaries
         Square square = new Square('h', 8);
 
         assertEquals('h', square.getFile());
@@ -28,9 +27,15 @@ class SquareTest {
 
     @Test
     void constructor_invalidFile_throwsException() {
-        // TC3: Invalid File (Out of bounds)
         assertThrows(IllegalArgumentException.class, () -> {
             new Square('i', 1);
         }, "Should throw exception for file 'i'");
+    }
+
+    @Test
+    void constructor_invalidRank_throwsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Square('a', 9);
+        }, "Should throw exception for rank 9");
     }
 }

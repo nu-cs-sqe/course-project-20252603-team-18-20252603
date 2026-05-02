@@ -46,6 +46,7 @@
 - **TC4: Invalid Rank (Out of bounds)** (x)
     - **State of the system**: System instantiates `Square` with `file = 'a'`, `rank = 9`.
     - **Expected output**: Throws `IllegalArgumentException`.
+    - **Implemented at** constructor_invalidRank_throwsException
 
 ### Method under test: `setOccupant(Piece piece)`
 - **TC5: Valid Occupant (Add Piece)** (x)
