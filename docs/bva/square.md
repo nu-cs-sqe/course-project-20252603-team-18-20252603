@@ -28,9 +28,10 @@
 ## Step 4: Test Cases
 
 ### Method under test: `Square(char file, int rank)`
-- **TC1: Valid Minimum Boundaries** (x)
+- **TC1: Valid Minimum Boundaries** (V)
     - **State of the system**: System instantiates `Square` with `file = 'a'`, `rank = 1`.
     - **Expected output**: `Square` created successfully. `occupant` defaults to `null`.
+    - **Implemented at** constructor_validMinimumBoundaries_createsSquare
 
 - **TC2: Valid Maximum Boundaries** (x)
     - **State of the system**: System instantiates `Square` with `file = 'h'`, `rank = 8`.
