@@ -41,12 +41,24 @@
 - **TC3: Invalid File (Out of bounds)** (V)
     - **State of the system**: System instantiates `Square` with `file = 'i'`, `rank = 1`.
     - **Expected output**: Throws `IllegalArgumentException`.
-    - **Implemented at** constructor_invalidFile_throwsException
+    - **Implemented at** constructor_invalidFileAbove_throwsException
+
+- **TC3.5: Invalid File (Out of bounds)** (V)
+  - **State of the system**: System instantiates `Square` with file = `` '`' `` (backtick), `rank = 1`.
+  - **Expected output**: Throws `IllegalArgumentException`.
+  - **Implemented at** constructor_invalidFileBelow_throwsException
 
 - **TC4: Invalid Rank (Out of bounds)** (x)
     - **State of the system**: System instantiates `Square` with `file = 'a'`, `rank = 9`.
     - **Expected output**: Throws `IllegalArgumentException`.
-    - **Implemented at** constructor_invalidRank_throwsException
+    - **Implemented at** constructor_invalidRankAbove_throwsException
+
+- **TC4.5: Invalid Rank (Out of bounds)** (V)
+  - **State of the system**: System instantiates `Square` with `file = 'i'`, `rank = 0`.
+  - **Expected output**: Throws `IllegalArgumentException`.
+  - **Implemented at** constructor_invalidRankBelow_throwsException
+
+
 
 ### Method under test: `setOccupant(Piece piece)`
 - **TC5: Valid Occupant (Add Piece)** (x)

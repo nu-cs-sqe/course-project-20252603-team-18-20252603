@@ -26,16 +26,31 @@ class SquareTest {
     }
 
     @Test
-    void constructor_invalidFile_throwsException() {
+    void constructor_invalidFileAbove_throwsException() {
         assertThrows(IllegalArgumentException.class, () -> {
             new Square('i', 1);
         }, "Should throw exception for file 'i'");
     }
 
     @Test
-    void constructor_invalidRank_throwsException() {
+    void constructor_invalidFileBelow_throwsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Square('`', 1);
+        }, "Should throw exception for file '`'");
+    }
+
+    @Test
+    void constructor_invalidRankAbove_throwsException() {
         assertThrows(IllegalArgumentException.class, () -> {
             new Square('a', 9);
         }, "Should throw exception for rank 9");
     }
+
+    @Test
+    void constructor_invalidRankBelow_throwsException() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Square('a', 0);
+        }, "Should throw exception for rank 9");
+    }
+
 }
