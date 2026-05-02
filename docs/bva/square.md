@@ -64,7 +64,9 @@
 - **TC5: Valid Occupant (Add Piece)** (x)
     - **State of the system**: Empty `Square` ('a', 1) exists. System calls `setOccupant` with a valid mock or skeleton `Piece`.
     - **Expected output**: `Square.occupant` is updated to the provided `Piece`.
+    - **Implemented at** setOccupant_validPiece_updatesSquareToNotEmpty
 
 - **TC6: Empty Occupant (Clear Square)** (x)
     - **State of the system**: Occupied `Square` ('a', 1) exists. System calls `setOccupant` with `null`.
     - **Expected output**: `Square.occupant` is updated to `null`.
+    - **Implemented at** setOccupant_null_updatesSquareToEmpty

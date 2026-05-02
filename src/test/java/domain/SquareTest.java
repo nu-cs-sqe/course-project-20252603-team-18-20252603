@@ -2,6 +2,7 @@ package domain;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.easymock.EasyMock.createMock;
 
 class SquareTest {
 
@@ -52,5 +53,26 @@ class SquareTest {
             new Square('a', 0);
         }, "Should throw exception for rank 9");
     }
+    //method on test: setOccupant
+    @Test
+    void setOccupant_validPiece_updatesSquareToNotEmpty() {
+        Square square = new Square('e', 4);
+        Piece mockPiece = createMock(Piece.class);
 
+        square.setOccupant(mockPiece);
+
+        assertFalse(square.isEmpty(), "Square should not be empty after a piece is set.");
+    }
+
+    @Test
+    void setOccupant_null_updatesSquareToEmpty() {
+        Square square = new Square('e', 4);
+
+        Piece mockPiece = createMock(Piece.class);
+        square.setOccupant(mockPiece);
+
+        square.setOccupant(null);
+
+        assertTrue(square.isEmpty(), "Square should be empty after occupant is set to null.");
+    }
 }

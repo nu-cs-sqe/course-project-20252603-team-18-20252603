@@ -1,8 +1,8 @@
 package domain;
 
 public class Square {
-    private char file;
-    private int rank;
+    final private char file;
+    final private int rank;
     private Piece occupant;
 
     public Square(char file, int rank) {
@@ -26,5 +26,9 @@ public class Square {
 
     public boolean isEmpty() {
         return this.occupant == null;
+    }
+
+    public void setOccupant(Piece piece) {
+        this.occupant = piece;
     }
 }
