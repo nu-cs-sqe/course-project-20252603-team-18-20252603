@@ -15,4 +15,14 @@ class SquareTest {
         assertEquals(1, square.getRank());
         assertTrue(square.isEmpty(), "A newly created square should be empty");
     }
+
+    @Test
+    void constructor_validMaximumBoundaries_createsSquare() {
+        // TC2: Valid Max Boundaries
+        Square square = new Square('h', 8);
+
+        assertEquals('h', square.getFile());
+        assertEquals(8, square.getRank());
+        assertTrue(square.isEmpty());
+    }
 }

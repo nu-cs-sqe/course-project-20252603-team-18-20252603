@@ -36,6 +36,7 @@
 - **TC2: Valid Maximum Boundaries** (x)
     - **State of the system**: System instantiates `Square` with `file = 'h'`, `rank = 8`.
     - **Expected output**: `Square` created successfully. `occupant` defaults to `null`.
+    - **Implemented at** constructor_validMaximumBoundaries_createsSquare
 
 - **TC3: Invalid File (Out of bounds)** (x)
     - **State of the system**: System instantiates `Square` with `file = 'i'`, `rank = 1`.
