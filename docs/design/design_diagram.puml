@@ -1,0 +1,164 @@
+@startuml Chess_MVC_Architecture
+
+skinparam backgroundColor #FAFAFA
+skinparam classBackgroundColor #FFFFFF
+skinparam classBorderColor #333333
+skinparam arrowColor #555555
+skinparam packageBackgroundColor #F0F4FF
+skinparam packageBorderColor #7090CC
+skinparam titleFontSize 18
+
+title Chess Application — MVC Architecture
+
+' ─────────────────────────────────────────
+' MODEL
+' ─────────────────────────────────────────
+package "Model" {
+
+  class GameModel {
+    - board: Board
+    - players: Player[2]
+    - currentTurn: Color
+    - status: GameStatus
+    - moveHistory: Move[]
+    --
+    + initGame()
+    + getLegalMoves(square: Square): Square[]
+    + applyMove(move: Move): void
+    + getStatus(): GameStatus
+  }
+
+  class Board {
+    - grid: Square[8][8]
+    --
+    + getSquare(file, rank): Square
+    + placePiece(piece, square): void
+    + removePiece(square): void
+    + movePiece(from, to): void
+  }
+
+  class Square {
+    + file: char
+    + rank: int
+    + occupant: Piece
+  }
+
+  abstract class Piece {
+    + color: Color
+    + type: PieceType
+    + hasMoved: boolean
+    --
+    + getLegalMoves(board): Square[]
+  }
+
+  class King extends Piece
+  class Queen extends Piece
+  class Rook extends Piece
+  class Bishop extends Piece
+  class Knight extends Piece
+  class Pawn extends Piece
+
+  class Player {
+    + color: Color
+    + isHuman: boolean
+    + capturedPieces: Piece[]
+  }
+
+  class Move {
+    + piece: Piece
+    + from: Square
+    + to: Square
+    + capturedPiece: Piece
+    + isEnPassant: boolean
+    + isCastle: boolean
+    + promotionPiece: PieceType
+    + causedCheck: boolean
+    + causedCheckmate: boolean
+  }
+
+  class RulesEngine <<service>> {
+    + isInCheck(color, board): boolean
+    + isCheckmate(color, board): boolean
+    + isLegalMove(move, board): boolean
+    + getEnPassantTarget(history): Square
+    + isCastlingLegal(king, rook, board): boolean
+  }
+
+  GameModel "1" *-- "1" Board
+  GameModel "1" *-- "2" Player
+  GameModel "1" *-- "*" Move
+  GameModel ..> RulesEngine : uses
+  Board "1" *-- "64" Square
+  Square "1" o-- "0..1" Piece
+}
+
+' ─────────────────────────────────────────
+' VIEW
+' ─────────────────────────────────────────
+package "View" {
+
+  class BoardView {
+    + render(board: Board): void
+    + highlightSquares(squares: Square[]): void
+    + clearHighlights(): void
+    + showCheckIndicator(square: Square): void
+    + clearCheckIndicator(): void
+    + onSquareClick: EventEmitter
+  }
+
+  class NotificationView {
+    + showTurn(color: string): void
+    + showCheck(color: string): void
+    + showCheckmate(winner: string): void
+  }
+
+  class PromotionView {
+    + show(color: string): Promise<PieceType>
+    + hide(): void
+  }
+
+  class CapturedPiecesView {
+    + update(white: Piece[], black: Piece[]): void
+  }
+}
+
+' ─────────────────────────────────────────
+' CONTROLLER
+' ─────────────────────────────────────────
+package "Controller" {
+
+  class GameController {
+    - model: GameModel
+    - boardView: BoardView
+    - notificationView: NotificationView
+    - promotionView: PromotionView
+    - capturedView: CapturedPiecesView
+    - selectedSquare: Square
+    --
+    + init(): void
+    - onSquareClick(square: Square): void
+    - handlePieceSelection(square: Square): void
+    - handleMoveExecution(target: Square): void
+    - handlePromotion(square: Square): void
+    - refreshViews(): void
+  }
+}
+
+' ─────────────────────────────────────────
+' MVC RELATIONSHIPS
+' ─────────────────────────────────────────
+GameController "1" *-- "1" GameModel      : owns
+GameController "1" *-- "1" BoardView      : owns
+GameController "1" *-- "1" NotificationView : owns
+GameController "1" *-- "1" PromotionView  : owns
+GameController "1" *-- "1" CapturedPiecesView : owns
+
+GameController ..> GameModel   : calls
+GameController ..> BoardView   : updates
+GameController ..> NotificationView : updates
+GameController ..> PromotionView : awaits
+GameController ..> CapturedPiecesView : updates
+
+BoardView ..> GameController   : emits onSquareClick
+
+@enduml
