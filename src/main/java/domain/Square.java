@@ -34,6 +34,6 @@ public class Square {
     }
 
     public Piece getOccupant() {
-        return null;
+        return occupant;
     }
 }
