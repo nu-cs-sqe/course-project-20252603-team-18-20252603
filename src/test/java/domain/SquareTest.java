@@ -75,4 +75,20 @@ class SquareTest {
 
         assertTrue(square.isEmpty(), "Square should be empty after occupant is set to null.");
     }
+
+    @Test
+    void getOccupant_emptySquare_returnsNull() {
+        Square square = new Square('e', 4);
+
+        assertNull(square.getOccupant(), "getOccupant should return null for a square with no occupant set.");
+    }
+
+    @Test
+    void getOccupant_occupiedSquare_returnsPiece() {
+        Square square = new Square('e', 4);
+        Piece mockPiece = createMock(Piece.class);
+        square.setOccupant(mockPiece);
+
+        assertSame(mockPiece, square.getOccupant(), "getOccupant should return the exact Piece instance that was set.");
+    }
 }

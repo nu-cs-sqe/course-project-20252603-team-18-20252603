@@ -16,6 +16,7 @@ public class Square {
         this.rank = rank;
         this.occupant = null;
     }
+
     public char getFile() {
         return file;
     }
@@ -30,5 +31,9 @@ public class Square {
 
     public void setOccupant(Piece piece) {
         this.occupant = piece;
+    }
+
+    public Piece getOccupant() {
+        return occupant;
     }
 }
