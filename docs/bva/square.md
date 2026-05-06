@@ -70,3 +70,15 @@
     - **State of the system**: Occupied `Square` ('a', 1) exists. System calls `setOccupant` with `null`.
     - **Expected output**: `Square.occupant` is updated to `null`.
     - **Implemented at** setOccupant_null_updatesSquareToEmpty
+
+
+
+### Method under test: `getOccupant()`
+- **TC7: Get Occupant on Empty Square** (V)
+  - **State of the system**: A `Square` ('e', 4) exists. `setOccupant` has not been called.
+  - **Expected output**: Returns `null`.
+  - **Implemented at** getOccupant_emptySquare_returnsNull
+- **TC8: Get Occupant on Occupied Square** (V)
+  - **State of the system**: A `Square` ('e', 4) exists. `setOccupant` has been called with a valid mock `Piece`.
+  - **Expected output**: Returns the exact same `Piece` instance that was set (referential equality).
+  - **Implemented at** getOccupant_occupiedSquare_returnsPiece
