@@ -13,6 +13,10 @@ public class Move {
     private boolean causedCheckmate = false;
 
     public Move(Piece piece, Square from, Square to) {
+        if (piece == null) {
+            throw new IllegalArgumentException("Piece cannot be null.");
+        }
+
         this.piece = piece;
         this.from = from;
         this.to = to;
