@@ -19,6 +19,9 @@ public class Move {
         if (from == null) {
             throw new IllegalArgumentException("\"from\" Square cannot be null.");
         }
+        if (to == null) {
+            throw new IllegalArgumentException("\"to\" Square cannot be null.");
+        }
 
         this.piece = piece;
         this.from = from;
