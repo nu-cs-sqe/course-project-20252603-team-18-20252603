@@ -18,6 +18,10 @@ N/A
 # Week 6 (05/04/2026-05/10/2026)
 **Planning and Progress Tracking**:
 1. [20% done] Eshan Haq: Implementing Piece Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/19)
-1. [20% done] Eric Fei: Implementing Move Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/20)
-2. [not started] David, Eric, Eshan: Implement RulesEngine Class
-2. [not started] David, Eric, Eshan: Implement GameModel Class
+2. [20% done] Eric Fei: Implementing Move Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/20)
+3. [not started] David, Eric, Eshan: Implement RulesEngine Class
+4. [not started] David, Eric, Eshan: Implement GameModel Class
+
+# Week 7 (05/11/2026 - 05/17/2026)
+**Planning and Progress Tracking**:
+1. [done] Eric Fei: Completed Move Class
