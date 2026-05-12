@@ -23,6 +23,9 @@ public class Move {
             throw new IllegalArgumentException("\"to\" Square cannot be null.");
         }
 
+        if (from.getOccupant() != piece) {
+            throw new IllegalArgumentException("Piece must match the occupant of the \"from\" square.");
+        }
         if (from.getFile() == to.getFile() && from.getRank() == to.getRank()) {
             throw new IllegalArgumentException("\"from\" and \"to\" squares cannot be the same.");
         }
