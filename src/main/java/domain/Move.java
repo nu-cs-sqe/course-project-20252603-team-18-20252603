@@ -2,41 +2,55 @@ package domain;
 
 public class Move {
 
-    public Move(Piece piece, Square from, Square to) {}
+    private final Piece piece;
+    private final Square from;
+    private final Square to;
+    private Piece capturedPiece = null;
+    private Piece promotionPiece = null;
+    private boolean isEnPassant = false;
+    private boolean isCastle = false;
+    private boolean causedCheck = false;
+    private boolean causedCheckmate = false;
+
+    public Move(Piece piece, Square from, Square to) {
+        this.piece = piece;
+        this.from = from;
+        this.to = to;
+    }
 
     Piece getPiece() {
-        return null;
+        return piece;
     }
 
     Square getFrom() {
-        return null;
+        return from;
     }
 
     Square getTo() {
-        return null;
+        return to;
     }
 
     Piece getCapturedPiece() {
-        return null;
+        return capturedPiece;
     }
 
     Piece getPromotionPiece() {
-        return null;
+        return promotionPiece;
     }
 
     boolean isEnPassant() {
-        return false;
+        return isEnPassant;
     }
 
     boolean isCastle() {
-        return false;
+        return isCastle;
     }
 
     boolean isCausedCheck() {
-        return false;
+        return causedCheck;
     }
 
     boolean isCausedCheckmate() {
-        return false;
+        return causedCheckmate;
     }
 }
