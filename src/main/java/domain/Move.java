@@ -23,6 +23,10 @@ public class Move {
             throw new IllegalArgumentException("\"to\" Square cannot be null.");
         }
 
+        if (from.getFile() == to.getFile() && from.getRank() == to.getRank()) {
+            throw new IllegalArgumentException("\"from\" and \"to\" squares cannot be the same.");
+        }
+
         this.piece = piece;
         this.from = from;
         this.to = to;
