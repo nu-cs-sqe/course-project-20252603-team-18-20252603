@@ -1,6 +1,6 @@
 package domain;
 
-public class Square {
+public final class Square {
     final private char file;
     final private int rank;
     private Piece occupant;
