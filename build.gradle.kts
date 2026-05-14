@@ -1,5 +1,10 @@
+import org.gradle.api.plugins.quality.Checkstyle
+import org.gradle.api.plugins.quality.CheckstyleExtension
+
 plugins {
     id("java")
+    id("checkstyle")
+    id("com.github.spotbugs") version "6.0.25"
 }
 
 group = "nu.csse.sqe"
@@ -27,4 +32,16 @@ tasks.compileJava {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.withType<Checkstyle>().configureEach {
+    reports {
+        xml.required = false
+        html.required = true
+        html.stylesheet = resources.text.fromFile("config/xsl/checkstyle-noframes-severity-sorted.xsl")
+    }
+}
+
+configure<CheckstyleExtension> {
+    isIgnoreFailures = false
 }
