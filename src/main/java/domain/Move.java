@@ -12,7 +12,13 @@ public class Move {
     private boolean causedCheck = false;
     private boolean causedCheckmate = false;
 
-    public Move(Piece piece, Square from, Square to) {
+	private Move(Piece piece, Square from, Square to) {
+		this.piece = piece;
+		this.from = from;
+		this.to = to;
+	}
+
+    public static Move create(Piece piece, Square from, Square to) {
         if (piece == null) {
             throw new IllegalArgumentException("Piece cannot be null.");
         }
@@ -30,9 +36,7 @@ public class Move {
             throw new IllegalArgumentException("\"from\" and \"to\" squares cannot be the same.");
         }
 
-        this.piece = piece;
-        this.from = from;
-        this.to = to;
+        return new Move(piece, from, to);
     }
 
     Piece getPiece() {
@@ -54,6 +58,14 @@ public class Move {
     Piece getPromotionPiece() {
         return promotionPiece;
     }
+
+	void setCapturedPiece(Piece capturedPiece) {
+		this.capturedPiece = capturedPiece;
+	}
+
+	void setPromotionPiece(Piece promotionPiece) {
+		this.promotionPiece = promotionPiece;
+	}
 
     boolean isEnPassant() {
         return isEnPassant;

@@ -29,7 +29,7 @@ public class MoveTest {
 
         EasyMock.replay(mockPiece, mockFrom, mockTo);
 
-        Move move = new Move(mockPiece, mockFrom, mockTo);
+        Move move = Move.create(mockPiece, mockFrom, mockTo);
 
         assertNotNull(move);
         assertSame(mockPiece, move.getPiece());
@@ -55,7 +55,7 @@ public class MoveTest {
 
         EasyMock.replay(mockFrom, mockTo);
 
-        assertThrows(IllegalArgumentException.class, () -> new Move(null, mockFrom, mockTo));
+        assertThrows(IllegalArgumentException.class, () -> Move.create(null, mockFrom, mockTo));
 
         EasyMock.verify(mockFrom, mockTo);
     }
@@ -67,7 +67,7 @@ public class MoveTest {
 
         EasyMock.replay(mockPiece, mockTo);
 
-        assertThrows(IllegalArgumentException.class, () -> new Move(mockPiece, null, mockTo));
+        assertThrows(IllegalArgumentException.class, () -> Move.create(mockPiece, null, mockTo));
 
         EasyMock.verify(mockPiece, mockTo);
     }
@@ -80,7 +80,7 @@ public class MoveTest {
 
         EasyMock.replay(mockPiece, mockFrom);
 
-        assertThrows(IllegalArgumentException.class, () -> new Move(mockPiece, mockFrom, null));
+        assertThrows(IllegalArgumentException.class, () -> Move.create(mockPiece, mockFrom, null));
 
         EasyMock.verify(mockPiece, mockFrom);
     }
@@ -95,7 +95,7 @@ public class MoveTest {
 
         EasyMock.replay(mockPiece, mockFrom, mockTo);
 
-        assertThrows(IllegalArgumentException.class, () -> new Move(mockPiece, mockFrom, mockTo));
+        assertThrows(IllegalArgumentException.class, () -> Move.create(mockPiece, mockFrom, mockTo));
 
         EasyMock.verify(mockPiece, mockFrom, mockTo);
     }
@@ -112,7 +112,7 @@ public class MoveTest {
 
         EasyMock.replay(mockPiece, mockFrom, mockTo, differentPiece);
 
-        assertThrows(IllegalArgumentException.class, () -> new Move(mockPiece, mockFrom, mockTo));
+        assertThrows(IllegalArgumentException.class, () -> Move.create(mockPiece, mockFrom, mockTo));
 
         EasyMock.verify(mockPiece, mockFrom, mockTo, differentPiece);
     }
