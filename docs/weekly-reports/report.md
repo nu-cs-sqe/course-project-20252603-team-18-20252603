@@ -25,3 +25,5 @@ N/A
 # Week 7 (05/11/2026 - 05/17/2026)
 **Planning and Progress Tracking**:
 1. [done] Eric Fei: Completed Move Class
+2. [done] Eric Fei: Completed Checkstyle setup
+3. [done] Eric Fei: Completed SpotBugs setup
