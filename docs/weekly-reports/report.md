@@ -27,3 +27,4 @@ N/A
 1. [done] Eric Fei: Completed Move Class
 2. [done] Eric Fei: Completed Checkstyle setup
 3. [done] Eric Fei: Completed SpotBugs setup
+4. [40% done] Eshan Haq: Implementing Piece Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/19)
