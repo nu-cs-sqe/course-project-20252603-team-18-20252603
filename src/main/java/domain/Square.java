@@ -1,20 +1,24 @@
 package domain;
 
-public final class Square {
+public class Square {
 	final private char file;
 	final private int rank;
 	private Piece occupant;
 
-	public Square(char file, int rank) {
+	private Square(char file, int rank) {
+		this.file = file;
+		this.rank = rank;
+	}
+
+	public static Square create(char file, int rank) {
 		if (file < 'a' || file > 'h') {
 			throw new IllegalArgumentException("File must be between 'a' and 'h'.");
 		}
 		if (rank < 1 || rank > 8){
 			throw new IllegalArgumentException("Rank must be between 1 and 8");
 		}
-		this.file = file;
-		this.rank = rank;
-		this.occupant = null;
+
+		return new Square(file, rank);
 	}
 
 	public char getFile() {
