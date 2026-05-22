@@ -24,4 +24,8 @@ N/A
 
 # Week 7 (05/11/2026 - 05/17/2026)
 **Planning and Progress Tracking**:
-1. [done] Eric Fei: Completed Move Class
+1. [done] Eric Fei: Completed Move Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/20)
+2. [done] Eric Fei: Completed Checkstyle setup (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/26)
+3. [done] Eric Fei: Completed SpotBugs setup (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/26)
+4. [40% done] Eshan Haq: Implementing Piece Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/19)
+5. [20% done] David Yim: Planned out Rules Engine Implementation
