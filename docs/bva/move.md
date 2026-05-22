@@ -28,9 +28,9 @@
     * Valid values: `true`, `false`.
     * Constraint: Can only be `true` if `piece` is a King, neither the King nor the involved Rook has previously moved (`hasMoved == false`), and there are no pieces between them.
 
-* `promotionPiece` (PieceType): The piece type a Pawn is promoted to upon reaching the final rank.
-    * Valid values: `QUEEN`, `ROOK`, `BISHOP`, `KNIGHT` (when promotion is applicable), or `null` (when the move is not a promotion).
-    * Invalid values: `KING`, `PAWN`, or any non-null value when `piece` is not a Pawn reaching the final rank.
+* `promotionPiece` (Piece): The `Piece` instance a Pawn is promoted to upon reaching the final rank.
+    * Valid values: A non-null `Piece` object of type Queen, Rook, Bishop, or Knight (when promotion is applicable), or `null` (when the move is not a promotion).
+    * Invalid values: A `Piece` of type King or Pawn, or any non-null value when `piece` is not a Pawn reaching the final rank.
 
 * `causedCheck` (boolean): Indicates that this move left the opponent's King in check.
     * Valid values: `true`, `false`.
@@ -62,15 +62,15 @@
     * `causedCheckmate = true` requires `causedCheck = true`.
 
 * `promotionPiece` Boundaries:
-    * Valid promotion values: `QUEEN`, `ROOK`, `BISHOP`, `KNIGHT`.
+    * Valid promotion values: A non-null `Piece` instance of type Queen, Rook, Bishop, or Knight.
     * Valid non-promotion value: `null`.
-    * Invalid values: `KING`, `PAWN`.
+    * Invalid values: A `Piece` instance of type King or Pawn.
 
 ---
 
 ## Step 4: Test Cases
 
-### Method under test: `Move(Piece piece, Square from, Square to)`
+### Method under test: `Move.create(Piece piece, Square from, Square to)`
 
 - **TC1: Valid Standard Move (Non-capture, Non-special)** (x)
     - **State of the system**: A non-null `Piece` occupies `from` ('e', 2). `to` is ('e', 4) — a legal destination. No capture, no special flags.
@@ -78,26 +78,26 @@
     - **Implemented at**: constructor_validStandardMove_createsMove
 
 - **TC2: Null Piece** (x)
-    - **State of the system**: System instantiates `Move` with `piece = null`, valid `from` ('a', 1), valid `to` ('a', 2).
+    - **State of the system**: System calls `Move.create(...)` with `piece = null`, valid `from` ('a', 1), valid `to` ('a', 2).
     - **Expected output**: Throws `IllegalArgumentException`.
     - **Implemented at**: constructor_nullPiece_throwsException
 
 - **TC3: Null From Square** (x)
-    - **State of the system**: System instantiates `Move` with a valid `Piece`, `from = null`, valid `to` ('a', 2).
+    - **State of the system**: System calls `Move.create(...)` with a valid `Piece`, `from = null`, valid `to` ('a', 2).
     - **Expected output**: Throws `IllegalArgumentException`.
     - **Implemented at**: constructor_nullFromSquare_throwsException
 
 - **TC4: Null To Square** (x)
-    - **State of the system**: System instantiates `Move` with a valid `Piece`, valid `from` ('a', 1), `to = null`.
+    - **State of the system**: System calls `Move.create(...)` with a valid `Piece`, valid `from` ('a', 1), `to = null`.
     - **Expected output**: Throws `IllegalArgumentException`.
     - **Implemented at**: constructor_nullToSquare_throwsException
 
 - **TC5: From and To Are the Same Square** (x)
-    - **State of the system**: System instantiates `Move` with a valid `Piece`, `from` = ('d', 4), `to` = ('d', 4) (identical square references or equivalent file/rank).
+    - **State of the system**: System calls `Move.create(...)` with a valid `Piece`, `from` = ('d', 4), `to` = ('d', 4) (identical square references or equivalent file/rank).
     - **Expected output**: Throws `IllegalArgumentException` (a zero-distance move is illegal).
     - **Implemented at**: constructor_fromAndToSameSquare_throwsException
 
 - **TC6: Piece Does Not Match From Square Occupant** (x)
-    - **State of the system**: System instantiates `Move` where `piece` is a White Pawn but `from.occupant` is a different `Piece` (or `null`).
+    - **State of the system**: System calls `Move.create(...)` where `piece` is a valid `Piece` but `from.occupant` is a different `Piece` (or `null`).
     - **Expected output**: Throws `IllegalArgumentException`.
     - **Implemented at**: constructor_pieceMismatchFromOccupant_throwsException
