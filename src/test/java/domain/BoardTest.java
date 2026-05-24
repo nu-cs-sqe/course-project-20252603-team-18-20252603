@@ -238,23 +238,16 @@ class BoardTest {
 		assertThrows(IllegalArgumentException.class, () -> {
 			board.movePiece(null, mockTo);
 		}, "Should throw exception when the from square is null.");
-
-		verify(mockTo);
 	}
 
 	@Test
 	void movePiece_nullTo_throwsException() {
 		Square mockFrom = createMock(Square.class);
-		Piece mockPiece = createMock(Piece.class);
-
-		expect(mockFrom.isEmpty()).andReturn(false);
-		replay(mockFrom, mockPiece);
+		replay(mockFrom);
 
 		assertThrows(IllegalArgumentException.class, () -> {
 			board.movePiece(mockFrom, null);
 		}, "Should throw exception when the to square is null.");
-
-		verify(mockFrom, mockPiece);
 	}
 
 	@Test
@@ -276,7 +269,6 @@ class BoardTest {
 	void movePiece_fromAndToSameSquare_throwsException() {
 		Square mockFrom = createMock(Square.class);
 
-		expect(mockFrom.isEmpty()).andReturn(false);
 		expect(mockFrom.getFile()).andReturn('d').anyTimes();
 		expect(mockFrom.getRank()).andReturn(4).anyTimes();
 		replay(mockFrom);
