@@ -52,6 +52,9 @@ public class Board {
 	}
 
 	void removePiece(Square square) {
+		if (square == null) {
+			throw new IllegalArgumentException("Target Square must not be null.");
+		}
 		if (square.isEmpty() == false) {
 			square.setOccupant(null);
 		}
