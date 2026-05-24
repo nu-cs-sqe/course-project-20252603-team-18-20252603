@@ -52,6 +52,9 @@ public class Board {
 	}
 
 	void removePiece(Square square) {
+		if (square.isEmpty() == false) {
+			square.setOccupant(null);
+		}
 	}
 
 	void movePiece(Square from, Square to) {
