@@ -82,6 +82,10 @@ public class Board {
 			replacedPiece = to.getOccupant();
 		}
 
+		if (replacedPiece != null && movedPiece.getColor() == replacedPiece.getColor()) {
+			throw new IllegalArgumentException("Cannot move piece to a square with a piece of the same color.");
+		}
+
 		from.setOccupant(null);
 		to.setOccupant(movedPiece);
 	}
