@@ -1,11 +1,35 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Board {
+	private List<Character> files;
+	List<List<Square>> grid;
+
 	public Board() {
+		this.files = new ArrayList<>();
+		for (int i = 0; i < 8; i++) {
+			this.files.add((char) ('a' + i));
+		}
+
+		this.grid = new ArrayList<>();
+		for (int rank = 1; rank < 9; rank++) {
+			ArrayList<Square> row = new ArrayList<>();
+			for (char file : this.files) {
+				row.add(Square.create(file, rank));
+			}
+			this.grid.add(row);
+		}
+	}
+
+	private int fileToIndex(char file) {
+		char firstFile = 'a';
+		return file - firstFile;
 	}
 
 	Square getSquare(char file, int rank) {
-		return null;
+		return grid.get(rank-1).get(fileToIndex(file));
 	}
 
 	void placePiece(Piece piece, Square square) {
