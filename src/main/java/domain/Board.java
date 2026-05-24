@@ -39,6 +39,9 @@ public class Board {
 	}
 
 	void placePiece(Piece piece, Square square) {
+		if (square.isEmpty()) {
+			square.setOccupant(piece);
+		}
 	}
 
 	void removePiece(Square square) {
