@@ -62,5 +62,15 @@ public class Board {
 	}
 
 	void movePiece(Square from, Square to) {
+		Piece movedPiece = null;
+		if (from.isEmpty() == false) {
+			movedPiece = from.getOccupant();
+		}
+
+		if (to.isEmpty()) {
+		}
+
+		from.setOccupant(null);
+		to.setOccupant(movedPiece);
 	}
 }
