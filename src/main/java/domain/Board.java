@@ -62,6 +62,10 @@ public class Board {
 	}
 
 	void movePiece(Square from, Square to) {
+		if (from == null) {
+			throw new IllegalArgumentException("'from' Square must not be null.");
+		}
+
 		Piece movedPiece = null;
 		if (from.isEmpty() == false) {
 			movedPiece = from.getOccupant();
