@@ -67,7 +67,9 @@ public class Board {
 			movedPiece = from.getOccupant();
 		}
 
-		if (to.isEmpty()) {
+		Piece replacedPiece = null;
+		if (to.isEmpty() == false) {
+			replacedPiece = to.getOccupant();
 		}
 
 		from.setOccupant(null);
