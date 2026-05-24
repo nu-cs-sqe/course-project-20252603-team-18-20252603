@@ -68,6 +68,9 @@ public class Board {
 		if (to == null) {
 			throw new IllegalArgumentException("'to' Square must not be null.");
 		}
+		if (from.equals(to)) {
+			throw new IllegalArgumentException("'from' and 'to' should not be the same.");
+		}
 
 		if (from.isEmpty()) {
 			throw new IllegalStateException("'from' Square must not be empty when moving piece.");
