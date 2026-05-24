@@ -32,6 +32,9 @@ public class Board {
 		if (file < 'a' || file > 'h') {
 			throw new IllegalArgumentException("File in Board must be between 'a' and 'h'.");
 		}
+		if (rank < 1 || rank > 8){
+			throw new IllegalArgumentException("Rank must be between 1 and 8");
+		}
 		return grid.get(rank-1).get(fileToIndex(file));
 	}
 
