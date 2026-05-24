@@ -29,6 +29,9 @@ public class Board {
 	}
 
 	Square getSquare(char file, int rank) {
+		if (file < 'a' || file > 'h') {
+			throw new IllegalArgumentException("File in Board must be between 'a' and 'h'.");
+		}
 		return grid.get(rank-1).get(fileToIndex(file));
 	}
 
