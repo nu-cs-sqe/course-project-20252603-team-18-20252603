@@ -69,10 +69,10 @@ public class Board {
 			throw new IllegalArgumentException("'to' Square must not be null.");
 		}
 
-		Piece movedPiece = null;
-		if (from.isEmpty() == false) {
-			movedPiece = from.getOccupant();
+		if (from.isEmpty()) {
+			throw new IllegalStateException("'from' Square must not be empty when moving piece.");
 		}
+		Piece movedPiece = from.getOccupant();
 
 		Piece replacedPiece = null;
 		if (to.isEmpty() == false) {
