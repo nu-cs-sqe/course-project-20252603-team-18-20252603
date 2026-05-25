@@ -19,8 +19,22 @@ public class RulesEngine {
         int fileDelta = to.getFile() - from.getFile();
         int rankDelta = to.getRank() - from.getRank();
 
-        return fileDelta == 0
-                && rankDelta == 1
-                && to.getOccupant() == null;
+        if (fileDelta != 0) {
+            return false;
+        }
+
+        if (rankDelta == 1) {
+            return to.getOccupant() == null;
+        }
+
+        if (rankDelta == 2 && from.getRank() == 2) {
+            Square intermediate = model.getBoard().getSquare(from.getFile(), from.getRank() + 1);
+
+            return intermediate.getOccupant() == null
+                    && to.getOccupant() == null;
+        }
+
+        return false;
+
     }
 }
