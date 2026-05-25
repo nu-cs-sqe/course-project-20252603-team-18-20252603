@@ -115,6 +115,39 @@ class RulesEngineTest {
 
         verify(model, move, from, to, piece);
     }
+    @Test
+    void isLegalMove_pawnForwardIntoOccupiedSquare_returnsFalse() {
+        GameModel model = mock(GameModel.class);
+        Move move = mock(Move.class);
+        Square from = mock(Square.class);
+        Square to = mock(Square.class);
+        Piece movingPawn = mock(Piece.class);
+        Piece blockingPiece = mock(Piece.class);
+
+        expect(move.getPiece()).andReturn(movingPawn).anyTimes();
+        expect(move.getFrom()).andReturn(from).anyTimes();
+        expect(move.getTo()).andReturn(to).anyTimes();
+
+        expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+
+        expect(movingPawn.getColor()).andReturn(Color.WHITE).anyTimes();
+        expect(movingPawn.getType()).andReturn(PieceType.PAWN).anyTimes();
+
+        expect(from.getFile()).andReturn('e').anyTimes();
+        expect(from.getRank()).andReturn(2).anyTimes();
+
+        expect(to.getFile()).andReturn('e').anyTimes();
+        expect(to.getRank()).andReturn(3).anyTimes();
+        expect(to.getOccupant()).andReturn(blockingPiece).anyTimes();
+
+        replay(model, move, from, to, movingPawn, blockingPiece);
+
+        RulesEngine rulesEngine = new RulesEngine();
+
+        assertFalse(rulesEngine.isLegalMove(model, move));
+
+        verify(model, move, from, to, movingPawn, blockingPiece);
+    }
 
 
 
