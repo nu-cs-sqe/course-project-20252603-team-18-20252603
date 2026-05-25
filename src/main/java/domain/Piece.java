@@ -1,18 +1,30 @@
 package domain;
 
 public abstract class Piece {
+	private final Color color;
+	private final PieceType type;
+	private boolean hasMoved;
+
 	Piece(Color color, PieceType type) {
+		this.color = color;
+		this.type = type;
+		this.hasMoved = false;
 	}
 
-	Color getColor() {
-		return null;
+	public Color getColor() {
+		return color;
 	}
 
-	PieceType getType() {
-		return null;
+	public PieceType getType() {
+		return type;
 	}
 
-	void markMoved() {
+	public boolean hasMoved() {
+		return hasMoved;
+	}
+
+	public void markMoved() {
+
 	}
 
 	Square[] getMoves(Board board) {
