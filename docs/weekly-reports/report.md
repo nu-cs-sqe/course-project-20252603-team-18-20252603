@@ -29,3 +29,16 @@ N/A
 3. [done] Eric Fei: Completed SpotBugs setup (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/26)
 4. [40% done] Eshan Haq: Implementing Piece Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/19)
 5. [20% done] David Yim: Planned out Rules Engine Implementation
+
+# Week 8 (05/18/2026 - 05/24/2026)
+**Planning and Progress Tracking**:
+1. [done] Eric Fei: Completed Board Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/34)
+4. [done] Eric Fei: Updated Design Diagram for Move (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/35)
+4. [done] Eric Fei: Updated Design Diagram for Board (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/35)
+2. [80% done] Eshan Haq: Implementing Piece Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/19)
+3. [60% done] Eshan Haq: Implementing Player Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/39)
+4. [done] Eshan Haq: Updated Design Diagram for Piece (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/35)
+4. [done] David: Complete design diagram for Rules Engine (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/35)
+5. [done] David: Refactor Square Class to remove magic numbers (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/37)
+6. [done] David: BVA for Rules Engine (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+7. [30%] David: Method Is_Legal_Move TDD (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
