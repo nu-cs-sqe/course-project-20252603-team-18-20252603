@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 class RulesEngineTest {
 
+    // Methods Under Test: isLegalMove
+
     @Test
     void isLegalMove_validPawnSingleStep_returnsTrue() {
         GameModel model = mock(GameModel.class);
@@ -217,4 +219,14 @@ class RulesEngineTest {
 
         verify(model, move, from, to, movingPawn);
     }
+
+    // Methods Under Test: getLegalMoves
+    // Methods Under Test: isInCheck
+    // Methods Under Test: isSquareAttacked
+    // Methods Under Test: isCheckmate
+    // Methods Under Test: isStalemate
+    // Methods Under Test: isCastlingLegal
+    // Methods Under Test: isEnPassantLegal
+    // Methods Under Test: isPromotionLegal
+    // Methods Under Test: getGameStatus
 }
