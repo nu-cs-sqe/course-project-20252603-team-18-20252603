@@ -117,11 +117,19 @@ package "Model" {
   end note
 
   class RulesEngine <<service>> {
-    + isInCheck(color: Color, board: Board): boolean
-    + isCheckmate(color: Color, board: Board): boolean
-    + isLegalMove(move: Move, board: Board): boolean
-    + getEnPassantTarget(history: Move[]): Square
-    + isCastlingLegal(king: King, rook: Rook, board: Board): boolean
+    + isLegalMove(move: Move, state: GameState): boolean
+    + getLegalMoves(color: Color, state: GameState): Move[]
+
+    + isInCheck(color: Color, state: GameState): boolean
+    + isSquareAttack(state: GameState, square: Square, color:Color): boolean
+    + isCheckmate(color: Color, state: GameState): boolean
+    + isStalemate(color: Color, state: GameState): boolean
+
+    + isEnPassantLegal(move: Move, state: GameState): boolean
+    + isCastlingLegal(move: Move, state: GameState): boolean
+    + isPromotionLegas(move: Move, state: GameState): boolean
+
+    + getGameStatus(state: GameState)
   }
 
   ' Model internal relationships
