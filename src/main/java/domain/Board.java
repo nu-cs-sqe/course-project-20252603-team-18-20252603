@@ -4,17 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
+	private static char FIRSTFILE = 'a';
+	private static char LASTFILE = 'h';
+	private static int FIRSTRANK = 1;
+	private static int LASTRANK = 8;
+
 	private List<Character> files;
 	List<List<Square>> grid;
 
 	public Board() {
 		this.files = new ArrayList<>();
-		for (int i = 0; i < 8; i++) {
-			this.files.add((char) ('a' + i));
+		for (int i = 0; i < LASTRANK; i++) {
+			this.files.add((char) (FIRSTFILE + i));
 		}
 
 		this.grid = new ArrayList<>();
-		for (int rank = 1; rank < 9; rank++) {
+		for (int rank = FIRSTRANK; rank < LASTRANK + 1; rank++) {
 			ArrayList<Square> row = new ArrayList<>();
 			for (char file : this.files) {
 				row.add(Square.create(file, rank));
@@ -24,15 +29,14 @@ public class Board {
 	}
 
 	private int fileToIndex(char file) {
-		char firstFile = 'a';
-		return file - firstFile;
+		return file - FIRSTFILE;
 	}
 
 	Square getSquare(char file, int rank) {
-		if (file < 'a' || file > 'h') {
+		if (file < FIRSTFILE || file > LASTFILE) {
 			throw new IllegalArgumentException("File in Board must be between 'a' and 'h'.");
 		}
-		if (rank < 1 || rank > 8){
+		if (rank < FIRSTRANK || rank > LASTRANK) {
 			throw new IllegalArgumentException("Rank must be between 1 and 8");
 		}
 		return grid.get(rank-1).get(fileToIndex(file));
