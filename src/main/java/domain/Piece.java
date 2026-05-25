@@ -6,6 +6,10 @@ public abstract class Piece {
 	private boolean hasMoved;
 
 	Piece(Color color, PieceType type) {
+		if (color == null) {
+			throw new IllegalArgumentException("Color can't be null.");
+		}
+
 		this.color = color;
 		this.type = type;
 		this.hasMoved = false;
