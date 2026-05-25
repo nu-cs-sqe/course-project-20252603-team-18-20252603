@@ -32,7 +32,7 @@
   - **Expected output**: Piece is created successfully; `getColor()` returns `WHITE`; `getType()` returns `QUEEN`; `hasMoved()` returns `false`.
   - **Test name**: `constructor_validWhiteQueen_createsPiece`
 
-- **TC2: Constructor creates valid black pawn piece** ( :white_check_mark: Implemented in TC1 )
+- **TC2: Constructor creates valid black pawn piece** ( :white_check_mark: )
   - **State of the system**: System instantiates a concrete test subclass of `Piece` with `color = BLACK`, `type = PAWN`.
   - **Expected output**: Piece is created successfully; `getColor()` returns `BLACK`; `getType()` returns `PAWN`; `hasMoved()` returns `false`.
   - **Test name**: `constructor_validBlackPawn_createsPiece`
@@ -47,7 +47,7 @@
   - **Expected output**: Throws `IllegalArgumentException`.
   - **Test name**: `constructor_nullType_throwsException`
 
-- **TC5: Constructor with null color and null type throws exception** ( :white_check_mark: Implemented in TC4 )
+- **TC5: Constructor with null color and null type throws exception** ( :white_check_mark: )
   - **State of the system**: System instantiates a concrete test subclass of `Piece` with `color = null`, `type = null`.
   - **Expected output**: Throws `IllegalArgumentException`.
   - **Test name**: `constructor_nullColorAndNullType_throwsException`
@@ -67,7 +67,7 @@
 
 
 ## Method under test: `getType()`
-- **TC8: Get type on king piece returns queen** ( :white_check_mark: )
+- **TC8: Get type on queen piece returns queen** ( :white_check_mark: )
   - **State of the system**: A concrete test subclass of `Piece` exists with `color = WHITE`, `type = QUEEN`.
   - **Expected output**: `getType()` returns `QUEEN`.
   - **Test name**: `getType_queenPiece_returnsQueen`
