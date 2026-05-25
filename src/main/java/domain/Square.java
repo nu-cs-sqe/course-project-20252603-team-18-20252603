@@ -5,16 +5,21 @@ public class Square {
 	final private int rank;
 	private Piece occupant;
 
+	private static int minrank = 1;
+	private static int maxrank = 8;
+	private static char minfile = 'a';
+	private static char maxfile = 'h';
+
 	private Square(char file, int rank) {
 		this.file = file;
 		this.rank = rank;
 	}
 
 	public static Square create(char file, int rank) {
-		if (file < 'a' || file > 'h') {
+		if (file < minfile || file > maxfile) {
 			throw new IllegalArgumentException("File must be between 'a' and 'h'.");
 		}
-		if (rank < 1 || rank > 8){
+		if (rank < minrank || rank > maxrank){
 			throw new IllegalArgumentException("Rank must be between 1 and 8");
 		}
 
