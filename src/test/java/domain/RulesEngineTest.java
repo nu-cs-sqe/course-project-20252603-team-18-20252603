@@ -149,6 +149,41 @@ class RulesEngineTest {
         verify(model, move, from, to, movingPawn, blockingPiece);
     }
 
+    @Test
+    void isLegalMove_validPawnDiagonalCapture_returnsTrue() {
+        GameModel model = mock(GameModel.class);
+        Move move = mock(Move.class);
+        Square from = mock(Square.class);
+        Square to = mock(Square.class);
+        Piece movingPawn = mock(Piece.class);
+        Piece capturedPiece = mock(Piece.class);
+
+        expect(move.getPiece()).andReturn(movingPawn).anyTimes();
+        expect(move.getFrom()).andReturn(from).anyTimes();
+        expect(move.getTo()).andReturn(to).anyTimes();
+
+        expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+
+        expect(movingPawn.getColor()).andReturn(Color.WHITE).anyTimes();
+        expect(movingPawn.getType()).andReturn(PieceType.PAWN).anyTimes();
+
+        expect(capturedPiece.getColor()).andReturn(Color.BLACK).anyTimes();
+
+        expect(from.getFile()).andReturn('e').anyTimes();
+        expect(from.getRank()).andReturn(4).anyTimes();
+
+        expect(to.getFile()).andReturn('f').anyTimes();
+        expect(to.getRank()).andReturn(5).anyTimes();
+        expect(to.getOccupant()).andReturn(capturedPiece).anyTimes();
+
+        replay(model, move, from, to, movingPawn, capturedPiece);
+
+        RulesEngine rulesEngine = new RulesEngine();
+
+        assertTrue(rulesEngine.isLegalMove(model, move));
+
+        verify(model, move, from, to, movingPawn, capturedPiece);
+    }
 
 
 }
