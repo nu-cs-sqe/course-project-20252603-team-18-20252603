@@ -31,7 +31,7 @@ public abstract class Piece {
 	}
 
 	public void markMoved() {
-
+		this.hasMoved = true;
 	}
 
 	Square[] getMoves(Board board) {
