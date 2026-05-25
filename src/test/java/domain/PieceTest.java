@@ -9,15 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PieceTest {
 
-	private static class TestPiece extends Piece {
-		TestPiece(Color color, PieceType type) {
-			super(color, type);
-		}
-	}
-
 	@Test
-	void constructor_validWhiteQueen_createsPiece() {
-		Piece piece = new TestPiece(Color.WHITE, PieceType.QUEEN);
+	void create_validWhiteQueen_createsPiece() {
+		Piece piece = Piece.create(Color.WHITE, PieceType.QUEEN);
 
 		assertEquals(Color.WHITE, piece.getColor());
 		assertEquals(PieceType.QUEEN, piece.getType());
@@ -25,8 +19,8 @@ class PieceTest {
 	}
 
 	@Test
-	void constructor_validBlackPawn_createsPiece() {
-		Piece piece = new TestPiece(Color.BLACK, PieceType.PAWN);
+	void create_validBlackPawn_createsPiece() {
+		Piece piece = Piece.create(Color.BLACK, PieceType.PAWN);
 
 		assertEquals(Color.BLACK, piece.getColor());
 		assertEquals(PieceType.PAWN, piece.getType());
@@ -34,36 +28,36 @@ class PieceTest {
 	}
 
 	@Test
-	void constructor_nullColor_throwsException() {
+	void create_nullColor_throwsException() {
 		Color color = null;
 		PieceType type = PieceType.QUEEN;
 
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new TestPiece(color, type);
+			Piece.create(color, type);
 		});
 
 		assertEquals("Color can't be null.", exception.getMessage());
 	}
 
 	@Test
-	void constructor_nullType_throwsException() {
+	void create_nullType_throwsException() {
 		Color color = Color.WHITE;
 		PieceType type = null;
 
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new TestPiece(color, type);
+			Piece.create(color, type);
 		});
 
 		assertEquals("Piece type can't be null.", exception.getMessage());
 	}
 
 	@Test
-	void constructor_nullColorAndNullType_throwsException() {
+	void create_nullColorAndNullType_throwsException() {
 		Color color = null;
 		PieceType type = null;
 
 		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-			new TestPiece(color, type);
+			Piece.create(color, type);
 		});
 
 		assertEquals("Color can't be null.", exception.getMessage());
@@ -71,42 +65,42 @@ class PieceTest {
 
 	@Test
 	void getColor_whitePiece_returnsWhite() {
-		Piece piece = new TestPiece(Color.WHITE, PieceType.ROOK);
+		Piece piece = Piece.create(Color.WHITE, PieceType.ROOK);
 
 		assertEquals(Color.WHITE, piece.getColor());
 	}
 
 	@Test
 	void getColor_blackPiece_returnsBlack() {
-		Piece piece = new TestPiece(Color.BLACK, PieceType.BISHOP);
+		Piece piece = Piece.create(Color.BLACK, PieceType.BISHOP);
 
 		assertEquals(Color.BLACK, piece.getColor());
 	}
 
 	@Test
 	void getType_queenPiece_returnsQueen() {
-		Piece piece = new TestPiece(Color.WHITE, PieceType.QUEEN);
+		Piece piece = Piece.create(Color.WHITE, PieceType.QUEEN);
 
 		assertEquals(PieceType.QUEEN, piece.getType());
 	}
 
 	@Test
 	void getType_pawnPiece_returnsPawn() {
-		Piece piece = new TestPiece(Color.BLACK, PieceType.PAWN);
+		Piece piece = Piece.create(Color.BLACK, PieceType.PAWN);
 
 		assertEquals(PieceType.PAWN, piece.getType());
 	}
 
 	@Test
 	void hasMoved_newPiece_returnsFalse() {
-		Piece piece = new TestPiece(Color.WHITE, PieceType.KNIGHT);
+		Piece piece = Piece.create(Color.WHITE, PieceType.KNIGHT);
 
 		assertFalse(piece.hasMoved());
 	}
 
 	@Test
 	void hasMoved_afterMarkMoved_returnsTrue() {
-		Piece piece = new TestPiece(Color.WHITE, PieceType.KNIGHT);
+		Piece piece = Piece.create(Color.WHITE, PieceType.KNIGHT);
 
 		piece.markMoved();
 
@@ -115,7 +109,7 @@ class PieceTest {
 
 	@Test
 	void markMoved_newPiece_updatesHasMovedToTrue() {
-		Piece piece = new TestPiece(Color.BLACK, PieceType.QUEEN);
+		Piece piece = Piece.create(Color.BLACK, PieceType.QUEEN);
 
 		piece.markMoved();
 
@@ -124,7 +118,7 @@ class PieceTest {
 
 	@Test
 	void markMoved_alreadyMovedPiece_remainsTrue() {
-		Piece piece = new TestPiece(Color.BLACK, PieceType.QUEEN);
+		Piece piece = Piece.create(Color.BLACK, PieceType.QUEEN);
 
 		piece.markMoved();
 		piece.markMoved();
