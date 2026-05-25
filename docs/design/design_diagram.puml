@@ -7,6 +7,8 @@ skinparam arrowColor #555555
 skinparam packageBackgroundColor #F0F4FF
 skinparam packageBorderColor #7090CC
 skinparam titleFontSize 18
+skinparam noteBackgroundColor #FFFDE7
+skinparam noteBorderColor #BFAF60
 
 title Chess Application — MVC Architecture
 
@@ -31,24 +33,38 @@ package "Model" {
   class Board {
     - grid: Square[8][8]
     --
-    + getSquare(file, rank): Square
-    + placePiece(piece, square): void
-    + removePiece(square): void
-    + movePiece(from, to): void
+    + getSquare(file: char, rank: int): Square
+    + placePiece(piece: Piece, square: Square): void
+    + removePiece(square: Square): void
+    + movePiece(from: Square, to: Square): void
   }
 
   class Square {
-    + file: char
-    + rank: int
-    + occupant: Piece
+    - file: char  {final}
+    - rank: int   {final}
+    - occupant: Piece
+    --
+    + {static} create(file: char, rank: int): Square
+    + getFile(): char
+    + getRank(): int
+    + isEmpty(): boolean
+    + getOccupant(): Piece
+    + setOccupant(piece: Piece): void
   }
+
+  note right of Square
+    Static factory validates:
+    file ∈ ['a'..'h']
+    rank ∈ [1..8]
+    Private constructor — use create()
+  end note
 
   abstract class Piece {
     + color: Color
     + type: PieceType
     + hasMoved: boolean
     --
-    + getLegalMoves(board): Square[]
+    + {abstract} getLegalMoves(board: Board): Square[]
   }
 
   class King extends Piece
@@ -65,31 +81,58 @@ package "Model" {
   }
 
   class Move {
-    + piece: Piece
-    + from: Square
-    + to: Square
-    + capturedPiece: Piece
-    + isEnPassant: boolean
-    + isCastle: boolean
-    + promotionPiece: PieceType
-    + causedCheck: boolean
-    + causedCheckmate: boolean
+    - piece: Piece         {final}
+    - from: Square         {final}
+    - to: Square           {final}
+    - capturedPiece: Piece
+    - promotionPiece: Piece
+    - isEnPassant: boolean
+    - isCastle: boolean
+    - causedCheck: boolean
+    - causedCheckmate: boolean
+    --
+    + {static} create(piece: Piece, from: Square, to: Square): Move
+    ~ getPiece(): Piece
+    ~ getFrom(): Square
+    ~ getTo(): Square
+    ~ getCapturedPiece(): Piece
+    ~ setCapturedPiece(p: Piece): void
+    ~ getPromotionPiece(): Piece
+    ~ setPromotionPiece(p: Piece): void
+    ~ isEnPassant(): boolean
+    ~ isCastle(): boolean
+    ~ isCausedCheck(): boolean
+    ~ isCausedCheckmate(): boolean
   }
+
+  note right of Move
+    Static factory validates:
+    · piece != null
+    · from != null, to != null
+    · from.getOccupant() == piece
+    · from != to (file+rank)
+    Private constructor — use create()
+    promotionPiece typed as Piece (not PieceType)
+    All getters/setters are package-private (~)
+  end note
 
   class RulesEngine <<service>> {
-    + isInCheck(color, board): boolean
-    + isCheckmate(color, board): boolean
-    + isLegalMove(move, board): boolean
-    + getEnPassantTarget(history): Square
-    + isCastlingLegal(king, rook, board): boolean
+    + isInCheck(color: Color, board: Board): boolean
+    + isCheckmate(color: Color, board: Board): boolean
+    + isLegalMove(move: Move, board: Board): boolean
+    + getEnPassantTarget(history: Move[]): Square
+    + isCastlingLegal(king: King, rook: Rook, board: Board): boolean
   }
 
-  GameModel "1" *-- "1" Board
-  GameModel "1" *-- "2" Player
-  GameModel "1" *-- "*" Move
-  GameModel ..> RulesEngine : uses
-  Board "1" *-- "64" Square
-  Square "1" o-- "0..1" Piece
+  ' Model internal relationships
+  GameModel "1" *-- "1"  Board        : owns
+  GameModel "1" *-- "2"  Player       : owns
+  GameModel "1" *-- "*"  Move         : history
+  GameModel       ..>     RulesEngine  : uses
+
+  Board "1" *-- "64" Square           : grid
+  Square "1" o-- "0..1" Piece        : occupant
+
 }
 
 ' ─────────────────────────────────────────
@@ -98,24 +141,31 @@ package "Model" {
 package "View" {
 
   class BoardView {
+    + onSquareClick: EventEmitter
+    --
     + render(board: Board): void
     + highlightSquares(squares: Square[]): void
     + clearHighlights(): void
     + showCheckIndicator(square: Square): void
     + clearCheckIndicator(): void
-    + onSquareClick: EventEmitter
   }
 
   class NotificationView {
-    + showTurn(color: string): void
-    + showCheck(color: string): void
-    + showCheckmate(winner: string): void
+    + showTurn(color: String): void
+    + showCheck(color: String): void
+    + showCheckmate(winner: String): void
   }
 
   class PromotionView {
-    + show(color: string): Promise<PieceType>
+    + show(color: String): Promise<Piece>
     + hide(): void
   }
+
+  note right of PromotionView
+    Returns Promise<Piece>
+    (previously Promise<PieceType>)
+    — aligns with Move.promotionPiece: Piece
+  end note
 
   class CapturedPiecesView {
     + update(white: Piece[], black: Piece[]): void
@@ -147,18 +197,18 @@ package "Controller" {
 ' ─────────────────────────────────────────
 ' MVC RELATIONSHIPS
 ' ─────────────────────────────────────────
-GameController "1" *-- "1" GameModel      : owns
-GameController "1" *-- "1" BoardView      : owns
-GameController "1" *-- "1" NotificationView : owns
-GameController "1" *-- "1" PromotionView  : owns
+GameController "1" *-- "1" GameModel          : owns
+GameController "1" *-- "1" BoardView          : owns
+GameController "1" *-- "1" NotificationView   : owns
+GameController "1" *-- "1" PromotionView      : owns
 GameController "1" *-- "1" CapturedPiecesView : owns
 
-GameController ..> GameModel   : calls
-GameController ..> BoardView   : updates
-GameController ..> NotificationView : updates
-GameController ..> PromotionView : awaits
+GameController ..> GameModel          : calls
+GameController ..> BoardView          : updates
+GameController ..> NotificationView   : updates
+GameController ..> PromotionView      : awaits
 GameController ..> CapturedPiecesView : updates
 
-BoardView ..> GameController   : emits onSquareClick
+BoardView ..> GameController : emits onSquareClick
 
 @enduml
