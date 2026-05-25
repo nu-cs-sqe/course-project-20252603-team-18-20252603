@@ -11,222 +11,223 @@ import org.junit.jupiter.api.Test;
 
 class RulesEngineTest {
 
-    // Methods Under Test: isLegalMove
+	// Methods Under Test: isLegalMove
 
-    @Test
-    void isLegalMove_validPawnSingleStep_returnsTrue() {
-        GameModel model = mock(GameModel.class);
-        Move move = mock(Move.class);
-        Square from = mock(Square.class);
-        Square to = mock(Square.class);
-        Piece piece = mock(Piece.class);
+	@Test
+	void isLegalMove_validPawnSingleStep_returnsTrue() {
+		GameModel model = mock(GameModel.class);
+		Move move = mock(Move.class);
+		Square from = mock(Square.class);
+		Square to = mock(Square.class);
+		Piece piece = mock(Piece.class);
 
-        expect(move.getPiece()).andReturn(piece).anyTimes();
-        expect(move.getFrom()).andReturn(from).anyTimes();
-        expect(move.getTo()).andReturn(to).anyTimes();
+		expect(move.getPiece()).andReturn(piece).anyTimes();
+		expect(move.getFrom()).andReturn(from).anyTimes();
+		expect(move.getTo()).andReturn(to).anyTimes();
 
-        expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
 
-        expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
-        expect(piece.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(piece.getType()).andReturn(PieceType.PAWN).anyTimes();
 
-        expect(from.getFile()).andReturn('e').anyTimes();
-        expect(from.getRank()).andReturn(2).anyTimes();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
 
-        expect(to.getFile()).andReturn('e').anyTimes();
-        expect(to.getRank()).andReturn(3).anyTimes();
-        expect(to.getOccupant()).andReturn(null).anyTimes();
+		expect(to.getFile()).andReturn('e').anyTimes();
+		expect(to.getRank()).andReturn(3).anyTimes();
+		expect(to.getOccupant()).andReturn(null).anyTimes();
 
-        replay(model, move, from, to, piece);
+		replay(model, move, from, to, piece);
 
-        RulesEngine rulesEngine = new RulesEngine();
+		RulesEngine rulesEngine = new RulesEngine();
 
-        assertTrue(rulesEngine.isLegalMove(model, move));
+		assertTrue(rulesEngine.isLegalMove(model, move));
 
-        verify(model, move, from, to, piece);
-    }
+		verify(model, move, from, to, piece);
+	}
 
-    @Test
-    void isLegalMove_validPawnDoubleStepFromStart_returnsTrue() {
-        GameModel model = mock(GameModel.class);
-        Board board = mock(Board.class);
-        Move move = mock(Move.class);
-        Square from = mock(Square.class);
-        Square intermediate = mock(Square.class);
-        Square to = mock(Square.class);
-        Piece piece = mock(Piece.class);
+	@Test
+	void isLegalMove_validPawnDoubleStepFromStart_returnsTrue() {
+		GameModel model = mock(GameModel.class);
+		Board board = mock(Board.class);
+		Move move = mock(Move.class);
+		Square from = mock(Square.class);
+		Square intermediate = mock(Square.class);
+		Square to = mock(Square.class);
+		Piece piece = mock(Piece.class);
 
-        expect(move.getPiece()).andReturn(piece).anyTimes();
-        expect(move.getFrom()).andReturn(from).anyTimes();
-        expect(move.getTo()).andReturn(to).anyTimes();
+		expect(move.getPiece()).andReturn(piece).anyTimes();
+		expect(move.getFrom()).andReturn(from).anyTimes();
+		expect(move.getTo()).andReturn(to).anyTimes();
 
-        expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
-        expect(model.getBoard()).andReturn(board).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getBoard()).andReturn(board).anyTimes();
 
-        expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
-        expect(piece.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(piece.getType()).andReturn(PieceType.PAWN).anyTimes();
 
-        expect(from.getFile()).andReturn('e').anyTimes();
-        expect(from.getRank()).andReturn(2).anyTimes();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
 
-        expect(to.getFile()).andReturn('e').anyTimes();
-        expect(to.getRank()).andReturn(4).anyTimes();
-        expect(to.getOccupant()).andReturn(null).anyTimes();
+		expect(to.getFile()).andReturn('e').anyTimes();
+		expect(to.getRank()).andReturn(4).anyTimes();
+		expect(to.getOccupant()).andReturn(null).anyTimes();
 
-        expect(board.getSquare('e', 3)).andReturn(intermediate).anyTimes();
-        expect(intermediate.getOccupant()).andReturn(null).anyTimes();
+		expect(board.getSquare('e', 3)).andReturn(intermediate).anyTimes();
+		expect(intermediate.getOccupant()).andReturn(null).anyTimes();
 
-        replay(model, board, move, from, intermediate, to, piece);
+		replay(model, board, move, from, intermediate, to, piece);
 
-        RulesEngine rulesEngine = new RulesEngine();
+		RulesEngine rulesEngine = new RulesEngine();
 
-        assertTrue(rulesEngine.isLegalMove(model, move));
+		assertTrue(rulesEngine.isLegalMove(model, move));
 
-        verify(model, board, move, from, intermediate, to, piece);
-    }
+		verify(model, board, move, from, intermediate, to, piece);
+	}
 
-    @Test
-    void isLegalMove_pawnDoubleStepNotFromStart_returnsFalse() {
-        GameModel model = mock(GameModel.class);
-        Move move = mock(Move.class);
-        Square from = mock(Square.class);
-        Square to = mock(Square.class);
-        Piece piece = mock(Piece.class);
+	@Test
+	void isLegalMove_pawnDoubleStepNotFromStart_returnsFalse() {
+		GameModel model = mock(GameModel.class);
+		Move move = mock(Move.class);
+		Square from = mock(Square.class);
+		Square to = mock(Square.class);
+		Piece piece = mock(Piece.class);
 
-        expect(move.getPiece()).andReturn(piece).anyTimes();
-        expect(move.getFrom()).andReturn(from).anyTimes();
-        expect(move.getTo()).andReturn(to).anyTimes();
+		expect(move.getPiece()).andReturn(piece).anyTimes();
+		expect(move.getFrom()).andReturn(from).anyTimes();
+		expect(move.getTo()).andReturn(to).anyTimes();
 
-        expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
 
-        expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
-        expect(piece.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(piece.getType()).andReturn(PieceType.PAWN).anyTimes();
 
-        expect(from.getFile()).andReturn('e').anyTimes();
-        expect(from.getRank()).andReturn(3).anyTimes();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(3).anyTimes();
 
-        expect(to.getFile()).andReturn('e').anyTimes();
-        expect(to.getRank()).andReturn(5).anyTimes();
-        expect(to.getOccupant()).andReturn(null).anyTimes();
+		expect(to.getFile()).andReturn('e').anyTimes();
+		expect(to.getRank()).andReturn(5).anyTimes();
+		expect(to.getOccupant()).andReturn(null).anyTimes();
 
-        replay(model, move, from, to, piece);
+		replay(model, move, from, to, piece);
 
-        RulesEngine rulesEngine = new RulesEngine();
+		RulesEngine rulesEngine = new RulesEngine();
 
-        assertFalse(rulesEngine.isLegalMove(model, move));
+		assertFalse(rulesEngine.isLegalMove(model, move));
 
-        verify(model, move, from, to, piece);
-    }
-    @Test
-    void isLegalMove_pawnForwardIntoOccupiedSquare_returnsFalse() {
-        GameModel model = mock(GameModel.class);
-        Move move = mock(Move.class);
-        Square from = mock(Square.class);
-        Square to = mock(Square.class);
-        Piece movingPawn = mock(Piece.class);
-        Piece blockingPiece = mock(Piece.class);
+		verify(model, move, from, to, piece);
+	}
 
-        expect(move.getPiece()).andReturn(movingPawn).anyTimes();
-        expect(move.getFrom()).andReturn(from).anyTimes();
-        expect(move.getTo()).andReturn(to).anyTimes();
+	@Test
+	void isLegalMove_pawnForwardIntoOccupiedSquare_returnsFalse() {
+		GameModel model = mock(GameModel.class);
+		Move move = mock(Move.class);
+		Square from = mock(Square.class);
+		Square to = mock(Square.class);
+		Piece movingPawn = mock(Piece.class);
+		Piece blockingPiece = mock(Piece.class);
 
-        expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(move.getPiece()).andReturn(movingPawn).anyTimes();
+		expect(move.getFrom()).andReturn(from).anyTimes();
+		expect(move.getTo()).andReturn(to).anyTimes();
 
-        expect(movingPawn.getColor()).andReturn(Color.WHITE).anyTimes();
-        expect(movingPawn.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
 
-        expect(from.getFile()).andReturn('e').anyTimes();
-        expect(from.getRank()).andReturn(2).anyTimes();
+		expect(movingPawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(movingPawn.getType()).andReturn(PieceType.PAWN).anyTimes();
 
-        expect(to.getFile()).andReturn('e').anyTimes();
-        expect(to.getRank()).andReturn(3).anyTimes();
-        expect(to.getOccupant()).andReturn(blockingPiece).anyTimes();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
 
-        replay(model, move, from, to, movingPawn, blockingPiece);
+		expect(to.getFile()).andReturn('e').anyTimes();
+		expect(to.getRank()).andReturn(3).anyTimes();
+		expect(to.getOccupant()).andReturn(blockingPiece).anyTimes();
 
-        RulesEngine rulesEngine = new RulesEngine();
+		replay(model, move, from, to, movingPawn, blockingPiece);
 
-        assertFalse(rulesEngine.isLegalMove(model, move));
+		RulesEngine rulesEngine = new RulesEngine();
 
-        verify(model, move, from, to, movingPawn, blockingPiece);
-    }
+		assertFalse(rulesEngine.isLegalMove(model, move));
 
-    @Test
-    void isLegalMove_validPawnDiagonalCapture_returnsTrue() {
-        GameModel model = mock(GameModel.class);
-        Move move = mock(Move.class);
-        Square from = mock(Square.class);
-        Square to = mock(Square.class);
-        Piece movingPawn = mock(Piece.class);
-        Piece capturedPiece = mock(Piece.class);
+		verify(model, move, from, to, movingPawn, blockingPiece);
+	}
 
-        expect(move.getPiece()).andReturn(movingPawn).anyTimes();
-        expect(move.getFrom()).andReturn(from).anyTimes();
-        expect(move.getTo()).andReturn(to).anyTimes();
+	@Test
+	void isLegalMove_validPawnDiagonalCapture_returnsTrue() {
+		GameModel model = mock(GameModel.class);
+		Move move = mock(Move.class);
+		Square from = mock(Square.class);
+		Square to = mock(Square.class);
+		Piece movingPawn = mock(Piece.class);
+		Piece capturedPiece = mock(Piece.class);
 
-        expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(move.getPiece()).andReturn(movingPawn).anyTimes();
+		expect(move.getFrom()).andReturn(from).anyTimes();
+		expect(move.getTo()).andReturn(to).anyTimes();
 
-        expect(movingPawn.getColor()).andReturn(Color.WHITE).anyTimes();
-        expect(movingPawn.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
 
-        expect(capturedPiece.getColor()).andReturn(Color.BLACK).anyTimes();
+		expect(movingPawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(movingPawn.getType()).andReturn(PieceType.PAWN).anyTimes();
 
-        expect(from.getFile()).andReturn('e').anyTimes();
-        expect(from.getRank()).andReturn(4).anyTimes();
+		expect(capturedPiece.getColor()).andReturn(Color.BLACK).anyTimes();
 
-        expect(to.getFile()).andReturn('f').anyTimes();
-        expect(to.getRank()).andReturn(5).anyTimes();
-        expect(to.getOccupant()).andReturn(capturedPiece).anyTimes();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
 
-        replay(model, move, from, to, movingPawn, capturedPiece);
+		expect(to.getFile()).andReturn('f').anyTimes();
+		expect(to.getRank()).andReturn(5).anyTimes();
+		expect(to.getOccupant()).andReturn(capturedPiece).anyTimes();
 
-        RulesEngine rulesEngine = new RulesEngine();
+		replay(model, move, from, to, movingPawn, capturedPiece);
 
-        assertTrue(rulesEngine.isLegalMove(model, move));
+		RulesEngine rulesEngine = new RulesEngine();
 
-        verify(model, move, from, to, movingPawn, capturedPiece);
-    }
+		assertTrue(rulesEngine.isLegalMove(model, move));
 
-    @Test
-    void isLegalMove_pawnDiagonalWithoutCapture_returnsFalse() {
-        GameModel model = mock(GameModel.class);
-        Move move = mock(Move.class);
-        Square from = mock(Square.class);
-        Square to = mock(Square.class);
-        Piece movingPawn = mock(Piece.class);
+		verify(model, move, from, to, movingPawn, capturedPiece);
+	}
 
-        expect(move.getPiece()).andReturn(movingPawn).anyTimes();
-        expect(move.getFrom()).andReturn(from).anyTimes();
-        expect(move.getTo()).andReturn(to).anyTimes();
+	@Test
+	void isLegalMove_pawnDiagonalWithoutCapture_returnsFalse() {
+		GameModel model = mock(GameModel.class);
+		Move move = mock(Move.class);
+		Square from = mock(Square.class);
+		Square to = mock(Square.class);
+		Piece movingPawn = mock(Piece.class);
 
-        expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(move.getPiece()).andReturn(movingPawn).anyTimes();
+		expect(move.getFrom()).andReturn(from).anyTimes();
+		expect(move.getTo()).andReturn(to).anyTimes();
 
-        expect(movingPawn.getColor()).andReturn(Color.WHITE).anyTimes();
-        expect(movingPawn.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
 
-        expect(from.getFile()).andReturn('e').anyTimes();
-        expect(from.getRank()).andReturn(4).anyTimes();
+		expect(movingPawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(movingPawn.getType()).andReturn(PieceType.PAWN).anyTimes();
 
-        expect(to.getFile()).andReturn('f').anyTimes();
-        expect(to.getRank()).andReturn(5).anyTimes();
-        expect(to.getOccupant()).andReturn(null).anyTimes();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
 
-        replay(model, move, from, to, movingPawn);
+		expect(to.getFile()).andReturn('f').anyTimes();
+		expect(to.getRank()).andReturn(5).anyTimes();
+		expect(to.getOccupant()).andReturn(null).anyTimes();
 
-        RulesEngine rulesEngine = new RulesEngine();
+		replay(model, move, from, to, movingPawn);
 
-        assertFalse(rulesEngine.isLegalMove(model, move));
+		RulesEngine rulesEngine = new RulesEngine();
 
-        verify(model, move, from, to, movingPawn);
-    }
+		assertFalse(rulesEngine.isLegalMove(model, move));
 
-    // Methods Under Test: getLegalMoves
-    // Methods Under Test: isInCheck
-    // Methods Under Test: isSquareAttacked
-    // Methods Under Test: isCheckmate
-    // Methods Under Test: isStalemate
-    // Methods Under Test: isCastlingLegal
-    // Methods Under Test: isEnPassantLegal
-    // Methods Under Test: isPromotionLegal
-    // Methods Under Test: getGameStatus
+		verify(model, move, from, to, movingPawn);
+	}
+
+	// Methods Under Test: getLegalMoves
+	// Methods Under Test: isInCheck
+	// Methods Under Test: isSquareAttacked
+	// Methods Under Test: isCheckmate
+	// Methods Under Test: isStalemate
+	// Methods Under Test: isCastlingLegal
+	// Methods Under Test: isEnPassantLegal
+	// Methods Under Test: isPromotionLegal
+	// Methods Under Test: getGameStatus
 }

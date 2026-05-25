@@ -12,13 +12,13 @@ The complete current state of the chess game.
 
 * A non-null `GameState` containing:
 
-  * a non-null `Board`
-  * valid `currentTurn`
-  * both kings present
-  * legal piece placement
-  * move history, possibly empty
-  * castling rights
-  * en passant target, possibly null
+    * a non-null `Board`
+    * valid `currentTurn`
+    * both kings present
+    * legal piece placement
+    * move history, possibly empty
+    * castling rights
+    * en passant target, possibly null
 
 **Invalid values:**
 
@@ -316,20 +316,20 @@ The selected promotion piece for a pawn reaching the final rank.
 
 * Valid files:
 
-  * Minimum: `'a'`
-  * Maximum: `'h'`
+    * Minimum: `'a'`
+    * Maximum: `'h'`
 * Invalid files:
 
-  * Below minimum: `` ` ``
-  * Above maximum: `'i'`
+    * Below minimum: `` ` ``
+    * Above maximum: `'i'`
 * Valid ranks:
 
-  * Minimum: `1`
-  * Maximum: `8`
+    * Minimum: `1`
+    * Maximum: `8`
 * Invalid ranks:
 
-  * Below minimum: `0`
-  * Above maximum: `9`
+    * Below minimum: `0`
+    * Above maximum: `9`
 
 ---
 
@@ -582,7 +582,8 @@ The selected promotion piece for a pawn reaching the final rank.
 
 ### TC24: Invalid Move Leaving Own King In Check
 
-* **State of the system**: White king on `e1`, white rook on `e2`, black rook on `e8`. White attempts to move rook from `e2` to `a2`, exposing the King.
+* **State of the system**: White king on `e1`, white rook on `e2`, black rook on `e8`. White attempts to move rook from
+  `e2` to `a2`, exposing the King.
 * **Expected output**: Returns `false`.
 * **Implemented at**: `isLegalMove_moveExposesOwnKing_returnsFalse`
 
@@ -600,7 +601,8 @@ The selected promotion piece for a pawn reaching the final rank.
 
 ### TC27: Invalid Move Capturing King
 
-* **State of the system**: White queen has line of sight to black King. Move attempts to capture the black King directly.
+* **State of the system**: White queen has line of sight to black King. Move attempts to capture the black King
+  directly.
 * **Expected output**: Returns `false`.
 * **Implemented at**: `isLegalMove_captureKing_returnsFalse`
 
@@ -796,7 +798,8 @@ The selected promotion piece for a pawn reaching the final rank.
 
 ### TC57: Checkmate Position
 
-* **State of the system**: King is in check and has no legal move, no piece can block, and no piece can capture the attacker.
+* **State of the system**: King is in check and has no legal move, no piece can block, and no piece can capture the
+  attacker.
 * **Expected output**: Returns `true`.
 * **Implemented at**: `isCheckmate_kingInCheckNoLegalMoves_returnsTrue`
 
@@ -852,13 +855,15 @@ The selected promotion piece for a pawn reaching the final rank.
 
 ### TC65: Valid White Kingside Castling
 
-* **State of the system**: White king on `e1`, white rook on `h1`, neither has moved, squares `f1` and `g1` are empty, and `e1`, `f1`, `g1` are not attacked.
+* **State of the system**: White king on `e1`, white rook on `h1`, neither has moved, squares `f1` and `g1` are empty,
+  and `e1`, `f1`, `g1` are not attacked.
 * **Expected output**: Returns `true`.
 * **Implemented at**: `isCastlingLegal_whiteKingsideValid_returnsTrue`
 
 ### TC66: Valid White Queenside Castling
 
-* **State of the system**: White king on `e1`, white rook on `a1`, neither has moved, squares `b1`, `c1`, and `d1` are empty, and `e1`, `d1`, `c1` are not attacked.
+* **State of the system**: White king on `e1`, white rook on `a1`, neither has moved, squares `b1`, `c1`, and `d1` are
+  empty, and `e1`, `d1`, `c1` are not attacked.
 * **Expected output**: Returns `true`.
 * **Implemented at**: `isCastlingLegal_whiteQueensideValid_returnsTrue`
 
@@ -910,13 +915,15 @@ The selected promotion piece for a pawn reaching the final rank.
 
 ### TC74: Valid White En Passant
 
-* **State of the system**: White pawn on `e5`, black pawn just moved from `d7` to `d5`, en passant target is `d6`, and White attempts `exd6 en passant`.
+* **State of the system**: White pawn on `e5`, black pawn just moved from `d7` to `d5`, en passant target is `d6`, and
+  White attempts `exd6 en passant`.
 * **Expected output**: Returns `true`.
 * **Implemented at**: `isEnPassantLegal_whiteValid_returnsTrue`
 
 ### TC75: Valid Black En Passant
 
-* **State of the system**: Black pawn on `e4`, white pawn just moved from `d2` to `d4`, en passant target is `d3`, and Black attempts `exd3 en passant`.
+* **State of the system**: Black pawn on `e4`, white pawn just moved from `d2` to `d4`, en passant target is `d3`, and
+  Black attempts `exd3 en passant`.
 * **Expected output**: Returns `true`.
 * **Implemented at**: `isEnPassantLegal_blackValid_returnsTrue`
 
@@ -940,7 +947,8 @@ The selected promotion piece for a pawn reaching the final rank.
 
 ### TC79: Invalid En Passant To Wrong Rank
 
-* **State of the system**: White pawn attempts en passant to a square not on rank `6`, or black pawn attempts to a square not on rank `3`.
+* **State of the system**: White pawn attempts en passant to a square not on rank `6`, or black pawn attempts to a
+  square not on rank `3`.
 * **Expected output**: Returns `false`.
 * **Implemented at**: `isEnPassantLegal_wrongTargetRank_returnsFalse`
 
