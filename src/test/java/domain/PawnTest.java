@@ -406,4 +406,28 @@ public class PawnTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC19: White Pawn — Correct Total Candidate Count From Interior File After Having Moved
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoves_whitePawnInteriorFileHasMoved_returnsThreeCandidates() {
+		Pawn pawn = new Pawn(Color.WHITE);
+		pawn.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(pawn);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = pawn.getLegalMoves(from);
+
+		assertEquals(3, candidates.size());
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 5));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'd' && s.getRank() == 5));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'f' && s.getRank() == 5));
+
+		verify(from);
+	}
 }
