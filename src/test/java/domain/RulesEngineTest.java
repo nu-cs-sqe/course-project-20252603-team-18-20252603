@@ -819,6 +819,26 @@ class RulesEngineTest {
 		verify(model, from);
 	}
 
+	@Test
+	void getLegalMoves_opponentPiece_returnsEmptyList() {
+		GameModel model = mock(GameModel.class);
+		Square from = mock(Square.class);
+		Piece opponentPiece = mock(Piece.class);
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(from.getOccupant()).andReturn(opponentPiece).anyTimes();
+		expect(opponentPiece.getColor()).andReturn(Color.BLACK).anyTimes();
+
+		replay(model, from, opponentPiece);
+
+		RulesEngine rulesEngine = new RulesEngine();
+		List<Square> result = rulesEngine.getLegalMoves(model, from);
+
+		assertTrue(result.isEmpty());
+
+		verify(model, from, opponentPiece);
+	}
+
 	// Methods Under Test: isInCheck
 	// Methods Under Test: isSquareAttacked
 	// Methods Under Test: isCheckmate
