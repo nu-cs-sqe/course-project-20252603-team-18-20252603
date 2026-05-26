@@ -13,6 +13,9 @@ public class Pawn extends Piece{
 		if (from == null) {
 			throw new IllegalArgumentException("'from' Square cannot be null");
 		}
+		if (from.getOccupant() != this) {
+			throw new IllegalArgumentException("'from' Square is not occupied by this Pawn");
+		}
 
 		List<Square> legalMoves = new ArrayList<Square>();
 		return legalMoves;
