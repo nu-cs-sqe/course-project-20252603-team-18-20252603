@@ -26,6 +26,14 @@ public class Pawn extends Piece{
 		int oneStepRank = rank + direction;
 		if (oneStepRank >= MINRANK && oneStepRank <= MAXRANK) {
 			legalMoves.add(Square.create(file, oneStepRank));
+
+			// Diagonal moves for en passant
+			if (file - 1 >= MINFILE) {
+				legalMoves.add(Square.create((char)(file - 1), oneStepRank));
+			}
+			if (file + 1 <= MAXFILE) {
+				legalMoves.add(Square.create((char)(file + 1), oneStepRank));
+			}
 		}
 
 		if (!this.hasMoved()) {
