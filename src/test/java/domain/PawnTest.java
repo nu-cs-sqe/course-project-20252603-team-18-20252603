@@ -14,11 +14,11 @@ public class PawnTest {
 	// TC1: Null From Square
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_nullFrom_throwsException() {
+	void getLegalMoveDestinationSquares_nullFrom_throwsException() {
 		Pawn pawn = new Pawn(Color.WHITE);
 
 		assertThrows(IllegalArgumentException.class, () -> {
-			pawn.getLegalMoves(null);
+			pawn.getLegalMoveDestinationSquares(null);
 		});
 	}
 
@@ -26,7 +26,7 @@ public class PawnTest {
 	// TC2: From Square Not Occupied By This Pawn
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_fromNotOccupiedByThisPawn_throwsException() {
+	void getLegalMoveDestinationSquares_fromNotOccupiedByThisPawn_throwsException() {
 		Pawn pawn = new Pawn(Color.WHITE);
 
 		Square from = createMock(Square.class);
@@ -34,7 +34,7 @@ public class PawnTest {
 		replay(from);
 
 		assertThrows(IllegalArgumentException.class, () -> {
-			pawn.getLegalMoves(from);
+			pawn.getLegalMoveDestinationSquares(from);
 		});
 
 		verify(from);
@@ -44,7 +44,7 @@ public class PawnTest {
 	// TC3: White Pawn — Single-Square Forward Candidate
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_whitePawnHasMoved_containsOneSquareForward() {
+	void getLegalMoveDestinationSquares_whitePawnHasMoved_containsOneSquareForward() {
 		Pawn pawn = new Pawn(Color.WHITE);
 		pawn.markMoved();
 
@@ -54,7 +54,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(4).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 5));
 		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 3));
@@ -66,7 +66,7 @@ public class PawnTest {
 	// TC4: Black Pawn — Single-Square Forward Candidate
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_blackPawnHasMoved_containsOneSquareForward() {
+	void getLegalMoveDestinationSquares_blackPawnHasMoved_containsOneSquareForward() {
 		Pawn pawn = new Pawn(Color.BLACK);
 		pawn.markMoved();
 
@@ -76,7 +76,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(5).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 4));
 		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 6));
@@ -88,7 +88,7 @@ public class PawnTest {
 	// TC5: White Pawn — Two-Square Advance Candidate From Starting Rank
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_whitePawnHasNotMoved_containsTwoSquareForward() {
+	void getLegalMoveDestinationSquares_whitePawnHasNotMoved_containsTwoSquareForward() {
 		Pawn pawn = new Pawn(Color.WHITE);
 
 		Square from = createMock(Square.class);
@@ -97,7 +97,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(2).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 3));
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 4));
@@ -109,7 +109,7 @@ public class PawnTest {
 	// TC6: Black Pawn — Two-Square Advance Candidate From Starting Rank
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_blackPawnHasNotMoved_containsTwoSquareForward() {
+	void getLegalMoveDestinationSquares_blackPawnHasNotMoved_containsTwoSquareForward() {
 		Pawn pawn = new Pawn(Color.BLACK);
 
 		Square from = createMock(Square.class);
@@ -118,7 +118,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(7).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 6));
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 5));
@@ -130,7 +130,7 @@ public class PawnTest {
 	// TC7: White Pawn — Two-Square Advance Candidate Absent After Having Moved
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_whitePawnHasMoved_excludesTwoSquareForward() {
+	void getLegalMoveDestinationSquares_whitePawnHasMoved_excludesTwoSquareForward() {
 		Pawn pawn = new Pawn(Color.WHITE);
 		pawn.markMoved();
 
@@ -140,7 +140,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(3).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 4));
 		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 5));
@@ -152,7 +152,7 @@ public class PawnTest {
 	// TC8: Black Pawn — Two-Square Advance Candidate Absent After Having Moved
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_blackPawnHasMoved_excludesTwoSquareForward() {
+	void getLegalMoveDestinationSquares_blackPawnHasMoved_excludesTwoSquareForward() {
 		Pawn pawn = new Pawn(Color.BLACK);
 		pawn.markMoved();
 
@@ -162,7 +162,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(6).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 5));
 		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 4));
@@ -174,7 +174,7 @@ public class PawnTest {
 	// TC9: White Pawn — Both Diagonal Candidates Present (Interior File)
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_whitePawnInteriorFile_containsBothDiagonals() {
+	void getLegalMoveDestinationSquares_whitePawnInteriorFile_containsBothDiagonals() {
 		Pawn pawn = new Pawn(Color.WHITE);
 		pawn.markMoved();
 
@@ -184,7 +184,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(4).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'd' && s.getRank() == 5));
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'f' && s.getRank() == 5));
@@ -196,7 +196,7 @@ public class PawnTest {
 	// TC10: Black Pawn — Both Diagonal Candidates Present (Interior File)
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_blackPawnInteriorFile_containsBothDiagonals() {
+	void getLegalMoveDestinationSquares_blackPawnInteriorFile_containsBothDiagonals() {
 		Pawn pawn = new Pawn(Color.BLACK);
 		pawn.markMoved();
 
@@ -206,7 +206,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(5).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'd' && s.getRank() == 4));
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'f' && s.getRank() == 4));
@@ -218,7 +218,7 @@ public class PawnTest {
 	// TC11: White Pawn On Minimum File ('a') — Only Right Diagonal Candidate Exists
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_whitePawnOnFileA_onlyRightDiagonalCandidate() {
+	void getLegalMoveDestinationSquares_whitePawnOnFileA_onlyRightDiagonalCandidate() {
 		Pawn pawn = new Pawn(Color.WHITE);
 		pawn.markMoved();
 
@@ -228,7 +228,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(4).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'a' && s.getRank() == 5));
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 5));
@@ -244,7 +244,7 @@ public class PawnTest {
 	// TC12: White Pawn On Maximum File ('h') — Only Left Diagonal Candidate Exists
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_whitePawnOnFileH_onlyLeftDiagonalCandidate() {
+	void getLegalMoveDestinationSquares_whitePawnOnFileH_onlyLeftDiagonalCandidate() {
 		Pawn pawn = new Pawn(Color.WHITE);
 		pawn.markMoved();
 
@@ -254,7 +254,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(4).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'h' && s.getRank() == 5));
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 5));
@@ -270,7 +270,7 @@ public class PawnTest {
 	// TC13: Black Pawn On Minimum File ('a') — Only Right Diagonal Candidate Exists
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_blackPawnOnFileA_onlyRightDiagonalCandidate() {
+	void getLegalMoveDestinationSquares_blackPawnOnFileA_onlyRightDiagonalCandidate() {
 		Pawn pawn = new Pawn(Color.BLACK);
 		pawn.markMoved();
 
@@ -280,7 +280,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(5).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'a' && s.getRank() == 4));
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 4));
@@ -296,7 +296,7 @@ public class PawnTest {
 	// TC14: Black Pawn On Maximum File ('h') — Only Left Diagonal Candidate Exists
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_blackPawnOnFileH_onlyLeftDiagonalCandidate() {
+	void getLegalMoveDestinationSquares_blackPawnOnFileH_onlyLeftDiagonalCandidate() {
 		Pawn pawn = new Pawn(Color.BLACK);
 		pawn.markMoved();
 
@@ -306,7 +306,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(5).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'h' && s.getRank() == 4));
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 4));
@@ -322,7 +322,7 @@ public class PawnTest {
 	// TC15: White Pawn — Forward Candidate Reaches Promotion Rank
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_whitePawnOnRank7_containsPromotionRankCandidates() {
+	void getLegalMoveDestinationSquares_whitePawnOnRank7_containsPromotionRankCandidates() {
 		Pawn pawn = new Pawn(Color.WHITE);
 		pawn.markMoved();
 
@@ -332,7 +332,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(7).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 8));
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'd' && s.getRank() == 8));
@@ -346,7 +346,7 @@ public class PawnTest {
 	// -------------------------------------------------------------------------
 
 	@Test
-	void getLegalMoves_blackPawnOnRank2_containsPromotionRankCandidates() {
+	void getLegalMoveDestinationSquares_blackPawnOnRank2_containsPromotionRankCandidates() {
 		Pawn pawn = new Pawn(Color.BLACK);
 		pawn.markMoved();
 
@@ -356,7 +356,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(2).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 1));
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'd' && s.getRank() == 1));
@@ -369,7 +369,7 @@ public class PawnTest {
 	// TC17: White Pawn — Backward Square Not A Candidate
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_whitePawn_excludesBackwardSquare() {
+	void getLegalMoveDestinationSquares_whitePawn_excludesBackwardSquare() {
 		Pawn pawn = new Pawn(Color.WHITE);
 		pawn.markMoved();
 
@@ -379,7 +379,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(4).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 3));
 
@@ -390,7 +390,7 @@ public class PawnTest {
 	// TC18: Black Pawn — Backward Square Not A Candidate
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_blackPawn_excludesBackwardSquare() {
+	void getLegalMoveDestinationSquares_blackPawn_excludesBackwardSquare() {
 		Pawn pawn = new Pawn(Color.BLACK);
 		pawn.markMoved();
 
@@ -400,7 +400,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(5).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 6));
 
@@ -411,7 +411,7 @@ public class PawnTest {
 	// TC19: White Pawn — Correct Total Candidate Count From Interior File After Having Moved
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_whitePawnInteriorFileHasMoved_returnsThreeCandidates() {
+	void getLegalMoveDestinationSquares_whitePawnInteriorFileHasMoved_returnsThreeCandidates() {
 		Pawn pawn = new Pawn(Color.WHITE);
 		pawn.markMoved();
 
@@ -421,7 +421,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(4).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertEquals(3, candidates.size());
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 5));
@@ -435,7 +435,7 @@ public class PawnTest {
 	// TC20: White Pawn — Correct Total Candidate Count From Interior File Without Having Moved
 	// -------------------------------------------------------------------------
 	@Test
-	void getLegalMoves_whitePawnInteriorFileHasNotMoved_returnsFourCandidates() {
+	void getLegalMoveDestinationSquares_whitePawnInteriorFileHasNotMoved_returnsFourCandidates() {
 		Pawn pawn = new Pawn(Color.WHITE);
 
 		Square from = createMock(Square.class);
@@ -444,7 +444,7 @@ public class PawnTest {
 		expect(from.getRank()).andReturn(2).anyTimes();
 		replay(from);
 
-		List<Square> candidates = pawn.getLegalMoves(from);
+		List<Square> candidates = pawn.getLegalMoveDestinationSquares(from);
 
 		assertEquals(4, candidates.size());
 		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 3));

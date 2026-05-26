@@ -10,7 +10,7 @@
 
 * `color` (Color) — derived from `this.getColor()`: Determines the direction of forward movement.
     * Valid values: `WHITE` (advances toward increasing ranks), `BLACK` (advances toward decreasing ranks).
-    * Invalid values: `null` (guarded by `Piece.requireColor` at construction time; cannot arise at `getLegalMoves` call time).
+    * Invalid values: `null` (guarded by `Piece.requireColor` at construction time; cannot arise at `getLegalMoveDestinationSquares` call time).
 
 * `hasMoved` (boolean) — derived from `this.hasMoved()`: Controls whether the two-square advance is included as a geometric candidate.
     * Valid values: `false` (Pawn has not yet moved; two-square advance candidate is included), `true` (Pawn has moved at least once; two-square advance candidate is excluded).
@@ -52,104 +52,104 @@
 
 ## Step 4: Test Cases
 
-### Method under test: `Pawn.getLegalMoves(Square from)`
+### Method under test: `Pawn.getLegalMoveDestinationSquares(Square from)`
 
 - **TC1: Null From Square**
     - **State of the system**: `from = null`.
     - **Expected output**: Throws `IllegalArgumentException`.
-    - **Implemented at**: `getLegalMoves_nullFrom_throwsException`
+    - **Implemented at**: `getLegalMoveDestinationSquares_nullFrom_throwsException`
 
 - **TC2: From Square Not Occupied By This Pawn**
     - **State of the system**: `from` is a valid square whose `occupant` is a different `Piece` (or `null`), not this `Pawn` instance.
     - **Expected output**: Throws `IllegalArgumentException`.
-    - **Implemented at**: `getLegalMoves_fromNotOccupiedByThisPawn_throwsException`
+    - **Implemented at**: `getLegalMoveDestinationSquares_fromNotOccupiedByThisPawn_throwsException`
 
 - **TC3: White Pawn — Single-Square Forward Candidate**
     - **State of the system**: White `Pawn` (`hasMoved = true`) on `e4`.
     - **Expected output**: Returned list contains `e5`. Does not contain `e3` (backward).
-    - **Implemented at**: `getLegalMoves_whitePawnHasMoved_containsOneSquareForward`
+    - **Implemented at**: `getLegalMoveDestinationSquares_whitePawnHasMoved_containsOneSquareForward`
 
 - **TC4: Black Pawn — Single-Square Forward Candidate**
     - **State of the system**: Black `Pawn` (`hasMoved = true`) on `e5`.
     - **Expected output**: Returned list contains `e4`. Does not contain `e6` (backward for Black).
-    - **Implemented at**: `getLegalMoves_blackPawnHasMoved_containsOneSquareForward`
+    - **Implemented at**: `getLegalMoveDestinationSquares_blackPawnHasMoved_containsOneSquareForward`
 
 - **TC5: White Pawn — Two-Square Advance Candidate From Starting Rank**
     - **State of the system**: White `Pawn` (`hasMoved = false`) on `e2`.
     - **Expected output**: Returned list contains both `e3` and `e4`.
-    - **Implemented at**: `getLegalMoves_whitePawnHasNotMoved_containsTwoSquareForward`
+    - **Implemented at**: `getLegalMoveDestinationSquares_whitePawnHasNotMoved_containsTwoSquareForward`
 
 - **TC6: Black Pawn — Two-Square Advance Candidate From Starting Rank**
     - **State of the system**: Black `Pawn` (`hasMoved = false`) on `e7`.
     - **Expected output**: Returned list contains both `e6` and `e5`.
-    - **Implemented at**: `getLegalMoves_blackPawnHasNotMoved_containsTwoSquareForward`
+    - **Implemented at**: `getLegalMoveDestinationSquares_blackPawnHasNotMoved_containsTwoSquareForward`
 
 - **TC7: White Pawn — Two-Square Advance Candidate Absent After Having Moved**
     - **State of the system**: White `Pawn` (`hasMoved = true`) on `e3`.
     - **Expected output**: Returned list contains `e4` but does not contain `e5`.
-    - **Implemented at**: `getLegalMoves_whitePawnHasMoved_excludesTwoSquareForward`
+    - **Implemented at**: `getLegalMoveDestinationSquares_whitePawnHasMoved_excludesTwoSquareForward`
 
 - **TC8: Black Pawn — Two-Square Advance Candidate Absent After Having Moved**
     - **State of the system**: Black `Pawn` (`hasMoved = true`) on `e6`.
     - **Expected output**: Returned list contains `e5` but does not contain `e4`.
-    - **Implemented at**: `getLegalMoves_blackPawnHasMoved_excludesTwoSquareForward`
+    - **Implemented at**: `getLegalMoveDestinationSquares_blackPawnHasMoved_excludesTwoSquareForward`
 
 - **TC9: White Pawn — Both Diagonal Candidates Present (Interior File)**
     - **State of the system**: White `Pawn` (`hasMoved = true`) on `e4` (interior file `'e'`).
     - **Expected output**: Returned list contains `d5` and `f5`.
-    - **Implemented at**: `getLegalMoves_whitePawnInteriorFile_containsBothDiagonals`
+    - **Implemented at**: `getLegalMoveDestinationSquares_whitePawnInteriorFile_containsBothDiagonals`
 
 - **TC10: Black Pawn — Both Diagonal Candidates Present (Interior File)**
     - **State of the system**: Black `Pawn` (`hasMoved = true`) on `e5` (interior file `'e'`).
     - **Expected output**: Returned list contains `d4` and `f4`.
-    - **Implemented at**: `getLegalMoves_blackPawnInteriorFile_containsBothDiagonals`
+    - **Implemented at**: `getLegalMoveDestinationSquares_blackPawnInteriorFile_containsBothDiagonals`
 
 - **TC11: White Pawn On Minimum File (`'a'`) — Only Right Diagonal Candidate Exists**
     - **State of the system**: White `Pawn` (`hasMoved = true`) on `a4`.
     - **Expected output**: Returned list contains `a5` and `b5`. All returned squares have file within `'a'`–`'h'` and rank within `1`–`8`.
-    - **Implemented at**: `getLegalMoves_whitePawnOnFileA_onlyRightDiagonalCandidate`
+    - **Implemented at**: `getLegalMoveDestinationSquares_whitePawnOnFileA_onlyRightDiagonalCandidate`
 
 - **TC12: White Pawn On Maximum File (`'h'`) — Only Left Diagonal Candidate Exists**
     - **State of the system**: White `Pawn` (`hasMoved = true`) on `h4`.
     - **Expected output**: Returned list contains `h5` and `g5`. All returned squares have file within `'a'`–`'h'` and rank within `1`–`8`.
-    - **Implemented at**: `getLegalMoves_whitePawnOnFileH_onlyLeftDiagonalCandidate`
+    - **Implemented at**: `getLegalMoveDestinationSquares_whitePawnOnFileH_onlyLeftDiagonalCandidate`
 
 - **TC13: Black Pawn On Minimum File (`'a'`) — Only Right Diagonal Candidate Exists**
     - **State of the system**: Black `Pawn` (`hasMoved = true`) on `a5`.
     - **Expected output**: Returned list contains `a4` and `b4`. All returned squares have file within `'a'`–`'h'` and rank within `1`–`8`.
-    - **Implemented at**: `getLegalMoves_blackPawnOnFileA_onlyRightDiagonalCandidate`
+    - **Implemented at**: `getLegalMoveDestinationSquares_blackPawnOnFileA_onlyRightDiagonalCandidate`
 
 - **TC14: Black Pawn On Maximum File (`'h'`) — Only Left Diagonal Candidate Exists**
     - **State of the system**: Black `Pawn` (`hasMoved = true`) on `h5`.
     - **Expected output**: Returned list contains `h4` and `g4`. All returned squares have file within `'a'`–`'h'` and rank within `1`–`8`.
-    - **Implemented at**: `getLegalMoves_blackPawnOnFileH_onlyLeftDiagonalCandidate`
+    - **Implemented at**: `getLegalMoveDestinationSquares_blackPawnOnFileH_onlyLeftDiagonalCandidate`
 
 - **TC15: White Pawn — Forward Candidate Reaches Promotion Rank**
     - **State of the system**: White `Pawn` (`hasMoved = true`) on `e7`.
     - **Expected output**: Returned list contains `e8`, `d8`, and `f8` (forward and diagonal promotion rank candidates).
-    - **Implemented at**: `getLegalMoves_whitePawnOnRank7_containsPromotionRankCandidates`
+    - **Implemented at**: `getLegalMoveDestinationSquares_whitePawnOnRank7_containsPromotionRankCandidates`
 
 - **TC16: Black Pawn — Forward Candidate Reaches Promotion Rank**
     - **State of the system**: Black `Pawn` (`hasMoved = true`) on `e2`.
     - **Expected output**: Returned list contains `e1`, `d1`, and `f1` (forward and diagonal promotion rank candidates).
-    - **Implemented at**: `getLegalMoves_blackPawnOnRank2_containsPromotionRankCandidates`
+    - **Implemented at**: `getLegalMoveDestinationSquares_blackPawnOnRank2_containsPromotionRankCandidates`
 
 - **TC17: White Pawn — Backward Square Not A Candidate**
     - **State of the system**: White `Pawn` (`hasMoved = true`) on `e4`.
     - **Expected output**: Returned list does not contain `e3`.
-    - **Implemented at**: `getLegalMoves_whitePawn_excludesBackwardSquare`
+    - **Implemented at**: `getLegalMoveDestinationSquares_whitePawn_excludesBackwardSquare`
 
 - **TC18: Black Pawn — Backward Square Not A Candidate**
     - **State of the system**: Black `Pawn` (`hasMoved = true`) on `e5`.
     - **Expected output**: Returned list does not contain `e6`.
-    - **Implemented at**: `getLegalMoves_blackPawn_excludesBackwardSquare`
+    - **Implemented at**: `getLegalMoveDestinationSquares_blackPawn_excludesBackwardSquare`
 
 - **TC19: White Pawn — Correct Total Candidate Count From Interior File After Having Moved**
     - **State of the system**: White `Pawn` (`hasMoved = true`) on `e4` (interior file, non-boundary rank).
     - **Expected output**: Returned list contains exactly 3 squares: `e5` (forward), `d5` (left diagonal), `f5` (right diagonal).
-    - **Implemented at**: `getLegalMoves_whitePawnInteriorFileHasMoved_returnsThreeCandidates`
+    - **Implemented at**: `getLegalMoveDestinationSquares_whitePawnInteriorFileHasMoved_returnsThreeCandidates`
 
 - **TC20: White Pawn — Correct Total Candidate Count From Interior File Without Having Moved**
     - **State of the system**: White `Pawn` (`hasMoved = false`) on `e2` (interior file, starting rank).
     - **Expected output**: Returned list contains exactly 4 squares: `e3`, `e4` (forward candidates), `d3` (left diagonal), `f3` (right diagonal).
-    - **Implemented at**: `getLegalMoves_whitePawnInteriorFileHasNotMoved_returnsFourCandidates`
+    - **Implemented at**: `getLegalMoveDestinationSquares_whitePawnInteriorFileHasNotMoved_returnsFourCandidates`

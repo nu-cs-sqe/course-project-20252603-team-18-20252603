@@ -18,7 +18,7 @@ class PieceTest {
 		}
 
 		@Override
-		public List<Square> getLegalMoves(Square from) {
+		public List<Square> getLegalMoveDestinationSquares(Square from) {
 			return new ArrayList<Square>();
 		}
 	}

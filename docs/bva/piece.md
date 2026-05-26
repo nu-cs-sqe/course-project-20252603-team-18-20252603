@@ -111,5 +111,5 @@ The test subclass validates constructor arguments with `Piece` validation helper
 
 ---
 
-## Method under test: `getLegalMoves(Square from)`
-`getLegalMoves(Square from)` is abstract in `Piece`, so concrete movement behavior is determined in the specific subclass BVA and tests.
+## Method under test: `getLegalMoveDestinationSquares(Square from)`
+`getLegalMoveDestinationSquares(Square from)` is abstract in `Piece`, so concrete movement behavior is determined in the specific subclass BVA and tests.

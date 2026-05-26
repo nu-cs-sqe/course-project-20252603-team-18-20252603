@@ -9,7 +9,7 @@ public class Pawn extends Piece{
 	}
 
 	@Override
-	public List<Square> getLegalMoves(Square from) {
+	public List<Square> getLegalMoveDestinationSquares(Square from) {
 		if (from == null) {
 			throw new IllegalArgumentException("'from' Square cannot be null");
 		}

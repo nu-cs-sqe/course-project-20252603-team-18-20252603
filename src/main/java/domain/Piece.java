@@ -47,5 +47,5 @@ public abstract class Piece {
 		this.hasMoved = true;
 	}
 
-	public abstract List<Square> getLegalMoves(Square from);
+	public abstract List<Square> getLegalMoveDestinationSquares(Square from);
 }
