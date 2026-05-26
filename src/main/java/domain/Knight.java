@@ -13,6 +13,9 @@ public class Knight extends Piece {
 		if (from == null) {
 			throw new IllegalArgumentException("'from' Square cannot be null");
 		}
+		if (from.getOccupant() != this) {
+			throw new IllegalArgumentException("'from' Square is not occupied by this Knight");
+		}
 
 		List<Square> legalDestinationSquares = new ArrayList<Square>();
 		return legalDestinationSquares;
