@@ -1,24 +1,34 @@
 package domain;
 
-public class Piece {
+import java.util.List;
+
+public abstract class Piece {
+	protected static final char MINFILE = 'a';
+	protected static final char MAXFILE = 'h';
+	protected static final int MINRANK = 1;
+	protected static final int MAXRANK = 8;
 	private final Color color;
 	private final PieceType type;
 	private boolean hasMoved;
 
-	private Piece(Color color, PieceType type) {
+	protected Piece(Color color, PieceType type) {
 		this.color = color;
 		this.type = type;
 		this.hasMoved = false;
 	}
 
-	public static Piece create(Color color, PieceType type) {
+	protected static Color requireColor(Color color) {
 		if (color == null) {
 			throw new IllegalArgumentException("Color can't be null.");
 		}
+		return color;
+	}
+
+	protected static PieceType requireType(PieceType type) {
 		if (type == null) {
 			throw new IllegalArgumentException("Piece type can't be null.");
 		}
-		return new Piece(color, type);
+		return type;
 	}
 
 	public Color getColor() {
@@ -37,7 +47,5 @@ public class Piece {
 		this.hasMoved = true;
 	}
 
-	Square[] getMoves(Board board) {
-		return null;
-	}
+	public abstract List<Square> getLegalMoveDestinationSquares(Square from);
 }
