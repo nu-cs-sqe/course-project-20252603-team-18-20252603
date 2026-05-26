@@ -213,4 +213,30 @@ public class PawnTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC11: White Pawn On Minimum File ('a') — Only Right Diagonal Candidate Exists
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoves_whitePawnOnFileA_onlyRightDiagonalCandidate() {
+		Pawn pawn = new Pawn(Color.WHITE);
+		pawn.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(pawn);
+		expect(from.getFile()).andReturn('a').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = pawn.getLegalMoves(from);
+
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'a' && s.getRank() == 5));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 5));
+		for (Square candidate : candidates) {
+			assertTrue(candidate.getFile() >= 'a' && candidate.getFile() <= 'h');
+			assertTrue(candidate.getRank() >= 1 && candidate.getRank() <= 8);
+		}
+
+		verify(from);
+	}
 }
