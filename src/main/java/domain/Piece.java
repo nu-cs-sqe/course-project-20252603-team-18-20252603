@@ -6,16 +6,23 @@ public abstract class Piece {
 	private boolean hasMoved;
 
 	protected Piece(Color color, PieceType type) {
-		if (color == null) {
-			throw new IllegalArgumentException("Color can't be null.");
-		}
-		if (type == null) {
-			throw new IllegalArgumentException("Piece type can't be null.");
-		}
-
 		this.color = color;
 		this.type = type;
 		this.hasMoved = false;
+	}
+
+	protected static Color requireColor(Color color) {
+		if (color == null) {
+			throw new IllegalArgumentException("Color can't be null.");
+		}
+		return color;
+	}
+
+	protected static PieceType requireType(PieceType type) {
+		if (type == null) {
+			throw new IllegalArgumentException("Piece type can't be null.");
+		}
+		return type;
 	}
 
 	public Color getColor() {

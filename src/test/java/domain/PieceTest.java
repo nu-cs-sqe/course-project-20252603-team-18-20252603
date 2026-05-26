@@ -11,7 +11,7 @@ class PieceTest {
 
 	private static class TestPiece extends Piece {
 		TestPiece(Color color, PieceType type) {
-			super(color, type);
+			super(requireColor(color), requireType(type));
 		}
 
 		@Override
