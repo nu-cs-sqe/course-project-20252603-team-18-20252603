@@ -18,6 +18,25 @@ public class Knight extends Piece {
 		}
 
 		List<Square> legalDestinationSquares = new ArrayList<Square>();
+
+		int short_L_leg = 1;
+		int long_L_leg = 2;
+		int[][] offsets = {
+				{short_L_leg, long_L_leg}, {long_L_leg, short_L_leg},
+				{long_L_leg, -short_L_leg}, {short_L_leg, -long_L_leg},
+				{-short_L_leg, -long_L_leg}, {-long_L_leg, -short_L_leg},
+				{-long_L_leg, short_L_leg}, {-short_L_leg, long_L_leg}
+		};
+		char fromFile = from.getFile();
+		int  fromRank = from.getRank();
+
+		for (int[] offset : offsets) {
+			char destFile = (char) (fromFile + offset[0]);
+			int  destRank = fromRank + offset[1];
+
+			legalDestinationSquares.add(Square.create(destFile, destRank));
+		}
+
 		return legalDestinationSquares;
 	}
 }

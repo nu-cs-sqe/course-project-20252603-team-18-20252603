@@ -2,8 +2,10 @@ package domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.easymock.EasyMock.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class KnightTest {
 
@@ -33,6 +35,34 @@ public class KnightTest {
 		assertThrows(IllegalArgumentException.class, () -> {
 			knight.getLegalMoveDestinationSquares(from);
 		});
+
+		verify(from);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC3: Fully Interior Square — All Eight Candidates Generated
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_interiorSquare_returnsAllEightCandidates() {
+		Knight knight = new Knight(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(knight);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = knight.getLegalMoveDestinationSquares(from);
+
+		assertEquals(8, candidates.size());
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 3));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 5));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 2));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 6));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 2));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 6));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'f' && s.getRank() == 3));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'f' && s.getRank() == 5));
 
 		verify(from);
 	}
