@@ -83,4 +83,25 @@ public class PawnTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC5: White Pawn — Two-Square Advance Candidate From Starting Rank
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoves_whitePawnHasNotMoved_containsTwoSquareForward() {
+		Pawn pawn = new Pawn(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(pawn);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
+		replay(from);
+
+		List<Square> candidates = pawn.getLegalMoves(from);
+
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 3));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 4));
+
+		verify(from);
+	}
 }

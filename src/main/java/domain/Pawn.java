@@ -28,6 +28,13 @@ public class Pawn extends Piece{
 			legalMoves.add(Square.create(file, oneStepRank));
 		}
 
+		if (!this.hasMoved()) {
+			int twoStepRank = rank + (2 * direction);
+			if (twoStepRank >= MINRANK && twoStepRank <= MAXRANK) {
+				legalMoves.add(Square.create(file, twoStepRank));
+			}
+		}
+
 		return legalMoves;
 	}
 }
