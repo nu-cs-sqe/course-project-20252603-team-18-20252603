@@ -248,4 +248,29 @@ public class KnightTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC12: Minimum File, Interior Rank (a4) — Four Candidates
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_minFileInteriorRankA4_returnsFourCandidates() {
+		Knight knight = new Knight(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(knight);
+		expect(from.getFile()).andReturn('a').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = knight.getLegalMoveDestinationSquares(from);
+
+		assertEquals(4, candidates.size());
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 2));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 6));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 3));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 5));
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() < 'a'));
+
+		verify(from);
+	}
 }
