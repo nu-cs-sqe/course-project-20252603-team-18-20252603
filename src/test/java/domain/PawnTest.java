@@ -317,4 +317,27 @@ public class PawnTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC15: White Pawn — Forward Candidate Reaches Promotion Rank
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoves_whitePawnOnRank7_containsPromotionRankCandidates() {
+		Pawn pawn = new Pawn(Color.WHITE);
+		pawn.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(pawn);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(7).anyTimes();
+		replay(from);
+
+		List<Square> candidates = pawn.getLegalMoves(from);
+
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 8));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'd' && s.getRank() == 8));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'f' && s.getRank() == 8));
+
+		verify(from);
+	}
 }
