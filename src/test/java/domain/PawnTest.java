@@ -385,4 +385,25 @@ public class PawnTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC18: Black Pawn — Backward Square Not A Candidate
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoves_blackPawn_excludesBackwardSquare() {
+		Pawn pawn = new Pawn(Color.BLACK);
+		pawn.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(pawn);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(5).anyTimes();
+		replay(from);
+
+		List<Square> candidates = pawn.getLegalMoves(from);
+
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 6));
+
+		verify(from);
+	}
 }
