@@ -3,8 +3,10 @@ package domain;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.easymock.EasyMock.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PawnTest {
 
@@ -34,6 +36,28 @@ public class PawnTest {
 		assertThrows(IllegalArgumentException.class, () -> {
 			pawn.getLegalMoves(from);
 		});
+
+		verify(from);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC3: White Pawn — Single-Square Forward Candidate
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoves_whitePawnHasMoved_containsOneSquareForward() {
+		Pawn pawn = new Pawn(Color.WHITE);
+		pawn.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(pawn);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = pawn.getLegalMoves(from);
+
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 5));
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 3));
 
 		verify(from);
 	}

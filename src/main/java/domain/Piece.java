@@ -3,6 +3,10 @@ package domain;
 import java.util.List;
 
 public abstract class Piece {
+	protected static final char MINFILE = 'a';
+	protected static final char MAXFILE = 'h';
+	protected static final int MINRANK = 1;
+	protected static final int MAXRANK = 8;
 	private final Color color;
 	private final PieceType type;
 	private boolean hasMoved;

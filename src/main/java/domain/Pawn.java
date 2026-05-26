@@ -18,6 +18,16 @@ public class Pawn extends Piece{
 		}
 
 		List<Square> legalMoves = new ArrayList<Square>();
+
+		int direction = (this.getColor() == Color.WHITE) ? 1 : -1;
+		char file = from.getFile();
+		int rank = from.getRank();
+
+		int oneStepRank = rank + direction;
+		if (oneStepRank >= MINRANK && oneStepRank <= MAXRANK) {
+			legalMoves.add(Square.create(file, oneStepRank));
+		}
+
 		return legalMoves;
 	}
 }
