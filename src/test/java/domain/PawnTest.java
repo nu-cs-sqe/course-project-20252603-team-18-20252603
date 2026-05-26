@@ -104,4 +104,25 @@ public class PawnTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC6: Black Pawn — Two-Square Advance Candidate From Starting Rank
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoves_blackPawnHasNotMoved_containsTwoSquareForward() {
+		Pawn pawn = new Pawn(Color.BLACK);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(pawn);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(7).anyTimes();
+		replay(from);
+
+		List<Square> candidates = pawn.getLegalMoves(from);
+
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 6));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 5));
+
+		verify(from);
+	}
 }
