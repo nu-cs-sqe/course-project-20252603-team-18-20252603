@@ -154,4 +154,27 @@ public class KnightTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC8: Near-Corner — Minimum File, One Inside Minimum Rank (a2) — Three Candidates
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_nearCornerA2_returnsThreeCandidates() {
+		Knight knight = new Knight(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(knight);
+		expect(from.getFile()).andReturn('a').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
+		replay(from);
+
+		List<Square> candidates = knight.getLegalMoveDestinationSquares(from);
+
+		assertEquals(3, candidates.size());
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 4));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 3));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 1));
+
+		verify(from);
+	}
 }
