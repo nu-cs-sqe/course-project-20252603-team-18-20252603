@@ -452,4 +452,27 @@ public class KnightTest {
 		verify(fromWhite);
 		verify(fromBlack);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC20: All Returned Squares Are Within Board Bounds — Corner Stress Check
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_cornerA1_allCandidatesWithinBounds() {
+		Knight knight = new Knight(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(knight);
+		expect(from.getFile()).andReturn('a').anyTimes();
+		expect(from.getRank()).andReturn(1).anyTimes();
+		replay(from);
+
+		List<Square> candidates = knight.getLegalMoveDestinationSquares(from);
+
+		for (Square candidate : candidates) {
+			assertTrue(candidate.getFile() >= 'a' && candidate.getFile() <= 'h');
+			assertTrue(candidate.getRank() >= 1 && candidate.getRank() <= 8);
+		}
+
+		verify(from);
+	}
 }
