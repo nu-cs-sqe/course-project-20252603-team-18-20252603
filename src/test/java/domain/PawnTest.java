@@ -291,4 +291,30 @@ public class PawnTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC14: Black Pawn On Maximum File ('h') — Only Left Diagonal Candidate Exists
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoves_blackPawnOnFileH_onlyLeftDiagonalCandidate() {
+		Pawn pawn = new Pawn(Color.BLACK);
+		pawn.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(pawn);
+		expect(from.getFile()).andReturn('h').anyTimes();
+		expect(from.getRank()).andReturn(5).anyTimes();
+		replay(from);
+
+		List<Square> candidates = pawn.getLegalMoves(from);
+
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'h' && s.getRank() == 4));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 4));
+		for (Square candidate : candidates) {
+			assertTrue(candidate.getFile() >= 'a' && candidate.getFile() <= 'h');
+			assertTrue(candidate.getRank() >= 1 && candidate.getRank() <= 8);
+		}
+
+		verify(from);
+	}
 }
