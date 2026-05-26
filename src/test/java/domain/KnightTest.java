@@ -110,4 +110,26 @@ public class KnightTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC6: Corner Square — Maximum File, Minimum Rank (h1) — Two Candidates
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_cornerH1_returnsTwoCandidates() {
+		Knight knight = new Knight(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(knight);
+		expect(from.getFile()).andReturn('h').anyTimes();
+		expect(from.getRank()).andReturn(1).anyTimes();
+		replay(from);
+
+		List<Square> candidates = knight.getLegalMoveDestinationSquares(from);
+
+		assertEquals(2, candidates.size());
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 3));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'f' && s.getRank() == 2));
+
+		verify(from);
+	}
 }
