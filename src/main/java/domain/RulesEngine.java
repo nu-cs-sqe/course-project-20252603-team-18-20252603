@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.List;
+
 public class RulesEngine {
 
 	public boolean isLegalMove(Move move, GameModel model) {
@@ -185,5 +187,11 @@ public class RulesEngine {
 		// TODO
 	}
 
+	public List<Square> getLegalMoves(GameModel model, Square from) {
+		if (model == null) {
+			throw new IllegalArgumentException("GameModel cannot be null");
+		}
 
+		return null;
+	}
 }

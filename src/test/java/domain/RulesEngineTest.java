@@ -5,8 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.mock;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
@@ -775,6 +774,19 @@ class RulesEngineTest {
 
 
 	// Methods Under Test: getLegalMoves
+
+	@Test
+	void getLegalMoves_nullState_throwsException() {
+		RulesEngine rulesEngine = new RulesEngine();
+		Square from = mock(Square.class);
+		replay(from);
+
+		assertThrows(IllegalArgumentException.class,
+				() -> rulesEngine.getLegalMoves(null, from));
+
+		verify(from);
+	}
+
 	// Methods Under Test: isInCheck
 	// Methods Under Test: isSquareAttacked
 	// Methods Under Test: isCheckmate
