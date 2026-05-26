@@ -420,4 +420,36 @@ public class KnightTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC19: Color Does Not Affect Candidate Set — White vs. Black Knight on Same Square
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_colorDoesNotAffectCandidates() {
+		Knight whiteKnight = new Knight(Color.WHITE);
+		Knight blackKnight = new Knight(Color.BLACK);
+
+		Square fromWhite = createMock(Square.class);
+		expect(fromWhite.getOccupant()).andReturn(whiteKnight);
+		expect(fromWhite.getFile()).andReturn('d').anyTimes();
+		expect(fromWhite.getRank()).andReturn(4).anyTimes();
+		replay(fromWhite);
+
+		Square fromBlack = createMock(Square.class);
+		expect(fromBlack.getOccupant()).andReturn(blackKnight);
+		expect(fromBlack.getFile()).andReturn('d').anyTimes();
+		expect(fromBlack.getRank()).andReturn(4).anyTimes();
+		replay(fromBlack);
+
+		List<Square> whiteCandidates = whiteKnight.getLegalMoveDestinationSquares(fromWhite);
+		List<Square> blackCandidates = blackKnight.getLegalMoveDestinationSquares(fromBlack);
+
+		assertEquals(whiteCandidates.size(), blackCandidates.size());
+		for (Square ws : whiteCandidates) {
+			assertTrue(blackCandidates.stream().anyMatch(bs -> bs.getFile() == ws.getFile() && bs.getRank() == ws.getRank()));
+		}
+
+		verify(fromWhite);
+		verify(fromBlack);
+	}
 }
