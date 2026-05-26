@@ -1,5 +1,6 @@
 package domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RulesEngine {
@@ -195,6 +196,7 @@ public class RulesEngine {
 			throw new IllegalArgumentException("'from' Square cannot be null");
 		}
 
-		return null;
+		List<Square> legalMoves = new ArrayList<>();
+		return legalMoves;
 	}
 }

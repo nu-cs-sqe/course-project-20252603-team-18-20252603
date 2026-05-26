@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 class RulesEngineTest {
 
 	// Methods Under Test: isLegalMove
@@ -798,6 +800,23 @@ class RulesEngineTest {
 				() -> rulesEngine.getLegalMoves(model, null));
 
 		verify(model);
+	}
+
+	@Test
+	void getLegalMoves_emptySquare_returnsEmptyList() {
+		GameModel model = mock(GameModel.class);
+		Square from = mock(Square.class);
+
+		expect(from.getOccupant()).andReturn(null).anyTimes();
+
+		replay(model, from);
+
+		RulesEngine rulesEngine = new RulesEngine();
+		List<Square> result = rulesEngine.getLegalMoves(model, from);
+
+		assertTrue(result.isEmpty());
+
+		verify(model, from);
 	}
 
 	// Methods Under Test: isInCheck
