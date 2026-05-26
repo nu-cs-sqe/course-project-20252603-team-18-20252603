@@ -1,24 +1,21 @@
 package domain;
 
-public class Piece {
+public abstract class Piece {
 	private final Color color;
 	private final PieceType type;
 	private boolean hasMoved;
 
-	private Piece(Color color, PieceType type) {
-		this.color = color;
-		this.type = type;
-		this.hasMoved = false;
-	}
-
-	public static Piece create(Color color, PieceType type) {
+	protected Piece(Color color, PieceType type) {
 		if (color == null) {
 			throw new IllegalArgumentException("Color can't be null.");
 		}
 		if (type == null) {
 			throw new IllegalArgumentException("Piece type can't be null.");
 		}
-		return new Piece(color, type);
+
+		this.color = color;
+		this.type = type;
+		this.hasMoved = false;
 	}
 
 	public Color getColor() {
@@ -37,7 +34,5 @@ public class Piece {
 		this.hasMoved = true;
 	}
 
-	Square[] getMoves(Board board) {
-		return null;
-	}
+	public abstract Square[] getLegalMoves(Board board);
 }
