@@ -61,4 +61,26 @@ public class PawnTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC4: Black Pawn — Single-Square Forward Candidate
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoves_blackPawnHasMoved_containsOneSquareForward() {
+		Pawn pawn = new Pawn(Color.BLACK);
+		pawn.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(pawn);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(5).anyTimes();
+		replay(from);
+
+		List<Square> candidates = pawn.getLegalMoves(from);
+
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 4));
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 6));
+
+		verify(from);
+	}
 }
