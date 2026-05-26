@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.List;
+
 public abstract class Piece {
 	private final Color color;
 	private final PieceType type;
@@ -41,5 +43,5 @@ public abstract class Piece {
 		this.hasMoved = true;
 	}
 
-	public abstract Square[] getLegalMoves(Board board);
+	public abstract List<Square> getLegalMoves(Square from);
 }
