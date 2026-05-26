@@ -400,4 +400,24 @@ public class KnightTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC18: No Candidate Matches the From Square Itself
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_interior_doesNotContainFromSquare() {
+		Knight knight = new Knight(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(knight);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = knight.getLegalMoveDestinationSquares(from);
+
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'd' && s.getRank() == 4));
+
+		verify(from);
+	}
 }
