@@ -34,9 +34,13 @@ public class Knight extends Piece {
 			char destFile = (char) (fromFile + offset[0]);
 			int  destRank = fromRank + offset[1];
 
-			legalDestinationSquares.add(Square.create(destFile, destRank));
+			if (destFile >= MINFILE && destFile <= MAXFILE && destRank >= MINRANK && destRank <= MAXRANK) {
+				legalDestinationSquares.add(Square.create(destFile, destRank));
+			}
 		}
 
 		return legalDestinationSquares;
 	}
+
+
 }
