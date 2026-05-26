@@ -787,6 +787,19 @@ class RulesEngineTest {
 		verify(from);
 	}
 
+	@Test
+	void getLegalMoves_nullFrom_throwsException() {
+		GameModel model = mock(GameModel.class);
+		replay(model);
+
+		RulesEngine rulesEngine = new RulesEngine();
+
+		assertThrows(IllegalArgumentException.class,
+				() -> rulesEngine.getLegalMoves(model, null));
+
+		verify(model);
+	}
+
 	// Methods Under Test: isInCheck
 	// Methods Under Test: isSquareAttacked
 	// Methods Under Test: isCheckmate

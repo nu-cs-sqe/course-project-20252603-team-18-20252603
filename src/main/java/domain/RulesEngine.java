@@ -191,6 +191,9 @@ public class RulesEngine {
 		if (model == null) {
 			throw new IllegalArgumentException("GameModel cannot be null");
 		}
+		if (from == null) {
+			throw new IllegalArgumentException("'from' Square cannot be null");
+		}
 
 		return null;
 	}
