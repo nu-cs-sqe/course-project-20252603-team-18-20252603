@@ -39,6 +39,10 @@ public class RulesEngine {
 			return true;
 		}
 
+		if (isEnpassantLegal(move,model)){
+			return true;
+		}
+
 		Square to = move.getTo();
 
 		Square toBoardSquare = board.getSquare(
@@ -120,5 +124,10 @@ public class RulesEngine {
 		// TODO
 	}
 
-	
+	protected boolean isEnpassantLegal(Move move, GameModel model) {
+		return false;
+		// TODO
+	}
+
+
 }

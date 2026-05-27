@@ -511,11 +511,10 @@ The selected promotion piece for a pawn reaching the final rank.
   - **Expected output**: Move is accepted as legal promotion; method returns `true`.
   - **Test name**: `isLegalMove_promotionHelperTrue_returnsTrue`
   - 
-- **TC14: En passant-shaped move delegates to en passant helper** ( :white_check_mark: / :x: )
-  - **State of the system**: Source square contains a current-player pawn. The pawn moves diagonally into an empty square. `isEnpassantLegal(move, model)` is called.
-  - **Expected output**: Method returns the result of `isEnpassantLegal(move, model)`.
-  - **Test name**: `isLegalMove_enPassantShape_delegatesToEnPassantHelper`
----
+- **TC14: En passant helper returns true** ( :white_check_mark: )
+  - **State of the system**: Source square contains the current player’s pawn. `isEnpassantLegal(move, model)` returns `true`.
+  - **Expected output**: Move is accepted as legal en passant; method returns `true`.
+  - **Test name**: `isLegalMove_enPassantHelperTrue_returnsTrue`---
 
 ## Method under test: `RulesEngine.getLegalMoves(GameState state, Square from)`
 
