@@ -337,4 +337,25 @@ public class KingTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC15: Black King — Castling Destination Candidates Present When Not Moved
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_blackKingHasNotMoved_containsCastlingDestinations() {
+		King king = new King(Color.BLACK);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(king);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(8).anyTimes();
+		replay(from);
+
+		List<Square> candidates = king.getLegalMoveDestinationSquares(from);
+
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 8));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 8));
+
+		verify(from);
+	}
 }

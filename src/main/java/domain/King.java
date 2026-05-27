@@ -41,8 +41,10 @@ public class King extends Piece {
 			final char LEFTCASTLEFILE = 'c';
 			final char RIGHTCASTLEFILE = 'g';
 			final int BOTTOMCASTLERANK = 1;
-			legalDestinationSquares.add(Square.create(LEFTCASTLEFILE, BOTTOMCASTLERANK));
-			legalDestinationSquares.add(Square.create(RIGHTCASTLEFILE, BOTTOMCASTLERANK));
+			final int TOPCASTLERANK = 8;
+			int castleRank = (getColor() == Color.WHITE) ? BOTTOMCASTLERANK : TOPCASTLERANK;
+			legalDestinationSquares.add(Square.create(LEFTCASTLEFILE, castleRank));
+			legalDestinationSquares.add(Square.create(RIGHTCASTLEFILE, castleRank));
 		}
 
 		return legalDestinationSquares;
