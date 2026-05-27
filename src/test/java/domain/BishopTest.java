@@ -211,6 +211,29 @@ public class BishopTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC10: Bishop From Minimum Rank Interior Square Has No Downward Diagonals
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_bishopFromRank1_hasNoDownwardDiagonals() {
+		Bishop bishop = new Bishop(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(bishop);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(1).anyTimes();
+		replay(from);
+
+		List<Square> candidates = bishop.getLegalMoveDestinationSquares(from);
+
+		assertTrue(containsSquare(candidates, 'e', 2));
+		assertTrue(containsSquare(candidates, 'c', 2));
+		assertFalse(candidates.stream().anyMatch(s -> s.getRank() < 1));
+		assertEquals(7, candidates.size());
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
