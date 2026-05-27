@@ -171,6 +171,7 @@ class RulesEngineTest {
 		EasyMock.expect(move.getTo()).andReturn(to);
 		EasyMock.expect(board.getSquare('e', 3)).andReturn(toBoardSquare);
 		EasyMock.expect(destinationPiece.getColor()).andReturn(Color.BLACK);
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT);
 
 		EasyMock.replay(move, model, board, sourcePiece, destinationPiece);
 
@@ -210,6 +211,7 @@ class RulesEngineTest {
 
 		EasyMock.expect(move.getTo()).andReturn(to);
 		EasyMock.expect(board.getSquare('e', 3)).andReturn(toBoardSquare);
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT);
 
 		EasyMock.replay(move, model, board, sourcePiece);
 
@@ -222,6 +224,50 @@ class RulesEngineTest {
 		EasyMock.verify(move, model, board, sourcePiece);
 	}
 
+	@Test
+	void isLegalMove_slidingPathBlocked_returnsFalse() {
+		// Arrange
+		RulesEngine rulesEngine = new RulesEngine();
+
+		Move move = EasyMock.createMock(Move.class);
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece sourcePiece = EasyMock.createMock(Piece.class);
+		Piece blockerPiece = EasyMock.createMock(Piece.class);
+
+		Square from = Square.create('a', 1);
+		Square to = Square.create('a', 4);
+
+		Square fromBoardSquare = Square.create('a', 1);
+		Square intermediateSquare = Square.create('a', 2);
+		Square toBoardSquare = Square.create('a', 4);
+
+		fromBoardSquare.setOccupant(sourcePiece);
+		intermediateSquare.setOccupant(blockerPiece);
+
+		EasyMock.expect(move.getFrom()).andReturn(from);
+		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.expect(board.getSquare('a', 1)).andReturn(fromBoardSquare);
+
+		EasyMock.expect(sourcePiece.getColor()).andReturn(Color.WHITE);
+		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE);
+
+		EasyMock.expect(move.getTo()).andReturn(to);
+		EasyMock.expect(board.getSquare('a', 4)).andReturn(toBoardSquare);
+
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.ROOK);
+		EasyMock.expect(board.getSquare('a', 2)).andReturn(intermediateSquare);
+
+		EasyMock.replay(move, model, board, sourcePiece, blockerPiece);
+
+		// Act
+		boolean result = rulesEngine.isLegalMove(move, model);
+
+		// Assert
+		assertFalse(result);
+
+		EasyMock.verify(move, model, board, sourcePiece, blockerPiece);
+	}
 
 	// Methods Under Test: getLegalMoves
 	// Methods Under Test: isInCheck

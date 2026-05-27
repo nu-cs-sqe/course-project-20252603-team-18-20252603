@@ -43,6 +43,39 @@ public class RulesEngine {
 			return false;
 		}
 
+		if (isSlidingPiece(sourcePiece) && isPathBlocked(from, to, board)) {
+			return false;
+		}
+
 		return true;
+	}
+
+	private boolean isSlidingPiece(Piece piece) {
+		PieceType type = piece.getType();
+
+		return type == PieceType.ROOK
+				|| type == PieceType.BISHOP
+				|| type == PieceType.QUEEN;
+	}
+
+	private boolean isPathBlocked(Square from, Square to, Board board) {
+		int fileStep = Integer.compare(to.getFile(), from.getFile());
+		int rankStep = Integer.compare(to.getRank(), from.getRank());
+
+		char currentFile = (char) (from.getFile() + fileStep);
+		int currentRank = from.getRank() + rankStep;
+
+		while (currentFile != to.getFile() || currentRank != to.getRank()) {
+			Square currentSquare = board.getSquare(currentFile, currentRank);
+
+			if (!currentSquare.isEmpty()) {
+				return true;
+			}
+
+			currentFile = (char) (currentFile + fileStep);
+			currentRank += rankStep;
+		}
+
+		return false;
 	}
 }
