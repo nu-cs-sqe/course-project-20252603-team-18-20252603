@@ -18,6 +18,22 @@ public class King extends Piece {
 		}
 
 		List<Square> legalDestinationSquares = new ArrayList<Square>();
+
+		final int MOVEMENTDELTA = 1;
+		char file = from.getFile();
+		int rank = from.getRank();
+
+		for (int fileDelta = -MOVEMENTDELTA; fileDelta <= MOVEMENTDELTA; fileDelta++) {
+			for (int rankDelta = -MOVEMENTDELTA; rankDelta <= MOVEMENTDELTA; rankDelta++) {
+				if (fileDelta == 0 && rankDelta == 0) {
+					continue;
+				}
+				char candidateFile = (char) (file + fileDelta);
+				int candidateRank = rank + rankDelta;
+
+				legalDestinationSquares.add(Square.create(candidateFile, candidateRank));
+			}
+		}
 		return legalDestinationSquares;
 	}
 }
