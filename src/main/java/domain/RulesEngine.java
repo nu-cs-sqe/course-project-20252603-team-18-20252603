@@ -35,6 +35,10 @@ public class RulesEngine {
 			return true;
 		}
 
+		if (isPromotionLegal(move, model)) {
+			return true;
+		}
+
 		Square to = move.getTo();
 
 		Square toBoardSquare = board.getSquare(
@@ -110,4 +114,11 @@ public class RulesEngine {
 		// Given Move, validate if move is castling shaped
 		// Are all Castling conditions legal?
 	}
+
+	protected boolean isPromotionLegal(Move move, GameModel model) {
+		return false;
+		// TODO
+	}
+
+	
 }

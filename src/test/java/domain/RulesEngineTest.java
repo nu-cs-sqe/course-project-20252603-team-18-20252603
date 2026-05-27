@@ -440,6 +440,41 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
 	}
 
+	@Test
+	void isLegalMove_promotionHelperTrue_returnsTrue() {
+		// Arrange
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isPromotionLegal", Move.class, GameModel.class)
+				.createMock();
+
+		Move move = EasyMock.createMock(Move.class);
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece sourcePiece = EasyMock.createMock(Piece.class);
+
+		Square from = Square.create('e', 7);
+		Square fromBoardSquare = Square.create('e', 7);
+		fromBoardSquare.setOccupant(sourcePiece);
+
+		EasyMock.expect(move.getFrom()).andReturn(from);
+		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.expect(board.getSquare('e', 7)).andReturn(fromBoardSquare);
+
+		EasyMock.expect(sourcePiece.getColor()).andReturn(Color.WHITE);
+		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE);
+
+		EasyMock.expect(rulesEngine.isPromotionLegal(move, model)).andReturn(true);
+
+		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
+
+		// Act
+		boolean result = rulesEngine.isLegalMove(move, model);
+
+		// Assert
+		assertTrue(result);
+
+		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
+	}
 
 	// Methods Under Test: getLegalMoves
 	// Methods Under Test: isInCheck

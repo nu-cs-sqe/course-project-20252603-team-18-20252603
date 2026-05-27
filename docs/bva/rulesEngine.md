@@ -506,11 +506,11 @@ The selected promotion piece for a pawn reaching the final rank.
   - **Expected output**: Move is accepted as legal castling; method returns `true`.
   - **Test name**: `isLegalMove_castlingHelperTrue_returnsTrue`
   - 
-- **TC13: Promotion-rank pawn move delegates to promotion helper** ( :white_check_mark: / :x: )
-  - **State of the system**: Source square contains a current-player pawn. The pawn moves to the final rank. `isPromotionLegal(move, model)` is called.
-  - **Expected output**: Method returns the result of `isPromotionLegal(move, model)`.
-  - **Test name**: `isLegalMove_promotionRank_delegatesToPromotionHelper`
-
+- **TC13: Promotion helper returns true** ( :white_check_mark: )
+  - **State of the system**: Source square contains the current player’s pawn. `isPromotionLegal(move, model)` returns `true`.
+  - **Expected output**: Move is accepted as legal promotion; method returns `true`.
+  - **Test name**: `isLegalMove_promotionHelperTrue_returnsTrue`
+  - 
 - **TC14: En passant-shaped move delegates to en passant helper** ( :white_check_mark: / :x: )
   - **State of the system**: Source square contains a current-player pawn. The pawn moves diagonally into an empty square. `isEnpassantLegal(move, model)` is called.
   - **Expected output**: Method returns the result of `isEnpassantLegal(move, model)`.
