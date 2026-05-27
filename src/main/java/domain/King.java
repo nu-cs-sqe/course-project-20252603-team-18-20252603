@@ -31,7 +31,9 @@ public class King extends Piece {
 				char candidateFile = (char) (file + fileDelta);
 				int candidateRank = rank + rankDelta;
 
-				legalDestinationSquares.add(Square.create(candidateFile, candidateRank));
+				if (candidateFile >= MINFILE) {
+					legalDestinationSquares.add(Square.create(candidateFile, candidateRank));
+				}
 			}
 		}
 		return legalDestinationSquares;
