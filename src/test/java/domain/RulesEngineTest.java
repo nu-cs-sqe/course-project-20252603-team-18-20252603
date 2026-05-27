@@ -314,6 +314,51 @@ class RulesEngineTest {
 		EasyMock.verify(move, model, board, sourcePiece);
 	}
 
+	@Test
+	void isLegalMove_moveExposesOwnKing_returnsFalse() {
+		// Arrange
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
+
+		Move move = EasyMock.createMock(Move.class);
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece sourcePiece = EasyMock.createMock(Piece.class);
+
+		Square from = Square.create('e', 2);
+		Square to = Square.create('f', 2);
+
+		Square fromBoardSquare = Square.create('e', 2);
+		Square toBoardSquare = Square.create('f', 2);
+
+		fromBoardSquare.setOccupant(sourcePiece);
+
+		EasyMock.expect(move.getFrom()).andReturn(from).anyTimes();
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(board.getSquare('e', 2)).andReturn(fromBoardSquare).anyTimes();
+
+		EasyMock.expect(sourcePiece.getColor()).andReturn(Color.WHITE);
+		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+
+		EasyMock.expect(move.getTo()).andReturn(to).anyTimes();
+		EasyMock.expect(board.getSquare('f', 2)).andReturn(toBoardSquare).anyTimes();
+
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT);
+
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(true);
+
+		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
+
+		// Act
+		boolean result = rulesEngine.isLegalMove(move, model);
+
+		// Assert
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
+	}
+
 	// Methods Under Test: getLegalMoves
 	// Methods Under Test: isInCheck
 	// Methods Under Test: isSquareAttacked

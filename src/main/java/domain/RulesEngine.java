@@ -47,6 +47,20 @@ public class RulesEngine {
 			return false;
 		}
 
+		Piece capturedPiece = toBoardSquare.getOccupant();
+
+		fromBoardSquare.setOccupant(null);
+		toBoardSquare.setOccupant(sourcePiece);
+
+		boolean kingInCheck = isInCheck(model, currentTurn);
+
+		fromBoardSquare.setOccupant(sourcePiece);
+		toBoardSquare.setOccupant(capturedPiece);
+
+		if (kingInCheck) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -77,5 +91,10 @@ public class RulesEngine {
 		}
 
 		return false;
+	}
+
+	protected boolean isInCheck(GameModel model, Color color) {
+		return false;
+		// TODO
 	}
 }
