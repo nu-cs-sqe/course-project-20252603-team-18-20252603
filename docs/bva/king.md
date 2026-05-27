@@ -159,7 +159,7 @@
 
 - **TC18: White King — Correct Total Candidate Count From Starting Square Without Having Moved**
     - **State of the system**: White `King` (`hasMoved = false`) on `e1` (starting square, minimum rank, interior file).
-    - **Expected output**: Returned list contains exactly 10 squares: `d1`, `f1`, `d2`, `e2`, `f2` (one-step candidates) and `c1`, `g1` (castling destinations).
+    - **Expected output**: Returned list contains exactly 7 squares: `d1`, `f1`, `d2`, `e2`, `f2` (one-step candidates) and `c1`, `g1` (castling destinations).
     - **Implemented at**: `getLegalMoveDestinationSquares_whiteKingHasNotMoved_returnsTenCandidates`
 
 - **TC19: White King — Correct Total Candidate Count From Starting Square After Having Moved**
