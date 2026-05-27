@@ -11,19 +11,35 @@ public class RulesEngine {
 			return false;
 		}
 
+		Board board = model.getBoard();
+
 		Square from = move.getFrom();
-		Square fromBoardSquare = model.getBoard().getSquare(
+		Square fromBoardSquare = board.getSquare(
 				from.getFile(),
 				from.getRank()
 		);
 
-		Piece piece = fromBoardSquare.getOccupant();
+		Piece sourcePiece = fromBoardSquare.getOccupant();
 
-		if (piece == null) {
+		if (sourcePiece == null) {
 			return false;
 		}
 
-		if (piece.getColor() != model.getCurrentTurn()) {
+		Color currentTurn = model.getCurrentTurn();
+
+		if (sourcePiece.getColor() != currentTurn) {
+			return false;
+		}
+
+		Square to = move.getTo();
+		Square toBoardSquare = board.getSquare(
+				to.getFile(),
+				to.getRank()
+		);
+
+		Piece destinationPiece = toBoardSquare.getOccupant();
+
+		if (destinationPiece != null && destinationPiece.getColor() == currentTurn) {
 			return false;
 		}
 

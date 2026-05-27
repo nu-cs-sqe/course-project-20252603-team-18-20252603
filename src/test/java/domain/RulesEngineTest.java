@@ -99,6 +99,50 @@ class RulesEngineTest {
 		EasyMock.verify(move, model, board, piece);
 	}
 
+	@Test
+	void isLegalMove_destinationHasOwnPiece_returnsFalse() {
+		// Arrange
+		RulesEngine rulesEngine = new RulesEngine();
+
+		Move move = EasyMock.createMock(Move.class);
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece sourcePiece = EasyMock.createMock(Piece.class);
+		Piece destinationPiece = EasyMock.createMock(Piece.class);
+
+		Square from = Square.create('e', 2);
+		Square to = Square.create('e', 3);
+
+		Square fromBoardSquare = Square.create('e', 2);
+		Square toBoardSquare = Square.create('e', 3);
+
+		fromBoardSquare.setOccupant(sourcePiece);
+		toBoardSquare.setOccupant(destinationPiece);
+
+		EasyMock.expect(move.getFrom()).andReturn(from);
+		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.expect(board.getSquare('e', 2)).andReturn(fromBoardSquare);
+
+		EasyMock.expect(sourcePiece.getColor()).andReturn(Color.WHITE);
+		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE);
+
+		EasyMock.expect(move.getTo()).andReturn(to);
+		EasyMock.expect(board.getSquare('e', 3)).andReturn(toBoardSquare);
+		EasyMock.expect(destinationPiece.getColor()).andReturn(Color.WHITE);
+
+		EasyMock.replay(move, model, board, sourcePiece, destinationPiece);
+
+		// Act
+		boolean result = rulesEngine.isLegalMove(move, model);
+
+		// Assert
+		assertFalse(result);
+
+		EasyMock.verify(move, model, board, sourcePiece, destinationPiece);
+	}
+
+
+
 	// Methods Under Test: getLegalMoves
 	// Methods Under Test: isInCheck
 	// Methods Under Test: isSquareAttacked
