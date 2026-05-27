@@ -94,4 +94,31 @@ public class KingTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC5: King at Maximum-File Edge — Right Candidates Absent
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_fileH_interiorRank_returnsFiveCandidates() {
+		King king = new King(Color.WHITE);
+		king.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(king);
+		expect(from.getFile()).andReturn('h').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = king.getLegalMoveDestinationSquares(from);
+
+		assertEquals(5, candidates.size());
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'h' && s.getRank() == 3));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 3));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 4));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'h' && s.getRank() == 5));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 5));
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() > 'h'));
+
+		verify(from);
+	}
 }
