@@ -39,7 +39,7 @@ public class RulesEngine {
 			return true;
 		}
 
-		if (isEnpassantLegal(move,model)){
+		if (isEnpassantLegal(move, model)) {
 			return true;
 		}
 

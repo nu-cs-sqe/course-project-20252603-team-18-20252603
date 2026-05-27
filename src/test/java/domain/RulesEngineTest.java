@@ -774,7 +774,6 @@ class RulesEngineTest {
 	}
 
 
-
 	// Methods Under Test: getLegalMoves
 	// Methods Under Test: isInCheck
 	// Methods Under Test: isSquareAttacked
