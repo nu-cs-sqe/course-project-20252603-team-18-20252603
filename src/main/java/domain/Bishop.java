@@ -16,6 +16,23 @@ public class Bishop extends Piece {
 		if (from.getOccupant() != this) {
 			throw new IllegalArgumentException("'from' Square is not occupied by this Bishop");
 		}
-		return new ArrayList<Square>();
+
+		List<Square> legalMoves = new ArrayList<Square>();
+
+		char file = from.getFile();
+		int rank = from.getRank();
+
+		addSquareIfInBounds(legalMoves, (char) (file + 1), rank + 1);
+		addSquareIfInBounds(legalMoves, (char) (file + 1), rank - 1);
+		addSquareIfInBounds(legalMoves, (char) (file - 1), rank + 1);
+		addSquareIfInBounds(legalMoves, (char) (file - 1), rank - 1);
+
+		return legalMoves;
+	}
+
+	private void addSquareIfInBounds(List<Square> legalMoves, char file, int rank) {
+		if (file >= MINFILE && file <= MAXFILE && rank >= MINRANK && rank <= MAXRANK) {
+			legalMoves.add(Square.create(file, rank));
+		}
 	}
 }
