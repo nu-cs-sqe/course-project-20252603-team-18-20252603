@@ -133,8 +133,17 @@ public class RulesEngine {
 		boolean isStraightMove = fileDifference == SAME_FILE_DISTANCE;
 		boolean isTwoForward = rankDifference == direction * PAWN_INITIAL_MOVE_DISTANCE;
 
-		if (isStraightMove && isTwoForward && pawn.hasMoved()) {
-			return false;
+		if (isStraightMove && isTwoForward) {
+			if (pawn.hasMoved()) {
+				return false;
+			}
+
+			Square intermediateSquare = board.getSquare(
+					from.getFile(),
+					from.getRank() + direction
+			);
+
+			return intermediateSquare.isEmpty() && toBoardSquare.isEmpty();
 		}
 
 		return true;
