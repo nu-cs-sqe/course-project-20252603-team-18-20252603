@@ -907,6 +907,82 @@ class RulesEngineTest {
 		verify(model, board, from, rook);
 	}
 
+	@Test
+	void getLegalMoves_pieceAtH8_staysWithinBounds() {
+		// TC39
+		GameModel model = mock(GameModel.class);
+		Board board = mock(Board.class);
+		Square from = mock(Square.class);
+		Piece rook = mock(Piece.class);
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getBoard()).andReturn(board).anyTimes();
+		expect(from.getOccupant()).andReturn(rook).anyTimes();
+		expect(from.getFile()).andReturn('h').anyTimes();
+		expect(from.getRank()).andReturn(8).anyTimes();
+		expect(rook.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(rook.getType()).andReturn(PieceType.ROOK).anyTimes();
+		expect(rook.hasMoved()).andReturn(true).anyTimes();
+
+		List<Square> candidates = new ArrayList<>();
+		for (char f = 'a'; f <= 'g'; f++) {
+			Square sq = mock(Square.class);
+			expect(sq.getFile()).andReturn(f).anyTimes();
+			expect(sq.getRank()).andReturn(8).anyTimes();
+			candidates.add(sq);
+			replay(sq);
+		}
+		for (int r = 1; r <= 7; r++) {
+			Square sq = mock(Square.class);
+			expect(sq.getFile()).andReturn('h').anyTimes();
+			expect(sq.getRank()).andReturn(r).anyTimes();
+			candidates.add(sq);
+			replay(sq);
+		}
+
+		expect(rook.getLegalMoveDestinationSquares(from)).andReturn(candidates).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				boolean isOrigin = (file == 'h' && rank == 8);
+
+				if (isOrigin) {
+					// isLegalMove looks up the from square on the board, so the board must return the same mock so getOccupant() returns the rook
+					expect(from.isEmpty()).andReturn(false).anyTimes();
+					from.setOccupant(anyObject());
+					expectLastCall().anyTimes();
+					expect(board.getSquare('h', 8)).andReturn(from).anyTimes();
+				}
+				else {
+					Square sq = mock(Square.class);
+					expect(sq.getFile()).andReturn(file).anyTimes();
+					expect(sq.getRank()).andReturn(rank).anyTimes();
+					expect(sq.getOccupant()).andReturn(null).anyTimes();
+					expect(sq.isEmpty()).andReturn(true).anyTimes();
+					sq.setOccupant(anyObject());
+					expectLastCall().anyTimes();
+					expect(board.getSquare(file, rank)).andReturn(sq).anyTimes();
+					replay(sq);
+				}
+			}
+		}
+
+		replay(model, board, from, rook);
+
+		RulesEngine rulesEngine = new RulesEngine();
+		List<Square> result = rulesEngine.getLegalMoves(model, from);
+
+		assertFalse(result.isEmpty());
+		for (Square sq : result) {
+			assertTrue(sq.getFile() >= 'a' && sq.getFile() <= 'h',
+					"File out of bounds: " + sq.getFile());
+			assertTrue(sq.getRank() >= 1 && sq.getRank() <= 8,
+					"Rank out of bounds: " + sq.getRank());
+		}
+
+		verify(model, board, from, rook);
+	}
+
 	// Methods Under Test: isInCheck
 	// Methods Under Test: isSquareAttacked
 	// Methods Under Test: isCheckmate
