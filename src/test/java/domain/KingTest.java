@@ -402,4 +402,33 @@ public class KingTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC18: White King — Correct Total Candidate Count From Starting Square Without Having Moved
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_whiteKingHasNotMoved_returnsTenCandidates() {
+		King king = new King(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(king);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(1).anyTimes();
+		replay(from);
+
+		List<Square> candidates = king.getLegalMoveDestinationSquares(from);
+
+		assertEquals(7, candidates.size());
+		// One-step candidates
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'd' && s.getRank() == 1));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'f' && s.getRank() == 1));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'd' && s.getRank() == 2));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 2));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'f' && s.getRank() == 2));
+		// Castling destinations
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 1));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 1));
+
+		verify(from);
+	}
 }
