@@ -516,6 +516,31 @@ The selected promotion piece for a pawn reaching the final rank.
   - **Expected output**: Move is accepted as legal en passant; method returns `true`.
   - **Test name**: `isLegalMove_enPassantHelperTrue_returnsTrue`---
 
+- **TC15: Pawn moves two squares forward after already moved** ( :x: )
+  - **State of the system**: Source square contains a current-player pawn with `hasMoved() = true`. The pawn attempts to move two ranks forward to an empty destination.
+  - **Expected output**: Move is rejected because a pawn can only move two squares forward before it has moved; method returns `false`.
+  - **Test name**: `isLegalMove_pawnTwoForwardAfterMoved_returnsFalse`
+
+- **TC16: Pawn moves two squares forward before moved and path is clear** ( :white_check_mark: )
+  - **State of the system**: Source square contains a current-player pawn with `hasMoved() = false`. The pawn moves two ranks forward, the intermediate square is empty, and the destination square is empty.
+  - **Expected output**: Move is accepted; method returns `true`.
+  - **Test name**: `isLegalMove_pawnTwoForwardBeforeMovedPathClear_validMove`
+
+- **TC17: Pawn moves forward into occupied square** ( :x: )
+  - **State of the system**: Source square contains a current-player pawn. The pawn moves straight forward, but the destination square is occupied.
+  - **Expected output**: Move is rejected because pawns cannot move forward into an occupied square; method returns `false`.
+  - **Test name**: `isLegalMove_pawnForwardToOccupied_returnsFalse`
+
+- **TC18: Pawn moves diagonally to empty square without en passant** ( :x: )
+  - **State of the system**: Source square contains a current-player pawn. The pawn moves diagonally, the destination square is empty, and `isEnpassantLegal(move, model)` returns `false`.
+  - **Expected output**: Move is rejected because a normal diagonal pawn move must capture; method returns `false`.
+  - **Test name**: `isLegalMove_pawnDiagonalToEmptyWithoutEnPassant_returnsFalse`
+
+- **TC19: Pawn moves diagonally to opponent piece** ( :white_check_mark: )
+  - **State of the system**: Source square contains a current-player pawn. The pawn moves diagonally and the destination square contains an opponent piece.
+  - **Expected output**: Move is accepted as a legal pawn capture; method returns `true`.
+  - **Test name**: `isLegalMove_pawnDiagonalToOpponent_validCapture`
+
 ## Method under test: `RulesEngine.getLegalMoves(GameState state, Square from)`
 
 ### TC34: Legal Moves From Null State
