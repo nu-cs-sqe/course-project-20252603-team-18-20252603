@@ -271,4 +271,25 @@ public class KingTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC12: from Square Is Not A Candidate
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_interiorSquare_excludesFromSquare() {
+		King king = new King(Color.WHITE);
+		king.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(king);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = king.getLegalMoveDestinationSquares(from);
+
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 4));
+
+		verify(from);
+	}
 }
