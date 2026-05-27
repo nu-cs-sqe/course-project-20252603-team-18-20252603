@@ -1,15 +1,13 @@
 package domain;
 
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.mock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 class RulesEngineTest {
@@ -779,6 +777,7 @@ class RulesEngineTest {
 
 	@Test
 	void getLegalMoves_nullState_throwsException() {
+		// TC34
 		RulesEngine rulesEngine = new RulesEngine();
 		Square from = mock(Square.class);
 		replay(from);
@@ -791,6 +790,7 @@ class RulesEngineTest {
 
 	@Test
 	void getLegalMoves_nullFrom_throwsException() {
+		// TC35
 		GameModel model = mock(GameModel.class);
 		replay(model);
 
@@ -804,6 +804,7 @@ class RulesEngineTest {
 
 	@Test
 	void getLegalMoves_emptySquare_returnsEmptyList() {
+		// TC36
 		GameModel model = mock(GameModel.class);
 		Square from = mock(Square.class);
 
@@ -821,6 +822,7 @@ class RulesEngineTest {
 
 	@Test
 	void getLegalMoves_opponentPiece_returnsEmptyList() {
+		// TC37
 		GameModel model = mock(GameModel.class);
 		Square from = mock(Square.class);
 		Piece opponentPiece = mock(Piece.class);
@@ -837,6 +839,72 @@ class RulesEngineTest {
 		assertTrue(result.isEmpty());
 
 		verify(model, from, opponentPiece);
+	}
+
+	@Test
+	void getLegalMoves_pieceAtA1_staysWithinBounds() {
+		// TC38
+		GameModel model = mock(GameModel.class);
+		Board board = mock(Board.class);
+		Square from = mock(Square.class);
+		Piece rook = mock(Piece.class);
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getBoard()).andReturn(board).anyTimes();
+		expect(from.getOccupant()).andReturn(rook).anyTimes();
+		expect(from.getFile()).andReturn('a').anyTimes();
+		expect(from.getRank()).andReturn(1).anyTimes();
+		expect(rook.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(rook.getType()).andReturn(PieceType.ROOK).anyTimes();
+		expect(rook.hasMoved()).andReturn(true).anyTimes();
+
+		List<Square> candidates = new ArrayList<>();
+		for (char f = 'b'; f <= 'h'; f++) {
+			Square sq = mock(Square.class);
+			expect(sq.getFile()).andReturn(f).anyTimes();
+			expect(sq.getRank()).andReturn(1).anyTimes();
+			candidates.add(sq);
+			replay(sq);
+		}
+		for (int r = 2; r <= 8; r++) {
+			Square sq = mock(Square.class);
+			expect(sq.getFile()).andReturn('a').anyTimes();
+			expect(sq.getRank()).andReturn(r).anyTimes();
+			candidates.add(sq);
+			replay(sq);
+		}
+
+		expect(rook.getLegalMoveDestinationSquares(from)).andReturn(candidates).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				Square sq = mock(Square.class);
+				boolean isOrigin = (file == 'a' && rank == 1);
+				expect(sq.getFile()).andReturn(file).anyTimes();
+				expect(sq.getRank()).andReturn(rank).anyTimes();
+				expect(sq.getOccupant()).andReturn(isOrigin ? rook : null).anyTimes();
+				expect(sq.isEmpty()).andReturn(!isOrigin).anyTimes();
+				sq.setOccupant(anyObject());
+				expectLastCall().anyTimes();
+				expect(board.getSquare(file, rank)).andReturn(sq).anyTimes();
+				replay(sq);
+			}
+		}
+
+		replay(model, board, from, rook);
+
+		RulesEngine rulesEngine = new RulesEngine();
+		List<Square> result = rulesEngine.getLegalMoves(model, from);
+
+		assertFalse(result.isEmpty());
+		for (Square sq : result) {
+			assertTrue(sq.getFile() >= 'a' && sq.getFile() <= 'h',
+					"File out of bounds: " + sq.getFile());
+			assertTrue(sq.getRank() >= 1 && sq.getRank() <= 8,
+					"Rank out of bounds: " + sq.getRank());
+		}
+
+		verify(model, board, from, rook);
 	}
 
 	// Methods Under Test: isInCheck

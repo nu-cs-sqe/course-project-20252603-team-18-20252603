@@ -2,6 +2,7 @@ package domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RulesEngine {
 
@@ -196,7 +197,15 @@ public class RulesEngine {
 			throw new IllegalArgumentException("'from' Square cannot be null");
 		}
 
-		List<Square> legalMoves = new ArrayList<>();
-		return legalMoves;
+		Piece piece = from.getOccupant();
+
+		if (piece == null || piece.getColor() != model.getCurrentTurn()) {
+			return new ArrayList<>();
+		}
+
+		return piece.getLegalMoveDestinationSquares(from)
+				.stream()
+				.filter(to -> isLegalMove(Move.create(piece, from, to), model))
+				.collect(Collectors.toList());
 	}
 }
