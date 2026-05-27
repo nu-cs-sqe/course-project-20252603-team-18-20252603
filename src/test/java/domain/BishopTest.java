@@ -165,6 +165,29 @@ public class BishopTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC8: Bishop From Minimum File Interior Square Has No Left Diagonals
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_bishopFromFileA_hasNoLeftDiagonals() {
+		Bishop bishop = new Bishop(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(bishop);
+		expect(from.getFile()).andReturn('a').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = bishop.getLegalMoveDestinationSquares(from);
+
+		assertTrue(containsSquare(candidates, 'b', 5));
+		assertTrue(containsSquare(candidates, 'b', 3));
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() < 'a'));
+		assertEquals(7, candidates.size());
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
