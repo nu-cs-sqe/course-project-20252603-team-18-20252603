@@ -43,6 +43,6 @@ public class RulesEngine {
 			return false;
 		}
 
-		return false;
+		return true;
 	}
 }
