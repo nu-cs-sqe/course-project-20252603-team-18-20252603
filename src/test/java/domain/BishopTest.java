@@ -11,6 +11,7 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BishopTest {
 
@@ -86,6 +87,26 @@ public class BishopTest {
 		assertFalse(containsSquare(candidates, 'd', 3));
 		assertFalse(containsSquare(candidates, 'e', 4));
 		assertFalse(containsSquare(candidates, 'c', 4));
+
+		verify(from);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC5: Bishop From Center Returns Correct Candidate Count
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_bishopFromCenter_returnsCorrectCandidateCount() {
+		Bishop bishop = new Bishop(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(bishop);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = bishop.getLegalMoveDestinationSquares(from);
+
+		assertEquals(13, candidates.size());
 
 		verify(from);
 	}
