@@ -32,6 +32,11 @@ public class RulesEngine {
 		}
 
 		Square to = move.getTo();
+
+		if (isCastlingLegal(move, model)) {
+			return true;
+		}
+
 		Square toBoardSquare = board.getSquare(
 				to.getFile(),
 				to.getRank()
@@ -96,5 +101,13 @@ public class RulesEngine {
 	protected boolean isInCheck(GameModel model, Color color) {
 		return false;
 		// TODO
+		// Given model and color, return if king is in check
+	}
+
+	protected boolean isCastlingLegal(Move move, GameModel model) {
+		return false;
+		// TODO
+		// Given Move, validate if move is castling shaped
+		// Are all Castling conditions legal?
 	}
 }
