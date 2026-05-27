@@ -188,6 +188,29 @@ public class BishopTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC9: Bishop From Maximum File Interior Square Has No Right Diagonals
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_bishopFromFileH_hasNoRightDiagonals() {
+		Bishop bishop = new Bishop(Color.BLACK);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(bishop);
+		expect(from.getFile()).andReturn('h').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = bishop.getLegalMoveDestinationSquares(from);
+
+		assertTrue(containsSquare(candidates, 'g', 5));
+		assertTrue(containsSquare(candidates, 'g', 3));
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() > 'h'));
+		assertEquals(7, candidates.size());
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
