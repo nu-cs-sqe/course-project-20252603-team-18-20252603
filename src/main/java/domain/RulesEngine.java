@@ -7,7 +7,10 @@ public class RulesEngine {
 			return false;
 		}
 
+		if (model == null) {
+			return false;
+		}
+
 		return false;
 	}
-
 }

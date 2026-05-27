@@ -27,6 +27,20 @@ class RulesEngineTest {
 		EasyMock.verify(model);
 	}
 
+	@Test
+	void isLegalMove_nullModel_returnsFalse() {
+		// Arrange
+		RulesEngine rulesEngine = new RulesEngine();
+		Move move = EasyMock.createMock(Move.class);
+
+		EasyMock.replay(move);
+		boolean result = rulesEngine.isLegalMove(move, null);
+
+		assertFalse(result);
+
+		EasyMock.verify(move);
+	}
+
 
 	// Methods Under Test: getLegalMoves
 	// Methods Under Test: isInCheck
