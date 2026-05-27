@@ -36,6 +36,15 @@ public class King extends Piece {
 				}
 			}
 		}
+
+		if (hasMoved() == false) {
+			final char LEFTCASTLEFILE = 'c';
+			final char RIGHTCASTLEFILE = 'g';
+			final int BOTTOMCASTLERANK = 1;
+			legalDestinationSquares.add(Square.create(LEFTCASTLEFILE, BOTTOMCASTLERANK));
+			legalDestinationSquares.add(Square.create(RIGHTCASTLEFILE, BOTTOMCASTLERANK));
+		}
+
 		return legalDestinationSquares;
 	}
 }
