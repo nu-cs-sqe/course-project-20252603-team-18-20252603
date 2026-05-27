@@ -10,6 +10,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class BishopTest {
 
@@ -62,6 +63,29 @@ public class BishopTest {
 		assertTrue(containsSquare(candidates, 'e', 3));
 		assertTrue(containsSquare(candidates, 'c', 5));
 		assertTrue(containsSquare(candidates, 'c', 3));
+
+		verify(from);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC4: Bishop From Center Excludes Orthogonal Squares
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_bishopFromCenter_excludesOrthogonalSquares() {
+		Bishop bishop = new Bishop(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(bishop);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = bishop.getLegalMoveDestinationSquares(from);
+
+		assertFalse(containsSquare(candidates, 'd', 5));
+		assertFalse(containsSquare(candidates, 'd', 3));
+		assertFalse(containsSquare(candidates, 'e', 4));
+		assertFalse(containsSquare(candidates, 'c', 4));
 
 		verify(from);
 	}
