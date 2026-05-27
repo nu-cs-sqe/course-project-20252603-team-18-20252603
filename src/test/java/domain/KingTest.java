@@ -292,4 +292,28 @@ public class KingTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC13: All Returned Squares Are Within Board Bounds
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_cornerA1_allCandidatesInBounds() {
+		King king = new King(Color.WHITE);
+		king.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(king);
+		expect(from.getFile()).andReturn('a').anyTimes();
+		expect(from.getRank()).andReturn(1).anyTimes();
+		replay(from);
+
+		List<Square> candidates = king.getLegalMoveDestinationSquares(from);
+
+		for (Square candidate : candidates) {
+			assertTrue(candidate.getFile() >= 'a' && candidate.getFile() <= 'h');
+			assertTrue(candidate.getRank() >= 1 && candidate.getRank() <= 8);
+		}
+
+		verify(from);
+	}
 }
