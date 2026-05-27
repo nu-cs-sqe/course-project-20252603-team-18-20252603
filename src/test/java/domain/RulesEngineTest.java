@@ -41,7 +41,6 @@ class RulesEngineTest {
 		EasyMock.verify(move);
 	}
 
-
 	// Methods Under Test: getLegalMoves
 	// Methods Under Test: isInCheck
 	// Methods Under Test: isSquareAttacked
