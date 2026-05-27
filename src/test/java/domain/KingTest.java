@@ -380,4 +380,26 @@ public class KingTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC17: Black King — Castling Destination Candidates Absent After Having Moved
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_blackKingHasMoved_excludesCastlingDestinations() {
+		King king = new King(Color.BLACK);
+		king.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(king);
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(8).anyTimes();
+		replay(from);
+
+		List<Square> candidates = king.getLegalMoveDestinationSquares(from);
+
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 8));
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 8));
+
+		verify(from);
+	}
 }
