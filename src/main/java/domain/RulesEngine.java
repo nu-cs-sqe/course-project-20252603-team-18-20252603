@@ -114,8 +114,9 @@ public class RulesEngine {
 	private static final int WHITE_PAWN_DIRECTION = 1;
 	private static final int BLACK_PAWN_DIRECTION = -1;
 	private static final int SAME_FILE_DISTANCE = 0;
-	private static final int PAWN_INITIAL_MOVE_DISTANCE = 2;
 	private static final int PAWN_SINGLE_MOVE_DISTANCE = 1;
+	private static final int PAWN_INITIAL_MOVE_DISTANCE = 2;
+	private static final int PAWN_DIAGONAL_FILE_DISTANCE = 1;
 
 	private boolean isNormalPawnMoveLegal(
 			Piece pawn,
@@ -132,6 +133,7 @@ public class RulesEngine {
 		int rankDifference = to.getRank() - from.getRank();
 
 		boolean isStraightMove = fileDifference == SAME_FILE_DISTANCE;
+		boolean isDiagonalMove = Math.abs(fileDifference) == PAWN_DIAGONAL_FILE_DISTANCE;
 		boolean isOneForward = rankDifference == direction * PAWN_SINGLE_MOVE_DISTANCE;
 		boolean isTwoForward = rankDifference == direction * PAWN_INITIAL_MOVE_DISTANCE;
 
@@ -152,7 +154,12 @@ public class RulesEngine {
 			return intermediateSquare.isEmpty() && toBoardSquare.isEmpty();
 		}
 
-		return true;
+		if (isDiagonalMove && isOneForward) {
+			return !toBoardSquare.isEmpty()
+					&& toBoardSquare.getOccupant().getColor() != pawn.getColor();
+		}
+
+		return false;
 	}
 
 	protected boolean isInCheck(GameModel model, Color color) {
