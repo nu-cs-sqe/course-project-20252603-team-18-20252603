@@ -12,7 +12,6 @@ public class RulesEngine {
 		}
 
 		Square from = move.getFrom();
-
 		Square fromBoardSquare = model.getBoard().getSquare(
 				from.getFile(),
 				from.getRank()
@@ -21,6 +20,10 @@ public class RulesEngine {
 		Piece piece = fromBoardSquare.getOccupant();
 
 		if (piece == null) {
+			return false;
+		}
+
+		if (piece.getColor() != model.getCurrentTurn()) {
 			return false;
 		}
 
