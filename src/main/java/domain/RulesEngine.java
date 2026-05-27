@@ -2,8 +2,12 @@ package domain;
 
 public class RulesEngine {
 
-	public boolean isLegalMove(GameModel model, Move move) {
-	}
+	public boolean isLegalMove(Move move, GameModel model) {
+		if (move == null) {
+			return false;
+		}
 
+		return false;
+	}
 
 }
