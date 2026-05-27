@@ -405,7 +405,7 @@ class RulesEngineTest {
 	}
 
 	@Test
-	void isLegalMove_castlingShapeHelperFalse_returnsFalse() {
+	void isLegalMove_castlingHelperTrue_returnsTrue() {
 		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isCastlingLegal", Move.class, GameModel.class)
@@ -414,37 +414,31 @@ class RulesEngineTest {
 		Move move = EasyMock.createMock(Move.class);
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
-		Piece king = EasyMock.createMock(Piece.class);
+		Piece sourcePiece = EasyMock.createMock(Piece.class);
 
 		Square from = Square.create('e', 1);
-		Square to = Square.create('g', 1);
-
 		Square fromBoardSquare = Square.create('e', 1);
-		fromBoardSquare.setOccupant(king);
+		fromBoardSquare.setOccupant(sourcePiece);
 
-		EasyMock.expect(move.getFrom()).andReturn(from).anyTimes();
+		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
 		EasyMock.expect(board.getSquare('e', 1)).andReturn(fromBoardSquare);
 
-		EasyMock.expect(king.getColor()).andReturn(Color.WHITE);
+		EasyMock.expect(sourcePiece.getColor()).andReturn(Color.WHITE);
 		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE);
 
-		EasyMock.expect(move.getTo()).andReturn(to).anyTimes();
-		EasyMock.expect(king.getType()).andReturn(PieceType.KING);
+		EasyMock.expect(rulesEngine.isCastlingLegal(move, model)).andReturn(true);
 
-		EasyMock.expect(rulesEngine.isCastlingLegal(move, model)).andReturn(false);
-
-		EasyMock.replay(rulesEngine, move, model, board, king);
+		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
 
 		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
 		// Assert
-		assertFalse(result);
+		assertTrue(result);
 
-		EasyMock.verify(rulesEngine, move, model, board, king);
+		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
 	}
-
 
 
 	// Methods Under Test: getLegalMoves

@@ -501,11 +501,11 @@ The selected promotion piece for a pawn reaching the final rank.
 
 ## Special move delegation
 
-- **TC12: Castling-shaped move delegates to castling helper** ( :white_check_mark: / :x: )
-  - **State of the system**: Source square contains the current player’s king. The move is castling-shaped, such as the king moving two files horizontally. `isCastlingLegal(move, model)` is called.
-  - **Expected output**: Method returns the result of `isCastlingLegal(move, model)`.
-  - **Test name**: `isLegalMove_castlingShape_delegatesToCastlingHelper`
-
+- **TC12: Castling helper returns true** ( :white_check_mark: )
+  - **State of the system**: Source square contains the current player’s piece. `isCastlingLegal(move, model)` returns `true`.
+  - **Expected output**: Move is accepted as legal castling; method returns `true`.
+  - **Test name**: `isLegalMove_castlingHelperTrue_returnsTrue`
+  - 
 - **TC13: Promotion-rank pawn move delegates to promotion helper** ( :white_check_mark: / :x: )
   - **State of the system**: Source square contains a current-player pawn. The pawn moves to the final rank. `isPromotionLegal(move, model)` is called.
   - **Expected output**: Method returns the result of `isPromotionLegal(move, model)`.

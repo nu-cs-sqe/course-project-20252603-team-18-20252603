@@ -31,11 +31,11 @@ public class RulesEngine {
 			return false;
 		}
 
-		Square to = move.getTo();
-
 		if (isCastlingLegal(move, model)) {
 			return true;
 		}
+
+		Square to = move.getTo();
 
 		Square toBoardSquare = board.getSquare(
 				to.getFile(),
