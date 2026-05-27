@@ -129,6 +129,7 @@ class RulesEngineTest {
 		EasyMock.expect(move.getTo()).andReturn(to);
 		EasyMock.expect(board.getSquare('e', 3)).andReturn(toBoardSquare);
 		EasyMock.expect(destinationPiece.getColor()).andReturn(Color.WHITE);
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT).anyTimes();
 
 		EasyMock.replay(move, model, board, sourcePiece, destinationPiece);
 
@@ -171,7 +172,7 @@ class RulesEngineTest {
 		EasyMock.expect(move.getTo()).andReturn(to);
 		EasyMock.expect(board.getSquare('e', 3)).andReturn(toBoardSquare);
 		EasyMock.expect(destinationPiece.getColor()).andReturn(Color.BLACK);
-		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT);
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT).anyTimes();
 
 		EasyMock.replay(move, model, board, sourcePiece, destinationPiece);
 
@@ -211,7 +212,7 @@ class RulesEngineTest {
 
 		EasyMock.expect(move.getTo()).andReturn(to);
 		EasyMock.expect(board.getSquare('e', 3)).andReturn(toBoardSquare);
-		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT);
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT).anyTimes();
 
 		EasyMock.replay(move, model, board, sourcePiece);
 
@@ -255,7 +256,7 @@ class RulesEngineTest {
 		EasyMock.expect(move.getTo()).andReturn(to);
 		EasyMock.expect(board.getSquare('a', 4)).andReturn(toBoardSquare);
 
-		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.ROOK);
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.ROOK).anyTimes();
 		EasyMock.expect(board.getSquare('a', 2)).andReturn(intermediateSquare);
 
 		EasyMock.replay(move, model, board, sourcePiece, blockerPiece);
@@ -299,7 +300,7 @@ class RulesEngineTest {
 		EasyMock.expect(move.getTo()).andReturn(to);
 		EasyMock.expect(board.getSquare('a', 4)).andReturn(toBoardSquare);
 
-		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.ROOK);
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.ROOK).anyTimes();
 		EasyMock.expect(board.getSquare('a', 2)).andReturn(intermediateSquareOne);
 		EasyMock.expect(board.getSquare('a', 3)).andReturn(intermediateSquareTwo);
 
@@ -344,7 +345,7 @@ class RulesEngineTest {
 		EasyMock.expect(move.getTo()).andReturn(to).anyTimes();
 		EasyMock.expect(board.getSquare('f', 2)).andReturn(toBoardSquare).anyTimes();
 
-		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT);
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT).anyTimes();
 
 		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(true);
 
@@ -389,7 +390,7 @@ class RulesEngineTest {
 		EasyMock.expect(move.getTo()).andReturn(to).anyTimes();
 		EasyMock.expect(board.getSquare('f', 2)).andReturn(toBoardSquare).anyTimes();
 
-		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT);
+		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT).anyTimes();
 
 		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(false);
 
@@ -510,6 +511,56 @@ class RulesEngineTest {
 		assertTrue(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
+	}
+
+	@Test
+	void isLegalMove_pawnTwoForwardAfterMoved_returnsFalse() {
+		// Arrange
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isCastlingLegal", Move.class, GameModel.class)
+				.addMockedMethod("isPromotionLegal", Move.class, GameModel.class)
+				.addMockedMethod("isEnpassantLegal", Move.class, GameModel.class)
+				.createMock();
+
+		Move move = EasyMock.createMock(Move.class);
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece pawn = EasyMock.createMock(Piece.class);
+
+		Square from = Square.create('e', 2);
+		Square to = Square.create('e', 4);
+
+		Square fromBoardSquare = Square.create('e', 2);
+		Square toBoardSquare = Square.create('e', 4);
+
+		fromBoardSquare.setOccupant(pawn);
+
+		EasyMock.expect(move.getFrom()).andReturn(from);
+		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.expect(board.getSquare('e', 2)).andReturn(fromBoardSquare);
+
+		EasyMock.expect(pawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE);
+
+		EasyMock.expect(rulesEngine.isCastlingLegal(move, model)).andReturn(false);
+		EasyMock.expect(rulesEngine.isPromotionLegal(move, model)).andReturn(false);
+		EasyMock.expect(rulesEngine.isEnpassantLegal(move, model)).andReturn(false);
+
+		EasyMock.expect(move.getTo()).andReturn(to);
+		EasyMock.expect(board.getSquare('e', 4)).andReturn(toBoardSquare);
+
+		EasyMock.expect(pawn.getType()).andReturn(PieceType.PAWN);
+		EasyMock.expect(pawn.hasMoved()).andReturn(true);
+
+		EasyMock.replay(rulesEngine, move, model, board, pawn);
+
+		// Act
+		boolean result = rulesEngine.isLegalMove(move, model);
+
+		// Assert
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, move, model, board, pawn);
 	}
 
 	// Methods Under Test: getLegalMoves
