@@ -234,6 +234,29 @@ public class BishopTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC11: Bishop From Maximum Rank Interior Square Has No Upward Diagonals
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_bishopFromRank8_hasNoUpwardDiagonals() {
+		Bishop bishop = new Bishop(Color.BLACK);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(bishop);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(8).anyTimes();
+		replay(from);
+
+		List<Square> candidates = bishop.getLegalMoveDestinationSquares(from);
+
+		assertTrue(containsSquare(candidates, 'e', 7));
+		assertTrue(containsSquare(candidates, 'c', 7));
+		assertFalse(candidates.stream().anyMatch(s -> s.getRank() > 8));
+		assertEquals(7, candidates.size());
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
