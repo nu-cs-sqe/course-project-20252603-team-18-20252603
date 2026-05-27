@@ -175,4 +175,28 @@ public class KingTest {
 
 		verify(from);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC8: King at Corner a1 — Minimum Candidate Count
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_cornerA1_returnsThreeCandidates() {
+		King king = new King(Color.WHITE);
+		king.markMoved();
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(king);
+		expect(from.getFile()).andReturn('a').anyTimes();
+		expect(from.getRank()).andReturn(1).anyTimes();
+		replay(from);
+
+		List<Square> candidates = king.getLegalMoveDestinationSquares(from);
+
+		assertEquals(3, candidates.size());
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 1));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'a' && s.getRank() == 2));
+		assertTrue(candidates.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 2));
+
+		verify(from);
+	}
 }
