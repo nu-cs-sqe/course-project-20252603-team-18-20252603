@@ -138,6 +138,33 @@ public class BishopTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC7: Bishop From Maximum Corner h8 Contains Only Down-Left Diagonal
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_bishopFromH8_containsOnlyDownLeftDiagonal() {
+		Bishop bishop = new Bishop(Color.BLACK);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(bishop);
+		expect(from.getFile()).andReturn('h').anyTimes();
+		expect(from.getRank()).andReturn(8).anyTimes();
+		replay(from);
+
+		List<Square> candidates = bishop.getLegalMoveDestinationSquares(from);
+
+		assertEquals(7, candidates.size());
+		assertTrue(containsSquare(candidates, 'g', 7));
+		assertTrue(containsSquare(candidates, 'f', 6));
+		assertTrue(containsSquare(candidates, 'e', 5));
+		assertTrue(containsSquare(candidates, 'd', 4));
+		assertTrue(containsSquare(candidates, 'c', 3));
+		assertTrue(containsSquare(candidates, 'b', 2));
+		assertTrue(containsSquare(candidates, 'a', 1));
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
