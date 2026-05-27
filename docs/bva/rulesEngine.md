@@ -440,208 +440,106 @@ The selected promotion piece for a pawn reaching the final rank.
 
 # Step 4: Test Cases
 
-## Method under test: `RulesEngine.isLegalMove(GameState state, Move move)`
-
-### TC1: Valid Standard Pawn Move
-
-* **State of the system**: White pawn on `e2`, `currentTurn = WHITE`, destination `e3` is empty.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_validPawnSingleStep_returnsTrue`
-
-### TC2: Valid Pawn Double Move From Starting Rank
-
-* **State of the system**: White pawn on `e2`, destination `e4` is empty, and `e3` is also empty.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_validPawnDoubleStepFromStart_returnsTrue`
-
-### TC3: Invalid Pawn Double Move Not From Starting Rank
-
-* **State of the system**: White pawn on `e3`, destination `e5` is empty.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_pawnDoubleStepNotFromStart_returnsFalse`
-
-### TC4: Invalid Pawn Forward Move Into Occupied Square
-
-* **State of the system**: White pawn on `e2`, another piece occupies `e3`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_pawnForwardIntoOccupiedSquare_returnsFalse`
-
-### TC5: Valid Pawn Diagonal Capture
-
-* **State of the system**: White pawn on `e4`, black piece on `f5`.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_validPawnDiagonalCapture_returnsTrue`
-
-### TC6: Invalid Pawn Diagonal Move Without Capture
-
-* **State of the system**: White pawn on `e4`, destination `f5` is empty, and no en passant target exists.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_pawnDiagonalWithoutCapture_returnsFalse`
-
-### TC7: Invalid Pawn Backward Move
-
-* **State of the system**: White pawn on `e4`, destination `e3`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_pawnBackwardMove_returnsFalse`
-
-### TC8: Valid Knight Move From Board Center
-
-* **State of the system**: White knight on `d4`, destination `f5` is empty.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_validKnightMove_returnsTrue`
-
-### TC9: Invalid Knight Non-L Move
-
-* **State of the system**: White knight on `d4`, destination `d5`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_invalidKnightNonLMove_returnsFalse`
-
-### TC10: Knight Can Jump Over Pieces
-
-* **State of the system**: White knight on `b1`, pieces occupy surrounding squares, destination `c3` is empty.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_knightJumpsOverPieces_returnsTrue`
-
-### TC11: Valid Bishop Diagonal Move
-
-* **State of the system**: White bishop on `c1`, clear path to `g5`.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_validBishopDiagonalMove_returnsTrue`
-
-### TC12: Invalid Bishop Straight Move
-
-* **State of the system**: White bishop on `c1`, destination `c4`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_bishopStraightMove_returnsFalse`
-
-### TC13: Invalid Bishop Move With Blocked Path
-
-* **State of the system**: White bishop on `c1`, piece on `d2`, destination `e3`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_bishopBlockedPath_returnsFalse`
-
-### TC14: Valid Rook Horizontal Move
-
-* **State of the system**: White rook on `a1`, clear path to `h1`.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_validRookHorizontalMove_returnsTrue`
-
-### TC15: Valid Rook Vertical Move
-
-* **State of the system**: White rook on `a1`, clear path to `a8`.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_validRookVerticalMove_returnsTrue`
-
-### TC16: Invalid Rook Diagonal Move
-
-* **State of the system**: White rook on `a1`, destination `b2`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_rookDiagonalMove_returnsFalse`
-
-### TC17: Invalid Rook Move With Blocked Path
-
-* **State of the system**: White rook on `a1`, piece on `a4`, destination `a8`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_rookBlockedPath_returnsFalse`
-
-### TC18: Valid Queen Diagonal Move
-
-* **State of the system**: White queen on `d1`, clear path to `h5`.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_validQueenDiagonalMove_returnsTrue`
-
-### TC19: Valid Queen Straight Move
-
-* **State of the system**: White queen on `d1`, clear path to `d8`.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_validQueenStraightMove_returnsTrue`
-
-### TC20: Invalid Queen Knight-Like Move
-
-* **State of the system**: White queen on `d1`, destination `f2`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_queenKnightLikeMove_returnsFalse`
-
-### TC21: Valid King One-Square Move
-
-* **State of the system**: White king on `e1`, destination `e2` is empty and not attacked.
-* **Expected output**: Returns `true`.
-* **Implemented at**: `isLegalMove_validKingOneSquareMove_returnsTrue`
-
-### TC22: Invalid King Two-Square Non-Castle Move
-
-* **State of the system**: White king on `e1`, destination `e3`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_kingTwoSquareNonCastleMove_returnsFalse`
-
-### TC23: Invalid King Move Into Check
-
-* **State of the system**: White king on `e1`, black rook attacks `e2`, and White attempts `Ke2`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_kingMovesIntoCheck_returnsFalse`
-
-### TC24: Invalid Move Leaving Own King In Check
-
-* **State of the system**: White king on `e1`, white rook on `e2`, black rook on `e8`. White attempts to move rook from
-  `e2` to `a2`, exposing the King.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_moveExposesOwnKing_returnsFalse`
-
-### TC25: Invalid Move When Moving Opponent Piece
-
-* **State of the system**: `currentTurn = WHITE`, selected piece is a black knight on `g8`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_movingOpponentPiece_returnsFalse`
-
-### TC26: Invalid Move Capturing Own Piece
-
-* **State of the system**: White rook on `a1`, white knight on `a4`, White attempts `Ra1-a4`.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_captureOwnPiece_returnsFalse`
-
-### TC27: Invalid Move Capturing King
-
-* **State of the system**: White queen has line of sight to black King. Move attempts to capture the black King
-  directly.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_captureKing_returnsFalse`
-
-### TC28: Null GameState
-
-* **State of the system**: `state = null`, valid move object.
-* **Expected output**: Throws `IllegalArgumentException`.
-* **Implemented at**: `isLegalMove_nullState_throwsException`
-
-### TC29: Null Move
-
-* **State of the system**: Valid `GameState`, `move = null`.
-* **Expected output**: Throws `IllegalArgumentException`.
-* **Implemented at**: `isLegalMove_nullMove_throwsException`
-
-### TC30: Move From Empty Square
-
-* **State of the system**: `from = e4`, and square `e4` is empty.
-* **Expected output**: Returns `false`.
-* **Implemented at**: `isLegalMove_fromEmptySquare_returnsFalse`
-
-### TC31: Move To Same Square
-
-* **State of the system**: White bishop on `c1`, move from `c1` to `c1`.
-* **Expected output**: Returns `false` or throws `IllegalArgumentException`, depending on implementation.
-* **Implemented at**: `isLegalMove_sameFromAndTo_returnsFalse`
-
-### TC32: Destination Out of Bounds Below Minimum
-
-* **State of the system**: White rook on `a1`, destination equivalent to `a0`.
-* **Expected output**: Throws `IllegalArgumentException` or returns `false`.
-* **Implemented at**: `isLegalMove_destinationRankZero_returnsFalse`
-
-### TC33: Destination Out of Bounds Above Maximum
-
-* **State of the system**: White rook on `h8`, destination equivalent to `h9`.
-* **Expected output**: Throws `IllegalArgumentException` or returns `false`.
-* **Implemented at**: `isLegalMove_destinationRankNine_returnsFalse`
-
+## Method under test: `isLegalMove(Move move, GameModel model)`
+
+- **TC1: Move is null** ( :x: )
+  - **State of the system**: System calls `isLegalMove(...)` with `move = null`, and a valid `GameModel`.
+  - **Expected output**: Move is rejected because there is no move to validate; method returns `false`.
+  - **Test name**: `isLegalMove_nullMove_returnsFalse`
+
+- **TC2: Game model is null** ( :x: )
+  - **State of the system**: System calls `isLegalMove(...)` with a valid `Move`, but `model = null`.
+  - **Expected output**: Move is rejected because board and game state cannot be accessed; method returns `false`.
+  - **Test name**: `isLegalMove_nullModel_returnsFalse`
+
+- **TC3: Source square is outside board** ( :x: )
+  - **State of the system**: System calls `isLegalMove(...)` with `from` outside the board boundary, such as a file/rank below the minimum or above the maximum.
+  - **Expected output**: Move is rejected because the source square cannot be accessed on the board; method returns `false`.
+  - **Test name**: `isLegalMove_fromSquareOutsideBoard_returnsFalse`
+
+- **TC4: Destination square is outside board** ( :x: )
+  - **State of the system**: System calls `isLegalMove(...)` with `to` outside the board boundary, such as a file/rank below the minimum or above the maximum.
+  - **Expected output**: Move is rejected because the destination square is not on the board; method returns `false`.
+  - **Test name**: `isLegalMove_toSquareOutsideBoard_returnsFalse`
+
+- **TC5: Source square is on board boundary and contains current player piece** ( :white_check_mark: )
+  - **State of the system**: A current-player piece is placed on a board boundary square, such as file `A`, file `H`, rank `1`, or rank `8`. The destination is also valid and the move is otherwise legal.
+  - **Expected output**: Move is accepted as a legal boundary-square move; method returns `true`.
+  - **Test name**: `isLegalMove_fromSquareOnBoardBoundary_validMove`
+
+- **TC6: Destination square is on board boundary** ( :white_check_mark: )
+  - **State of the system**: A current-player piece moves from a valid source square to a board boundary square, such as file `A`, file `H`, rank `1`, or rank `8`. The destination is empty or contains an opponent piece, and the move is otherwise legal.
+  - **Expected output**: Move is accepted because destination boundary squares are valid board squares; method returns `true`.
+  - **Test name**: `isLegalMove_toSquareOnBoardBoundary_validMove`
+
+- **TC7: Source square exists but contains no piece** ( :x: )
+  - **State of the system**: `model.getBoard().getSquare(from.getFile(), from.getRank() + 1)` returns a valid square, but that square has no piece.
+  - **Expected output**: Move is rejected because there is no piece to move; method returns `false`.
+  - **Test name**: `isLegalMove_emptyFromSquare_returnsFalse`
+
+- **TC8: Source square contains opponent piece** ( :x: )
+  - **State of the system**: The source square contains a piece whose color does not match the current player.
+  - **Expected output**: Move is rejected because the player cannot move the opponent’s piece; method returns `false`.
+  - **Test name**: `isLegalMove_fromSquareHasOpponentPiece_returnsFalse`
+
+- **TC9: Destination is not in generated move destinations** ( :x: )
+  - **State of the system**: Source square contains a current-player piece, but the destination square is not included in that piece’s `getLegalMoveDestinationSquares(...)` result.
+  - **Expected output**: Move is rejected because the piece cannot move to that destination by its basic movement pattern; method returns `false`.
+  - **Test name**: `isLegalMove_destinationNotInGeneratedSquares_returnsFalse`
+
+- **TC10: Destination is in generated move destinations** ( :white_check_mark: )
+  - **State of the system**: Source square contains a current-player piece, and the destination square is included in that piece’s `getLegalMoveDestinationSquares(...)` result. The board state does not block the move.
+  - **Expected output**: Move passes the piece movement validation and returns `true` if the rest of the validations pass.
+  - **Test name**: `isLegalMove_destinationInGeneratedSquares_validMove`
+
+- **TC11: Destination contains own piece** ( :x: )
+  - **State of the system**: Source square contains a current-player piece and the destination square contains another piece of the same color.
+  - **Expected output**: Move is rejected because a piece cannot move onto its own piece; method returns `false`.
+  - **Test name**: `isLegalMove_destinationHasOwnPiece_returnsFalse`
+
+- **TC12: Destination contains opponent piece** ( :white_check_mark: )
+  - **State of the system**: Source square contains a current-player piece and the destination square contains an opponent piece. The move is otherwise legal for that piece.
+  - **Expected output**: Move is accepted as a valid capture; method returns `true`.
+  - **Test name**: `isLegalMove_destinationHasOpponentPiece_validCapture`
+
+- **TC13: Sliding piece path is blocked before destination** ( :x: )
+  - **State of the system**: Source square contains a rook, bishop, or queen. The destination is in the generated destination list, but another piece is located between the source and destination.
+  - **Expected output**: Move is rejected because sliding pieces cannot jump over blockers; method returns `false`.
+  - **Test name**: `isLegalMove_slidingPathBlocked_returnsFalse`
+
+- **TC14: Sliding piece path is clear** ( :white_check_mark: )
+  - **State of the system**: Source square contains a rook, bishop, or queen. The destination is in the generated destination list, and all squares between source and destination are empty.
+  - **Expected output**: Move is accepted if all other validations pass; method returns `true`.
+  - **Test name**: `isLegalMove_slidingPathClear_validMove`
+
+- **TC15: Move exposes own king to check** ( :x: )
+  - **State of the system**: Source square contains a current-player piece that is currently blocking an opponent attack line. Moving that piece would leave the current player’s king in check.
+  - **Expected output**: Move is rejected because a player cannot make a move that leaves their own king in check; method returns `false`.
+  - **Test name**: `isLegalMove_moveExposesOwnKing_returnsFalse`
+
+- **TC16: Move keeps own king safe** ( :white_check_mark: )
+  - **State of the system**: Source square contains a current-player piece. After the move is hypothetically applied, the current player’s king is not in check.
+  - **Expected output**: Move is accepted if all other validations pass; method returns `true`.
+  - **Test name**: `isLegalMove_moveKeepsKingSafe_validMove`
+
+---
+
+## Special move delegation
+
+- **TC17: Castling-shaped move delegates to castling helper** ( :white_check_mark: / :x: )
+  - **State of the system**: Source square contains the current player’s king. The move is castling-shaped, such as the king moving two files horizontally. `isCastlingLegal(move, model)` is called.
+  - **Expected output**: Method returns the result of `isCastlingLegal(move, model)`.
+  - **Test name**: `isLegalMove_castlingShape_delegatesToCastlingHelper`
+
+- **TC18: Promotion-rank pawn move delegates to promotion helper** ( :white_check_mark: / :x: )
+  - **State of the system**: Source square contains a current-player pawn. The pawn moves to the final rank. `isPromotionLegal(move, model)` is called.
+  - **Expected output**: Method returns the result of `isPromotionLegal(move, model)`.
+  - **Test name**: `isLegalMove_promotionRank_delegatesToPromotionHelper`
+
+- **TC19: En passant-shaped move delegates to en passant helper** ( :white_check_mark: / :x: )
+  - **State of the system**: Source square contains a current-player pawn. The pawn moves diagonally into an empty square. `isEnpassantLegal(move, model)` is called.
+  - **Expected output**: Method returns the result of `isEnpassantLegal(move, model)`.
+  - **Test name**: `isLegalMove_enPassantShape_delegatesToEnPassantHelper`
 ---
 
 ## Method under test: `RulesEngine.getLegalMoves(GameState state, Square from)`
