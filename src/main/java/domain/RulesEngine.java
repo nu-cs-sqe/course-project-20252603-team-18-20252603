@@ -115,6 +115,7 @@ public class RulesEngine {
 	private static final int BLACK_PAWN_DIRECTION = -1;
 	private static final int SAME_FILE_DISTANCE = 0;
 	private static final int PAWN_INITIAL_MOVE_DISTANCE = 2;
+	private static final int PAWN_SINGLE_MOVE_DISTANCE = 1;
 
 	private boolean isNormalPawnMoveLegal(
 			Piece pawn,
@@ -131,7 +132,12 @@ public class RulesEngine {
 		int rankDifference = to.getRank() - from.getRank();
 
 		boolean isStraightMove = fileDifference == SAME_FILE_DISTANCE;
+		boolean isOneForward = rankDifference == direction * PAWN_SINGLE_MOVE_DISTANCE;
 		boolean isTwoForward = rankDifference == direction * PAWN_INITIAL_MOVE_DISTANCE;
+
+		if (isStraightMove && isOneForward) {
+			return toBoardSquare.isEmpty();
+		}
 
 		if (isStraightMove && isTwoForward) {
 			if (pawn.hasMoved()) {

@@ -618,6 +618,57 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, move, model, board, pawn);
 	}
 
+	@Test
+	void isLegalMove_pawnForwardToOccupied_returnsFalse() {
+		// Arrange
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isCastlingLegal", Move.class, GameModel.class)
+				.addMockedMethod("isPromotionLegal", Move.class, GameModel.class)
+				.addMockedMethod("isEnpassantLegal", Move.class, GameModel.class)
+				.createMock();
+
+		Move move = EasyMock.createMock(Move.class);
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece pawn = EasyMock.createMock(Piece.class);
+		Piece blockingPiece = EasyMock.createMock(Piece.class);
+
+		Square from = Square.create('e', 2);
+		Square to = Square.create('e', 3);
+
+		Square fromBoardSquare = Square.create('e', 2);
+		Square toBoardSquare = Square.create('e', 3);
+
+		fromBoardSquare.setOccupant(pawn);
+		toBoardSquare.setOccupant(blockingPiece);
+
+		EasyMock.expect(move.getFrom()).andReturn(from).anyTimes();
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(board.getSquare('e', 2)).andReturn(fromBoardSquare).anyTimes();
+
+		EasyMock.expect(pawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+
+		EasyMock.expect(rulesEngine.isCastlingLegal(move, model)).andReturn(false);
+		EasyMock.expect(rulesEngine.isPromotionLegal(move, model)).andReturn(false);
+		EasyMock.expect(rulesEngine.isEnpassantLegal(move, model)).andReturn(false);
+
+		EasyMock.expect(move.getTo()).andReturn(to).anyTimes();
+		EasyMock.expect(board.getSquare('e', 3)).andReturn(toBoardSquare).anyTimes();
+
+		EasyMock.expect(pawn.getType()).andReturn(PieceType.PAWN).anyTimes();
+
+		EasyMock.replay(rulesEngine, move, model, board, pawn, blockingPiece);
+
+		// Act
+		boolean result = rulesEngine.isLegalMove(move, model);
+
+		// Assert
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, move, model, board, pawn, blockingPiece);
+	}
+
 	// Methods Under Test: getLegalMoves
 	// Methods Under Test: isInCheck
 	// Methods Under Test: isSquareAttacked
