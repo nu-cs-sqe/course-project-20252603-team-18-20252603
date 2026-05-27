@@ -41,6 +41,33 @@ class RulesEngineTest {
 		EasyMock.verify(move);
 	}
 
+	@Test
+	void isLegalMove_emptyFromSquare_returnsFalse() {
+		// Arrange
+		RulesEngine rulesEngine = new RulesEngine();
+
+		Move move = EasyMock.createMock(Move.class);
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+
+		Square from = Square.create('e', 2);
+		Square fromBoardSquare = Square.create('e', 2);
+
+		EasyMock.expect(move.getFrom()).andReturn(from);
+		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.expect(board.getSquare('e', 2)).andReturn(fromBoardSquare);
+
+		EasyMock.replay(move, model, board);
+
+		// Act
+		boolean result = rulesEngine.isLegalMove(move, model);
+
+		// Assert
+		assertFalse(result);
+
+		EasyMock.verify(move, model, board);
+	}
+
 	// Methods Under Test: getLegalMoves
 	// Methods Under Test: isInCheck
 	// Methods Under Test: isSquareAttacked
