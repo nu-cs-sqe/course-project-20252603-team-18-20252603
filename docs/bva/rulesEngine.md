@@ -467,27 +467,32 @@ The selected promotion piece for a pawn reaching the final rank.
   - **Expected output**: Move is rejected because a piece cannot move onto its own piece; method returns `false`.
   - **Test name**: `isLegalMove_destinationHasOwnPiece_returnsFalse`
 
-- **TC6: Destination contains opponent piece** ( :white_check_mark: )
+- **TC6: Valid move to empty destination** ( :x: )
+  - **state of the system**: Source square contains a current-player piece and the destination square does not contain another piece
+  - **Expected output**: Move is accepted as a valid move; method returns `true`.
+  - **Test name**: `isLegalMove_emptyDestinationSquare_validMove`
+
+- **TC7: Destination contains opponent piece** ( :white_check_mark: )
   - **State of the system**: Source square contains a current-player piece and the destination square contains an opponent piece. The move is otherwise legal for that piece.
   - **Expected output**: Move is accepted as a valid capture; method returns `true`.
   - **Test name**: `isLegalMove_destinationHasOpponentPiece_validCapture`
 
-- **TC7: Sliding piece path is blocked before destination** ( :x: )
+- **TC8: Sliding piece path is blocked before destination** ( :x: )
   - **State of the system**: Source square contains a rook, bishop, or queen. The destination is in the generated destination list, but another piece is located between the source and destination.
   - **Expected output**: Move is rejected because sliding pieces cannot jump over blockers; method returns `false`.
   - **Test name**: `isLegalMove_slidingPathBlocked_returnsFalse`
 
-- **TC8: Sliding piece path is clear** ( :white_check_mark: )
+- **TC9: Sliding piece path is clear** ( :white_check_mark: )
   - **State of the system**: Source square contains a rook, bishop, or queen. The destination is in the generated destination list, and all squares between source and destination are empty.
   - **Expected output**: Move is accepted if all other validations pass; method returns `true`.
   - **Test name**: `isLegalMove_slidingPathClear_validMove`
 
-- **TC9: Move exposes own king to check** ( :x: )
+- **TC10: Move exposes own king to check** ( :x: )
   - **State of the system**: Source square contains a current-player piece that is currently blocking an opponent attack line. Moving that piece would leave the current player’s king in check.
   - **Expected output**: Move is rejected because a player cannot make a move that leaves their own king in check; method returns `false`.
   - **Test name**: `isLegalMove_moveExposesOwnKing_returnsFalse`
 
-- **TC10: Move keeps own king safe** ( :white_check_mark: )
+- **TC11: Move keeps own king safe** ( :white_check_mark: )
   - **State of the system**: Source square contains a current-player piece. After the move is hypothetically applied, the current player’s king is not in check.
   - **Expected output**: Move is accepted if all other validations pass; method returns `true`.
   - **Test name**: `isLegalMove_moveKeepsKingSafe_validMove`
@@ -496,17 +501,17 @@ The selected promotion piece for a pawn reaching the final rank.
 
 ## Special move delegation
 
-- **TC11: Castling-shaped move delegates to castling helper** ( :white_check_mark: / :x: )
+- **TC12: Castling-shaped move delegates to castling helper** ( :white_check_mark: / :x: )
   - **State of the system**: Source square contains the current player’s king. The move is castling-shaped, such as the king moving two files horizontally. `isCastlingLegal(move, model)` is called.
   - **Expected output**: Method returns the result of `isCastlingLegal(move, model)`.
   - **Test name**: `isLegalMove_castlingShape_delegatesToCastlingHelper`
 
-- **TC12: Promotion-rank pawn move delegates to promotion helper** ( :white_check_mark: / :x: )
+- **TC13: Promotion-rank pawn move delegates to promotion helper** ( :white_check_mark: / :x: )
   - **State of the system**: Source square contains a current-player pawn. The pawn moves to the final rank. `isPromotionLegal(move, model)` is called.
   - **Expected output**: Method returns the result of `isPromotionLegal(move, model)`.
   - **Test name**: `isLegalMove_promotionRank_delegatesToPromotionHelper`
 
-- **TC13: En passant-shaped move delegates to en passant helper** ( :white_check_mark: / :x: )
+- **TC14: En passant-shaped move delegates to en passant helper** ( :white_check_mark: / :x: )
   - **State of the system**: Source square contains a current-player pawn. The pawn moves diagonally into an empty square. `isEnpassantLegal(move, model)` is called.
   - **Expected output**: Method returns the result of `isEnpassantLegal(move, model)`.
   - **Test name**: `isLegalMove_enPassantShape_delegatesToEnPassantHelper`
