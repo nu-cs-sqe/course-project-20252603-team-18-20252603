@@ -2,29 +2,29 @@ package domain;
 
 public interface GameModel {
 
-    Board getBoard();
+	Board getBoard();
 
-    Player[] getPlayers();
+	Player[] getPlayers();
 
-    Color getCurrentTurn();
+	Color getCurrentTurn();
 
-    GameStatus getStatus();
+	GameStatus getStatus();
 
-    Move[] getMoveHistory();
+	Move[] getMoveHistory();
 
-    void initGame();
+	void initGame();
 
-    Square[] getLegalMoves(Square square);
+	Square[] getLegalMoves(Square square);
 
-    void applyMove(Move move);
+	void applyMove(Move move);
 
-    void setBoard(Board board);
+	void setBoard(Board board);
 
-    void setPlayers(Player[] players);
+	void setPlayers(Player[] players);
 
-    void setCurrentTurn(Color currentTurn);
+	void setCurrentTurn(Color currentTurn);
 
-    void setStatus(GameStatus status);
+	void setStatus(GameStatus status);
 
-    void setMoveHistory(Move[] moveHistory);
+	void setMoveHistory(Move[] moveHistory);
 }

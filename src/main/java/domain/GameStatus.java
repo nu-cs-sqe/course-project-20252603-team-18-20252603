@@ -1,8 +1,8 @@
 package domain;
 
 public enum GameStatus {
-    ONGOING,
-    CHECK,
-    CHECKMATE,
-    STALEMATE
+	ONGOING,
+	CHECK,
+	CHECKMATE,
+	STALEMATE
 }
