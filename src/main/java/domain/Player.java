@@ -2,7 +2,7 @@ package domain;
 
 public interface Player {
 
-    Color getColor();
+	Color getColor();
 
-    Piece[] getCapturedPieces();
+	Piece[] getCapturedPieces();
 }
