@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 class RulesEngineTest {
 
@@ -144,7 +145,9 @@ class RulesEngineTest {
 	@Test
 	void isLegalMove_destinationHasOpponentPiece_validCapture() {
 		// Arrange
-		RulesEngine rulesEngine = new RulesEngine();
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
 
 		Move move = EasyMock.createMock(Move.class);
 		GameModel model = EasyMock.createMock(GameModel.class);
@@ -173,7 +176,9 @@ class RulesEngineTest {
 		EasyMock.expect(destinationPiece.getColor()).andReturn(Color.BLACK);
 		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT).anyTimes();
 
-		EasyMock.replay(move, model, board, sourcePiece, destinationPiece);
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(false);
+
+		EasyMock.replay(rulesEngine, move, model, board, sourcePiece, destinationPiece);
 
 		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
@@ -181,13 +186,15 @@ class RulesEngineTest {
 		// Assert
 		assertTrue(result);
 
-		EasyMock.verify(move, model, board, sourcePiece, destinationPiece);
+		EasyMock.verify(rulesEngine, move, model, board, sourcePiece, destinationPiece);
 	}
 
 	@Test
 	void isLegalMove_emptyDestinationSquare_validMove() {
 		// Arrange
-		RulesEngine rulesEngine = new RulesEngine();
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
 
 		Move move = EasyMock.createMock(Move.class);
 		GameModel model = EasyMock.createMock(GameModel.class);
@@ -213,7 +220,9 @@ class RulesEngineTest {
 		EasyMock.expect(board.getSquare('e', 3)).andReturn(toBoardSquare);
 		EasyMock.expect(sourcePiece.getType()).andReturn(PieceType.KNIGHT).anyTimes();
 
-		EasyMock.replay(move, model, board, sourcePiece);
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(false);
+
+		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
 
 		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
@@ -221,7 +230,7 @@ class RulesEngineTest {
 		// Assert
 		assertTrue(result);
 
-		EasyMock.verify(move, model, board, sourcePiece);
+		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
 	}
 
 	@Test
@@ -272,7 +281,9 @@ class RulesEngineTest {
 	@Test
 	void isLegalMove_slidingPathClear_validMove() {
 		// Arrange
-		RulesEngine rulesEngine = new RulesEngine();
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
 
 		Move move = EasyMock.createMock(Move.class);
 		GameModel model = EasyMock.createMock(GameModel.class);
@@ -303,7 +314,9 @@ class RulesEngineTest {
 		EasyMock.expect(board.getSquare('a', 2)).andReturn(intermediateSquareOne);
 		EasyMock.expect(board.getSquare('a', 3)).andReturn(intermediateSquareTwo);
 
-		EasyMock.replay(move, model, board, sourcePiece);
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(false);
+
+		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
 
 		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
@@ -311,7 +324,7 @@ class RulesEngineTest {
 		// Assert
 		assertTrue(result);
 
-		EasyMock.verify(move, model, board, sourcePiece);
+		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
 	}
 
 	@Test
