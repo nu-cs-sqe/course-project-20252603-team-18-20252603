@@ -273,6 +273,26 @@ public class RookTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC12: Rook From Center Does Not Include Starting Square
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_rookFromCenter_excludesStartingSquare() {
+		Rook rook = new Rook(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(rook);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = rook.getLegalMoveDestinationSquares(from);
+
+		assertFalse(containsSquare(candidates, 'd', 4));
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
