@@ -1182,6 +1182,54 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model, board, whiteKing, blackKnight);
 	}
 
+	@Test
+	void isInCheck_attackedByPawn_returnsTrue() {
+		// TC46: King In Check By Pawn
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece whiteKing = EasyMock.createMock(Piece.class);
+		Piece blackPawn = EasyMock.createMock(Piece.class);
+
+		// White king e4, black pawn d5 — attacks diagonally forward (from black's perspective, downward)
+		Square kingSquare = Square.create('e', 4);
+		kingSquare.setOccupant(whiteKing);
+
+		Square pawnSquare = Square.create('d', 5);
+		pawnSquare.setOccupant(blackPawn);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
+		EasyMock.expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
+		EasyMock.expect(blackPawn.getType()).andReturn(PieceType.PAWN).anyTimes();
+		EasyMock.expect(blackPawn.getColor()).andReturn(Color.BLACK).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'e' && rank == 4) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(kingSquare).anyTimes();
+				} else if (file == 'd' && rank == 5) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(pawnSquare).anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+				}
+			}
+		}
+
+		EasyMock.expect(rulesEngine.isSquareAttacked(model, kingSquare, Color.BLACK)).andReturn(true);
+
+		EasyMock.replay(rulesEngine, model, board, whiteKing, blackPawn);
+
+		boolean result = rulesEngine.isInCheck(model, Color.WHITE);
+
+		assertTrue(result);
+
+		EasyMock.verify(rulesEngine, model, board, whiteKing, blackPawn);
+	}
+
 	// Methods Under Test: isSquareAttacked
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate
