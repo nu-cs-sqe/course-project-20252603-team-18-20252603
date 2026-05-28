@@ -249,6 +249,30 @@ public class RookTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC11: Rook From Maximum Rank Interior Square Has No Upward Candidates
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_rookFromRank8_hasNoUpwardCandidates() {
+		Rook rook = new Rook(Color.BLACK);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(rook);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(8).anyTimes();
+		replay(from);
+
+		List<Square> candidates = rook.getLegalMoveDestinationSquares(from);
+
+		assertTrue(containsSquare(candidates, 'e', 8));
+		assertTrue(containsSquare(candidates, 'c', 8));
+		assertTrue(containsSquare(candidates, 'd', 7));
+		assertFalse(candidates.stream().anyMatch(s -> s.getRank() > 8));
+		assertEquals(14, candidates.size());
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
