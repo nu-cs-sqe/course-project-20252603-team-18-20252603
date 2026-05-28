@@ -248,7 +248,7 @@ public class RulesEngine {
 					int rankDiff = Math.abs(rank - square.getRank());
 					boolean isDiagonal = fileDiff == rankDiff && fileDiff != 0;
 					boolean isStraight = (fileDiff == 0) != (rankDiff == 0);
-					if (isDiagonal || isStraight) {
+					if ((isDiagonal || isStraight) && !isPathBlocked(candidateSquare, square, board)) {
 						return true;
 					}
 				}
