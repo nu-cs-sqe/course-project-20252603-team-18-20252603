@@ -893,10 +893,21 @@ class RulesEngineTest {
 			for (int rank = 1; rank <= 8; rank++) {
 				Square sq = mock(Square.class);
 				boolean isOrigin = (file == 'a' && rank == 1);
+				boolean isKing = (file == 'e' && rank == 1);
 				expect(sq.getFile()).andReturn(file).anyTimes();
 				expect(sq.getRank()).andReturn(rank).anyTimes();
-				expect(sq.getOccupant()).andReturn(isOrigin ? rook : null).anyTimes();
-				expect(sq.isEmpty()).andReturn(!isOrigin).anyTimes();
+				if (isOrigin) {
+					expect(sq.getOccupant()).andReturn(rook).anyTimes();
+				} else if (isKing) {
+					Piece whiteKing = mock(Piece.class);
+					expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
+					expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
+					expect(sq.getOccupant()).andReturn(whiteKing).anyTimes();
+					replay(whiteKing);
+				} else {
+					expect(sq.getOccupant()).andReturn(null).anyTimes();
+				}
+				expect(sq.isEmpty()).andReturn(!isOrigin && !isKing).anyTimes();
 				sq.setOccupant(anyObject());
 				expectLastCall().anyTimes();
 				expect(board.getSquare(file, rank)).andReturn(sq).anyTimes();
@@ -958,15 +969,27 @@ class RulesEngineTest {
 		for (char file = 'a'; file <= 'h'; file++) {
 			for (int rank = 1; rank <= 8; rank++) {
 				boolean isOrigin = (file == 'h' && rank == 8);
+				boolean isKing = (file == 'e' && rank == 1);
 
 				if (isOrigin) {
-					// isLegalMove looks up the from square on the board, so the board must return the same mock so getOccupant() returns the rook
 					expect(from.isEmpty()).andReturn(false).anyTimes();
 					from.setOccupant(anyObject());
 					expectLastCall().anyTimes();
 					expect(board.getSquare('h', 8)).andReturn(from).anyTimes();
-				}
-				else {
+				} else if (isKing) {
+					Square sq = mock(Square.class);
+					Piece whiteKing = mock(Piece.class);
+					expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
+					expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
+					expect(sq.getFile()).andReturn(file).anyTimes();
+					expect(sq.getRank()).andReturn(rank).anyTimes();
+					expect(sq.getOccupant()).andReturn(whiteKing).anyTimes();
+					expect(sq.isEmpty()).andReturn(false).anyTimes();
+					sq.setOccupant(anyObject());
+					expectLastCall().anyTimes();
+					expect(board.getSquare(file, rank)).andReturn(sq).anyTimes();
+					replay(whiteKing, sq);
+				} else {
 					Square sq = mock(Square.class);
 					expect(sq.getFile()).andReturn(file).anyTimes();
 					expect(sq.getRank()).andReturn(rank).anyTimes();
@@ -1348,6 +1371,34 @@ class RulesEngineTest {
 		});
 
 		EasyMock.verify(model);
+	}
+
+	@Test
+	void isInCheck_missingKing_throwsException() {
+		// TC50: Missing King
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+
+		// No white king on the board — all squares are empty
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				EasyMock.expect(board.getSquare(file, rank))
+						.andReturn(Square.create(file, rank))
+						.anyTimes();
+			}
+		}
+
+		EasyMock.replay(model, board);
+
+		assertThrows(IllegalStateException.class, () -> {
+			rulesEngine.isInCheck(model, Color.WHITE);
+		});
+
+		EasyMock.verify(model, board);
 	}
 
 	// Methods Under Test: isSquareAttacked

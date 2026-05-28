@@ -190,7 +190,7 @@ public class RulesEngine {
 			}
 		}
 
-		return false;
+		throw new IllegalStateException("No " + color + " king found on the board");
 	}
 
 	protected boolean isSquareAttacked(GameModel model, Square square, Color color) {
