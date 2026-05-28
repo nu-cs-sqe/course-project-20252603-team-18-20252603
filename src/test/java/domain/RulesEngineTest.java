@@ -1508,6 +1508,44 @@ class RulesEngineTest {
 		EasyMock.verify(model, board, blackBishop);
 	}
 
+	@Test
+	void isSquareAttacked_targetH8_returnsTrue() {
+		// TC54: Attacked Square At Upper Boundary (h8)
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece blackBishop = EasyMock.createMock(Piece.class);
+
+		Square targetSquare = Square.create('h', 8);
+		Square bishopSquare = Square.create('g', 7);
+		bishopSquare.setOccupant(blackBishop);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(blackBishop.getType()).andReturn(PieceType.BISHOP).anyTimes();
+		EasyMock.expect(blackBishop.getColor()).andReturn(Color.BLACK).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'g' && rank == 7) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(bishopSquare).anyTimes();
+				} else if (file == 'h' && rank == 8) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+				}
+			}
+		}
+
+		EasyMock.replay(model, board, blackBishop);
+
+		boolean result = rulesEngine.isSquareAttacked(model, targetSquare, Color.BLACK);
+
+		assertTrue(result);
+
+		EasyMock.verify(model, board, blackBishop);
+	}
+
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate
 	// Methods Under Test: isCastlingLegal
