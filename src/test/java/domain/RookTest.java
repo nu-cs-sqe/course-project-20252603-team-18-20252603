@@ -143,6 +143,40 @@ public class RookTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC7: Rook From Maximum Corner h8 Contains Only Down And Left Lines
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_rookFromH8_containsOnlyDownAndLeftLines() {
+		Rook rook = new Rook(Color.BLACK);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(rook);
+		expect(from.getFile()).andReturn('h').anyTimes();
+		expect(from.getRank()).andReturn(8).anyTimes();
+		replay(from);
+
+		List<Square> candidates = rook.getLegalMoveDestinationSquares(from);
+
+		assertEquals(14, candidates.size());
+		assertTrue(containsSquare(candidates, 'g', 8));
+		assertTrue(containsSquare(candidates, 'f', 8));
+		assertTrue(containsSquare(candidates, 'e', 8));
+		assertTrue(containsSquare(candidates, 'd', 8));
+		assertTrue(containsSquare(candidates, 'c', 8));
+		assertTrue(containsSquare(candidates, 'b', 8));
+		assertTrue(containsSquare(candidates, 'a', 8));
+		assertTrue(containsSquare(candidates, 'h', 7));
+		assertTrue(containsSquare(candidates, 'h', 6));
+		assertTrue(containsSquare(candidates, 'h', 5));
+		assertTrue(containsSquare(candidates, 'h', 4));
+		assertTrue(containsSquare(candidates, 'h', 3));
+		assertTrue(containsSquare(candidates, 'h', 2));
+		assertTrue(containsSquare(candidates, 'h', 1));
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
