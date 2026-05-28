@@ -1817,6 +1817,44 @@ class RulesEngineTest {
 		EasyMock.verify(model, board, blackKing);
 	}
 
+	@Test
+	void isSquareAttacked_kingTooFar_returnsFalse() {
+		// TC63b: Black king on e3, two ranks from target e1 — outside king reach.
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece blackKing = EasyMock.createMock(Piece.class);
+
+		Square targetSquare = Square.create('e', 1);
+		Square kingSquare = Square.create('e', 3);
+		kingSquare.setOccupant(blackKing);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(blackKing.getType()).andReturn(PieceType.KING).anyTimes();
+		EasyMock.expect(blackKing.getColor()).andReturn(Color.BLACK).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'e' && rank == 3) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(kingSquare).anyTimes();
+				} else if (file == 'e' && rank == 1) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+				}
+			}
+		}
+
+		EasyMock.replay(model, board, blackKing);
+
+		boolean result = rulesEngine.isSquareAttacked(model, targetSquare, Color.BLACK);
+
+		assertFalse(result);
+
+		EasyMock.verify(model, board, blackKing);
+	}
+
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate
 	// Methods Under Test: isCastlingLegal
