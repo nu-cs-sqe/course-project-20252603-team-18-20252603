@@ -233,6 +233,15 @@ public class RulesEngine {
 						return true;
 					}
 				}
+
+				if (piece.getType() == PieceType.ROOK) {
+					int fileDiff = Math.abs(file - square.getFile());
+					int rankDiff = Math.abs(rank - square.getRank());
+					boolean isStraight = (fileDiff == 0) != (rankDiff == 0);
+					if (isStraight && !isPathBlocked(candidateSquare, square, board)) {
+						return true;
+					}
+				}
 			}
 		}
 
