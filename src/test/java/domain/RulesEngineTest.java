@@ -2008,6 +2008,50 @@ class RulesEngineTest {
 	}
 
 	// Methods Under Test: isCheckmate
+
+	@Test
+	void isCheckmate_kingInCheckNoLegalMoves_returnsTrue() {
+		// TC57: Checkmate Position
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.addMockedMethod("getLegalMoves", GameModel.class, Square.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece blackKing = EasyMock.createMock(Piece.class);
+
+		Square kingSquare = Square.create('h', 8);
+		kingSquare.setOccupant(blackKing);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(blackKing.getType()).andReturn(PieceType.KING).anyTimes();
+		EasyMock.expect(blackKing.getColor()).andReturn(Color.BLACK).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'h' && rank == 8) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(kingSquare).anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(Square.create(file, rank)).anyTimes();
+				}
+			}
+		}
+
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.BLACK)).andReturn(true);
+		EasyMock.expect(rulesEngine.getLegalMoves(EasyMock.eq(model), EasyMock.anyObject(Square.class)))
+				.andReturn(new ArrayList<>()).anyTimes();
+
+		EasyMock.replay(rulesEngine, model, board, blackKing);
+
+		boolean result = rulesEngine.isCheckmate(model, Color.BLACK);
+
+		assertTrue(result);
+
+		EasyMock.verify(rulesEngine, model, board, blackKing);
+	}
+
 	// Methods Under Test: isStalemate
 	// Methods Under Test: isCastlingLegal
 	// Methods Under Test: isEnPassantLegal

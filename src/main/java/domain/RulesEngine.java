@@ -193,6 +193,25 @@ public class RulesEngine {
 		throw new IllegalStateException("No " + color + " king found on the board");
 	}
 
+	public boolean isCheckmate(GameModel model, Color color) {
+		if (!isInCheck(model, color)) {
+			return false;
+		}
+
+		Board board = model.getBoard();
+
+		for (char file = MINFILE; file <= MAXFILE; file++) {
+			for (int rank = MINRANK; rank <= MAXRANK; rank++) {
+				Square square = board.getSquare(file, rank);
+				if (!getLegalMoves(model, square).isEmpty()) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
 	protected boolean isSquareAttacked(GameModel model, Square square, Color byColor) {
 		if (square == null) {
 			throw new IllegalArgumentException("'square' cannot be null");
