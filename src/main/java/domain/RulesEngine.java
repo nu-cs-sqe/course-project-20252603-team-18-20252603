@@ -242,6 +242,15 @@ public class RulesEngine {
 						return true;
 					}
 				}
+
+				if (piece.getType() == PieceType.QUEEN) {
+					int fileDiff = Math.abs(file - square.getFile());
+					int rankDiff = Math.abs(rank - square.getRank());
+					boolean isDiagonal = fileDiff == rankDiff && fileDiff != 0;
+					if (isDiagonal) {
+						return true;
+					}
+				}
 			}
 		}
 
