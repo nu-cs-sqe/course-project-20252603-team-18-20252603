@@ -1230,6 +1230,54 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model, board, whiteKing, blackPawn);
 	}
 
+	@Test
+	void isInCheck_attackedByAdjacentKing_returnsTrue() {
+		// TC47: King In Check By Adjacent King
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece whiteKing = EasyMock.createMock(Piece.class);
+		Piece blackKing = EasyMock.createMock(Piece.class);
+
+		// White king e4, black king e5 — adjacent; structurally illegal but boundary case
+		Square whiteKingSquare = Square.create('e', 4);
+		whiteKingSquare.setOccupant(whiteKing);
+
+		Square blackKingSquare = Square.create('e', 5);
+		blackKingSquare.setOccupant(blackKing);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
+		EasyMock.expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
+		EasyMock.expect(blackKing.getType()).andReturn(PieceType.KING).anyTimes();
+		EasyMock.expect(blackKing.getColor()).andReturn(Color.BLACK).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'e' && rank == 4) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(whiteKingSquare).anyTimes();
+				} else if (file == 'e' && rank == 5) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(blackKingSquare).anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+				}
+			}
+		}
+
+		EasyMock.expect(rulesEngine.isSquareAttacked(model, whiteKingSquare, Color.BLACK)).andReturn(true);
+
+		EasyMock.replay(rulesEngine, model, board, whiteKing, blackKing);
+
+		boolean result = rulesEngine.isInCheck(model, Color.WHITE);
+
+		assertTrue(result);
+
+		EasyMock.verify(rulesEngine, model, board, whiteKing, blackKing);
+	}
+
 	// Methods Under Test: isSquareAttacked
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate
