@@ -1855,6 +1855,44 @@ class RulesEngineTest {
 		EasyMock.verify(model, board, blackKing);
 	}
 
+	@Test
+	void isSquareAttacked_byWhitePawn_returnsTrue() {
+		// TC64b: White pawn on d4 attacks e5 diagonally forward.
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece whitePawn = EasyMock.createMock(Piece.class);
+
+		Square targetSquare = Square.create('e', 5);
+		Square pawnSquare = Square.create('d', 4);
+		pawnSquare.setOccupant(whitePawn);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(whitePawn.getType()).andReturn(PieceType.PAWN).anyTimes();
+		EasyMock.expect(whitePawn.getColor()).andReturn(Color.WHITE).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'd' && rank == 4) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(pawnSquare).anyTimes();
+				} else if (file == 'e' && rank == 5) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+				}
+			}
+		}
+
+		EasyMock.replay(model, board, whitePawn);
+
+		boolean result = rulesEngine.isSquareAttacked(model, targetSquare, Color.WHITE);
+
+		assertTrue(result);
+
+		EasyMock.verify(model, board, whitePawn);
+	}
+
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate
 	// Methods Under Test: isCastlingLegal

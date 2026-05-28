@@ -216,6 +216,16 @@ public class RulesEngine {
 					continue;
 				}
 
+				if (piece.getType() == PieceType.PAWN) {
+					int direction = piece.getColor() == Color.WHITE ? 1 : -1;
+					int fileDiff = Math.abs(file - square.getFile());
+					int rankDiff = square.getRank() - rank;
+					boolean isPawnAttack = fileDiff == 1 && rankDiff == direction;
+					if (isPawnAttack) {
+						return true;
+					}
+				}
+
 				if (piece.getType() == PieceType.KNIGHT) {
 					int fileDiff = Math.abs(file - square.getFile());
 					int rankDiff = Math.abs(rank - square.getRank());
