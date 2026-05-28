@@ -171,6 +171,10 @@ public class RulesEngine {
 	}
 
 	protected boolean isInCheck(GameModel model, Color color) {
+		if (color == null) {
+			throw new IllegalArgumentException("Opponent Color cannot be null");
+		}
+
 		Board board = model.getBoard();
 
 		for (char file = MINFILE; file <= MAXFILE; file++) {

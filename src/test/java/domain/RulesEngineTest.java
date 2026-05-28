@@ -1335,6 +1335,21 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model, board, whiteKing, whiteBishop, blackRook);
 	}
 
+	@Test
+	void isInCheck_nullColor_throwsException() {
+		// TC49: Null Color
+		RulesEngine rulesEngine = new RulesEngine();
+		GameModel model = EasyMock.createMock(GameModel.class);
+
+		EasyMock.replay(model);
+
+		assertThrows(IllegalArgumentException.class, () -> {
+			rulesEngine.isInCheck(model, null);
+		});
+
+		EasyMock.verify(model);
+	}
+
 	// Methods Under Test: isSquareAttacked
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate
