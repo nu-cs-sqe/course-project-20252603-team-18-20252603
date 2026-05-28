@@ -1402,6 +1402,45 @@ class RulesEngineTest {
 	}
 
 	// Methods Under Test: isSquareAttacked
+
+	@Test
+	void isSquareAttacked_byKnight_returnsTrue() {
+		// TC51: Square Attacked By Knight
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece blackKnight = EasyMock.createMock(Piece.class);
+
+		Square targetSquare = Square.create('e', 1);
+		Square knightSquare = Square.create('f', 3);
+		knightSquare.setOccupant(blackKnight);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(blackKnight.getType()).andReturn(PieceType.KNIGHT).anyTimes();
+		EasyMock.expect(blackKnight.getColor()).andReturn(Color.BLACK).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'f' && rank == 3) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(knightSquare).anyTimes();
+				} else if (file == 'e' && rank == 1) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+				}
+			}
+		}
+
+		EasyMock.replay(model, board, blackKnight);
+
+		boolean result = rulesEngine.isSquareAttacked(model, targetSquare, Color.BLACK);
+
+		assertTrue(result);
+
+		EasyMock.verify(model, board, blackKnight);
+	}
+
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate
 	// Methods Under Test: isCastlingLegal

@@ -193,10 +193,34 @@ public class RulesEngine {
 		throw new IllegalStateException("No " + color + " king found on the board");
 	}
 
-	protected boolean isSquareAttacked(GameModel model, Square square, Color color) {
+	protected boolean isSquareAttacked(GameModel model, Square square, Color byColor) {
+		Board board = model.getBoard();
+
+		final int SHORT_L_LEG = 1;
+		final int LONG_L_LEG = 2;
+
+		for (char file = MINFILE; file <= MAXFILE; file++) {
+			for (int rank = MINRANK; rank <= MAXRANK; rank++) {
+				Square candidateSquare = board.getSquare(file, rank);
+				Piece piece = candidateSquare.getOccupant();
+
+				if (piece == null || piece.getColor() != byColor) {
+					continue;
+				}
+
+				if (piece.getType() == PieceType.KNIGHT) {
+					int fileDiff = Math.abs(file - square.getFile());
+					int rankDiff = Math.abs(rank - square.getRank());
+					boolean isLShape = (fileDiff == LONG_L_LEG && rankDiff == SHORT_L_LEG)
+							|| (fileDiff == SHORT_L_LEG && rankDiff == LONG_L_LEG);
+					if (isLShape) {
+						return true;
+					}
+				}
+			}
+		}
+
 		return false;
-		// TODO
-		// Given GameModel, Square, and Color, check if the Square is being attacked by the Color
 	}
 
 	protected boolean isCastlingLegal(Move move, GameModel model) {
