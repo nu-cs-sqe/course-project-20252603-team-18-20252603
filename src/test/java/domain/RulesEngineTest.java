@@ -1019,6 +1019,62 @@ class RulesEngineTest {
 		verify(model, board, from, rook);
 	}
 
+	@Test
+	void getLegalMoves_pinnedPiece_excludesIllegalMoves() {
+		// TC40
+		RulesEngine rulesEngine = partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isLegalMove", Move.class, GameModel.class)
+				.createMock();
+
+		GameModel model = mock(GameModel.class);
+		Square from = mock(Square.class);
+		Piece whiteRook = mock(Piece.class);
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(from.getOccupant()).andReturn(whiteRook).anyTimes();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
+
+		expect(whiteRook.getColor()).andReturn(Color.WHITE).anyTimes();
+
+		List<Square> candidates = new ArrayList<>();
+		for (char f = 'a'; f <= 'h'; f++) {
+			if (f == 'e') continue;
+			Square sq = mock(Square.class);
+			expect(sq.getFile()).andReturn(f).anyTimes();
+			expect(sq.getRank()).andReturn(2).anyTimes();
+			candidates.add(sq);
+			replay(sq);
+		}
+		for (int r = 1; r <= 8; r++) {
+			if (r == 2) continue;
+			Square sq = mock(Square.class);
+			expect(sq.getFile()).andReturn('e').anyTimes();
+			expect(sq.getRank()).andReturn(r).anyTimes();
+			candidates.add(sq);
+			replay(sq);
+		}
+		expect(whiteRook.getLegalMoveDestinationSquares(from)).andReturn(candidates).anyTimes();
+
+		expect(rulesEngine.isLegalMove(anyObject(Move.class), eq(model)))
+				.andStubAnswer(() -> {
+					Move move = (Move) EasyMock.getCurrentArguments()[0];
+					return move.getTo().getFile() == 'e';
+				});
+
+		replay(rulesEngine, model, from, whiteRook);
+
+		List<Square> result = rulesEngine.getLegalMoves(model, from);
+
+		assertFalse(result.isEmpty());
+		for (Square sq : result) {
+			assertEquals('e', sq.getFile(),
+					"Pinned rook must not be allowed to move off the e-file");
+		}
+
+		verify(rulesEngine, model, from, whiteRook);
+	}
+
 	// Methods Under Test: isInCheck
 
 	@Test
