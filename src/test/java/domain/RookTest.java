@@ -201,6 +201,30 @@ public class RookTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC9: Rook From Maximum File Interior Square Has No Right Candidates
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_rookFromFileH_hasNoRightCandidates() {
+		Rook rook = new Rook(Color.BLACK);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(rook);
+		expect(from.getFile()).andReturn('h').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = rook.getLegalMoveDestinationSquares(from);
+
+		assertTrue(containsSquare(candidates, 'g', 4));
+		assertTrue(containsSquare(candidates, 'h', 5));
+		assertTrue(containsSquare(candidates, 'h', 3));
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() > 'h'));
+		assertEquals(14, candidates.size());
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
