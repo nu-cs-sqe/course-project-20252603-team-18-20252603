@@ -205,6 +205,7 @@ public class RulesEngine {
 
 		final int SHORT_L_LEG = 1;
 		final int LONG_L_LEG = 2;
+		final int MAX_KING_DELTA = 1;
 
 		for (char file = MINFILE; file <= MAXFILE; file++) {
 			for (int rank = MINRANK; rank <= MAXRANK; rank++) {
@@ -249,6 +250,16 @@ public class RulesEngine {
 					boolean isDiagonal = fileDiff == rankDiff && fileDiff != 0;
 					boolean isStraight = (fileDiff == 0) != (rankDiff == 0);
 					if ((isDiagonal || isStraight) && !isPathBlocked(candidateSquare, square, board)) {
+						return true;
+					}
+				}
+
+				if (piece.getType() == PieceType.KING) {
+					int fileDiff = Math.abs(file - square.getFile());
+					int rankDiff = Math.abs(rank - square.getRank());
+					boolean isAdjacent = fileDiff <= MAX_KING_DELTA && rankDiff <= MAX_KING_DELTA
+							&& !(fileDiff == 0 && rankDiff == 0);
+					if (isAdjacent) {
 						return true;
 					}
 				}
