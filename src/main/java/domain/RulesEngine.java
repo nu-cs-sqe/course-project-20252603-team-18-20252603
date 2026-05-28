@@ -247,7 +247,8 @@ public class RulesEngine {
 					int fileDiff = Math.abs(file - square.getFile());
 					int rankDiff = Math.abs(rank - square.getRank());
 					boolean isDiagonal = fileDiff == rankDiff && fileDiff != 0;
-					if (isDiagonal) {
+					boolean isStraight = (fileDiff == 0) != (rankDiff == 0);
+					if (isDiagonal || isStraight) {
 						return true;
 					}
 				}
