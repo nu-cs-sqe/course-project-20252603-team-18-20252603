@@ -225,6 +225,30 @@ public class RookTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC10: Rook From Minimum Rank Interior Square Has No Downward Candidates
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_rookFromRank1_hasNoDownwardCandidates() {
+		Rook rook = new Rook(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(rook);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(1).anyTimes();
+		replay(from);
+
+		List<Square> candidates = rook.getLegalMoveDestinationSquares(from);
+
+		assertTrue(containsSquare(candidates, 'e', 1));
+		assertTrue(containsSquare(candidates, 'c', 1));
+		assertTrue(containsSquare(candidates, 'd', 2));
+		assertFalse(candidates.stream().anyMatch(s -> s.getRank() < 1));
+		assertEquals(14, candidates.size());
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
