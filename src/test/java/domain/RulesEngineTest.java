@@ -1441,6 +1441,35 @@ class RulesEngineTest {
 		EasyMock.verify(model, board, blackKnight);
 	}
 
+	@Test
+	void isSquareAttacked_noAttackers_returnsFalse() {
+		// TC52: Square Not Attacked
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+
+		Square targetSquare = Square.create('e', 4);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				EasyMock.expect(board.getSquare(file, rank))
+						.andReturn(Square.create(file, rank))
+						.anyTimes();
+			}
+		}
+
+		EasyMock.replay(model, board);
+
+		boolean result = rulesEngine.isSquareAttacked(model, targetSquare, Color.BLACK);
+
+		assertFalse(result);
+
+		EasyMock.verify(model, board);
+	}
+
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate
 	// Methods Under Test: isCastlingLegal
