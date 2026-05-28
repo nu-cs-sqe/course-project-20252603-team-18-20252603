@@ -2097,6 +2097,57 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model, board, blackKing, kingSquare, escapeSquare);
 	}
 
+	@Test
+	void isCheckmate_checkCanBeBlocked_returnsFalse() {
+		// TC59: In Check But Can Block
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.addMockedMethod("getLegalMoves", GameModel.class, Square.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece blackKing = EasyMock.createMock(Piece.class);
+		Piece blackRook = EasyMock.createMock(Piece.class);
+
+		Square kingSquare = EasyMock.createMock(Square.class);
+		Square rookSquare = EasyMock.createMock(Square.class);
+		Square blockSquare = EasyMock.createMock(Square.class);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(blackKing.getType()).andReturn(PieceType.KING).anyTimes();
+		EasyMock.expect(blackKing.getColor()).andReturn(Color.BLACK).anyTimes();
+		EasyMock.expect(blackRook.getType()).andReturn(PieceType.ROOK).anyTimes();
+		EasyMock.expect(blackRook.getColor()).andReturn(Color.BLACK).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'e' && rank == 8) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(kingSquare).anyTimes();
+				} else if (file == 'a' && rank == 5) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(rookSquare).anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(Square.create(file, rank)).anyTimes();
+				}
+			}
+		}
+
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.BLACK)).andReturn(true);
+		EasyMock.expect(rulesEngine.getLegalMoves(model, rookSquare))
+				.andReturn(List.of(blockSquare)).anyTimes();
+		EasyMock.expect(rulesEngine.getLegalMoves(EasyMock.eq(model), EasyMock.anyObject(Square.class)))
+				.andReturn(new ArrayList<>()).anyTimes();
+
+		EasyMock.replay(rulesEngine, model, board, blackKing, blackRook, kingSquare, rookSquare, blockSquare);
+
+		boolean result = rulesEngine.isCheckmate(model, Color.BLACK);
+
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, model, board, blackKing, blackRook, kingSquare, rookSquare, blockSquare);
+	}
+
 	// Methods Under Test: isStalemate
 	// Methods Under Test: isCastlingLegal
 	// Methods Under Test: isEnPassantLegal
