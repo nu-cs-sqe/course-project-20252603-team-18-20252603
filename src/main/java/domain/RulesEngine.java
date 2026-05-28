@@ -197,6 +197,9 @@ public class RulesEngine {
 		if (square == null) {
 			throw new IllegalArgumentException("'square' cannot be null");
 		}
+		if (byColor == null) {
+			throw new IllegalArgumentException("'byColor' cannot be null");
+		}
 
 		Board board = model.getBoard();
 
