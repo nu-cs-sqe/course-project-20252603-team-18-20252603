@@ -177,6 +177,30 @@ public class RookTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC8: Rook From Minimum File Interior Square Has No Left Candidates
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_rookFromFileA_hasNoLeftCandidates() {
+		Rook rook = new Rook(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(rook);
+		expect(from.getFile()).andReturn('a').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = rook.getLegalMoveDestinationSquares(from);
+
+		assertTrue(containsSquare(candidates, 'b', 4));
+		assertTrue(containsSquare(candidates, 'a', 5));
+		assertTrue(containsSquare(candidates, 'a', 3));
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() < 'a'));
+		assertEquals(14, candidates.size());
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
