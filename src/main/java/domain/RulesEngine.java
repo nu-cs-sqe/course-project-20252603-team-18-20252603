@@ -216,59 +216,45 @@ public class RulesEngine {
 					continue;
 				}
 
+				int direction = piece.getColor() == Color.WHITE ? 1 : -1;
+				int fileDiff = Math.abs(file - square.getFile());
+				int rankDiff = Math.abs(rank - square.getRank());
+				int pawnRankDiff = square.getRank() - rank;
+
+				boolean isPawnAttack = fileDiff == 1 && pawnRankDiff == direction;
+				boolean isLShape = (fileDiff == LONG_L_LEG && rankDiff == SHORT_L_LEG)
+						|| (fileDiff == SHORT_L_LEG && rankDiff == LONG_L_LEG);
+				boolean isDiagonal = fileDiff == rankDiff && fileDiff != 0;
+				boolean isStraight = (fileDiff == 0) != (rankDiff == 0);
+				boolean isAdjacent = fileDiff <= MAX_KING_DELTA && rankDiff <= MAX_KING_DELTA
+						&& !(fileDiff == 0 && rankDiff == 0);
+
 				if (piece.getType() == PieceType.PAWN) {
-					int direction = piece.getColor() == Color.WHITE ? 1 : -1;
-					int fileDiff = Math.abs(file - square.getFile());
-					int rankDiff = square.getRank() - rank;
-					boolean isPawnAttack = fileDiff == 1 && rankDiff == direction;
 					if (isPawnAttack) {
 						return true;
 					}
 				}
-
-				if (piece.getType() == PieceType.KNIGHT) {
-					int fileDiff = Math.abs(file - square.getFile());
-					int rankDiff = Math.abs(rank - square.getRank());
-					boolean isLShape = (fileDiff == LONG_L_LEG && rankDiff == SHORT_L_LEG)
-							|| (fileDiff == SHORT_L_LEG && rankDiff == LONG_L_LEG);
+				else if (piece.getType() == PieceType.KNIGHT) {
 					if (isLShape) {
 						return true;
 					}
 				}
-
-				if (piece.getType() == PieceType.BISHOP) {
-					int fileDiff = Math.abs(file - square.getFile());
-					int rankDiff = Math.abs(rank - square.getRank());
-					boolean isDiagonal = fileDiff == rankDiff && fileDiff != 0;
+				else if (piece.getType() == PieceType.BISHOP) {
 					if (isDiagonal && !isPathBlocked(candidateSquare, square, board)) {
 						return true;
 					}
 				}
-
-				if (piece.getType() == PieceType.ROOK) {
-					int fileDiff = Math.abs(file - square.getFile());
-					int rankDiff = Math.abs(rank - square.getRank());
-					boolean isStraight = (fileDiff == 0) != (rankDiff == 0);
+				else if (piece.getType() == PieceType.ROOK) {
 					if (isStraight && !isPathBlocked(candidateSquare, square, board)) {
 						return true;
 					}
 				}
-
-				if (piece.getType() == PieceType.QUEEN) {
-					int fileDiff = Math.abs(file - square.getFile());
-					int rankDiff = Math.abs(rank - square.getRank());
-					boolean isDiagonal = fileDiff == rankDiff && fileDiff != 0;
-					boolean isStraight = (fileDiff == 0) != (rankDiff == 0);
+				else if (piece.getType() == PieceType.QUEEN) {
 					if ((isDiagonal || isStraight) && !isPathBlocked(candidateSquare, square, board)) {
 						return true;
 					}
 				}
-
-				if (piece.getType() == PieceType.KING) {
-					int fileDiff = Math.abs(file - square.getFile());
-					int rankDiff = Math.abs(rank - square.getRank());
-					boolean isAdjacent = fileDiff <= MAX_KING_DELTA && rankDiff <= MAX_KING_DELTA
-							&& !(fileDiff == 0 && rankDiff == 0);
+				else if (piece.getType() == PieceType.KING) {
 					if (isAdjacent) {
 						return true;
 					}
