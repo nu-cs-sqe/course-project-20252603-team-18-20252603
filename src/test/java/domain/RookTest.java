@@ -65,6 +65,29 @@ public class RookTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC4: Rook From Center Excludes Diagonal Squares
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_rookFromCenter_excludesDiagonalSquares() {
+		Rook rook = new Rook(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(rook);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = rook.getLegalMoveDestinationSquares(from);
+
+		assertFalse(containsSquare(candidates, 'e', 5));
+		assertFalse(containsSquare(candidates, 'e', 3));
+		assertFalse(containsSquare(candidates, 'c', 5));
+		assertFalse(containsSquare(candidates, 'c', 3));
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
