@@ -9,6 +9,7 @@ import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RookTest {
 
@@ -84,6 +85,26 @@ public class RookTest {
 		assertFalse(containsSquare(candidates, 'e', 3));
 		assertFalse(containsSquare(candidates, 'c', 5));
 		assertFalse(containsSquare(candidates, 'c', 3));
+
+		verify(from);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC5: Rook From Center Returns Correct Candidate Count
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_rookFromCenter_returnsCorrectCandidateCount() {
+		Rook rook = new Rook(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(rook);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = rook.getLegalMoveDestinationSquares(from);
+
+		assertEquals(14, candidates.size());
 
 		verify(from);
 	}

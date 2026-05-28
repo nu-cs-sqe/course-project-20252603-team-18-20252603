@@ -19,20 +19,22 @@ public class Rook extends Piece {
 
 		List<Square> legalMoves = new ArrayList<Square>();
 
-		char file = from.getFile();
-		int rank = from.getRank();
-
-		addSquareIfInBounds(legalMoves, (char) (file + 1), rank);
-		addSquareIfInBounds(legalMoves, (char) (file - 1), rank);
-		addSquareIfInBounds(legalMoves, file, rank + 1);
-		addSquareIfInBounds(legalMoves, file, rank - 1);
+		addStraightMoves(legalMoves, from, 1, 0);
+		addStraightMoves(legalMoves, from, -1, 0);
+		addStraightMoves(legalMoves, from, 0, 1);
+		addStraightMoves(legalMoves, from, 0, -1);
 
 		return legalMoves;
 	}
 
-	private void addSquareIfInBounds(List<Square> legalMoves, char file, int rank) {
-		if (file >= MINFILE && file <= MAXFILE && rank >= MINRANK && rank <= MAXRANK) {
+	private void addStraightMoves(List<Square> legalMoves, Square from, int fileDirection, int rankDirection) {
+		char file = (char) (from.getFile() + fileDirection);
+		int rank = from.getRank() + rankDirection;
+
+		while (file >= MINFILE && file <= MAXFILE && rank >= MINRANK && rank <= MAXRANK) {
 			legalMoves.add(Square.create(file, rank));
+			file = (char) (file + fileDirection);
+			rank += rankDirection;
 		}
 	}
 }
