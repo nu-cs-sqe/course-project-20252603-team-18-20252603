@@ -194,6 +194,10 @@ public class RulesEngine {
 	}
 
 	protected boolean isSquareAttacked(GameModel model, Square square, Color byColor) {
+		if (square == null) {
+			throw new IllegalArgumentException("'square' cannot be null");
+		}
+
 		Board board = model.getBoard();
 
 		final int SHORT_L_LEG = 1;

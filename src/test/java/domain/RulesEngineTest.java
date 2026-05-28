@@ -1546,6 +1546,21 @@ class RulesEngineTest {
 		EasyMock.verify(model, board, blackBishop);
 	}
 
+	@Test
+	void isSquareAttacked_nullSquare_throwsException() {
+		// TC55: Null Target Square
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		EasyMock.replay(model);
+
+		assertThrows(IllegalArgumentException.class, () -> {
+			rulesEngine.isSquareAttacked(model, null, Color.BLACK);
+		});
+
+		EasyMock.verify(model);
+	}
+
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate
 	// Methods Under Test: isCastlingLegal
