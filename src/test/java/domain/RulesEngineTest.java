@@ -2206,6 +2206,26 @@ class RulesEngineTest {
 				kingSquare, rookSquare, attackerSquare);
 	}
 
+	@Test
+	void isCheckmate_notInCheck_returnsFalse() {
+		// TC61: Not In Check
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(false);
+
+		EasyMock.replay(rulesEngine, model);
+
+		boolean result = rulesEngine.isCheckmate(model, Color.WHITE);
+
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, model);
+	}
+
 	// Methods Under Test: isStalemate
 	// Methods Under Test: isCastlingLegal
 	// Methods Under Test: isEnPassantLegal
