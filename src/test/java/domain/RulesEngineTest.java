@@ -1278,6 +1278,63 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model, board, whiteKing, blackKing);
 	}
 
+	@Test
+	void isInCheck_blockedSlidingAttack_returnsFalse() {
+		// TC48: Blocked Sliding Attack Does Not Count As Check
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece whiteKing = EasyMock.createMock(Piece.class);
+		Piece whiteBishop = EasyMock.createMock(Piece.class);
+		Piece blackRook = EasyMock.createMock(Piece.class);
+
+		// White king e1, white bishop e4 blocking, black rook e8
+		Square kingSquare = Square.create('e', 1);
+		kingSquare.setOccupant(whiteKing);
+
+		Square blockerSquare = Square.create('e', 4);
+		blockerSquare.setOccupant(whiteBishop);
+
+		Square rookSquare = Square.create('e', 8);
+		rookSquare.setOccupant(blackRook);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
+		EasyMock.expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
+		EasyMock.expect(whiteBishop.getType()).andReturn(PieceType.BISHOP).anyTimes();
+		EasyMock.expect(whiteBishop.getColor()).andReturn(Color.WHITE).anyTimes();
+		EasyMock.expect(blackRook.getType()).andReturn(PieceType.ROOK).anyTimes();
+		EasyMock.expect(blackRook.getColor()).andReturn(Color.BLACK).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'e' && rank == 1) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(kingSquare).anyTimes();
+				} else if (file == 'e' && rank == 4) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(blockerSquare).anyTimes();
+				} else if (file == 'e' && rank == 8) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(rookSquare).anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+				}
+			}
+		}
+
+		// isSquareAttacked is responsible for path-blocking logic; it returns false here
+		EasyMock.expect(rulesEngine.isSquareAttacked(model, kingSquare, Color.BLACK)).andReturn(false);
+
+		EasyMock.replay(rulesEngine, model, board, whiteKing, whiteBishop, blackRook);
+
+		boolean result = rulesEngine.isInCheck(model, Color.WHITE);
+
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, model, board, whiteKing, whiteBishop, blackRook);
+	}
+
 	// Methods Under Test: isSquareAttacked
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate
