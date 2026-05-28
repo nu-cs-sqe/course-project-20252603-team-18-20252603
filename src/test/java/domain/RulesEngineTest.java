@@ -1075,6 +1075,63 @@ class RulesEngineTest {
 		verify(rulesEngine, model, from, whiteRook);
 	}
 
+	@Test
+	void getLegalMoves_whenInCheck_returnsOnlyEscapeMoves() {
+		// TC41
+		RulesEngine rulesEngine = partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isLegalMove", Move.class, GameModel.class)
+				.createMock();
+
+		GameModel model = mock(GameModel.class);
+		Square from = mock(Square.class);
+		Piece whiteKing = mock(Piece.class);
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(from.getOccupant()).andReturn(whiteKing).anyTimes();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(1).anyTimes();
+
+		expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
+
+		List<Square> candidates = new ArrayList<>();
+		for (int df = -1; df <= 1; df++) {
+			for (int dr = -1; dr <= 1; dr++) {
+				if (df == 0 && dr == 0) continue;
+				char f = (char) ('e' + df);
+				int r = 1 + dr;
+				if (f < 'a' || f > 'h' || r < 1 || r > 8) continue;
+				Square sq = mock(Square.class);
+				expect(sq.getFile()).andReturn(f).anyTimes();
+				expect(sq.getRank()).andReturn(r).anyTimes();
+				candidates.add(sq);
+				replay(sq);
+			}
+		}
+		expect(whiteKing.getLegalMoveDestinationSquares(from)).andReturn(candidates).anyTimes();
+
+		// Moves back to e1 or to e-file squares still attacked by the black rook are illegal.
+		expect(rulesEngine.isLegalMove(anyObject(Move.class), eq(model)))
+				.andStubAnswer(() -> {
+					Move move = (Move) EasyMock.getCurrentArguments()[0];
+					char toFile = move.getTo().getFile();
+					int toRank = move.getTo().getRank();
+					return toFile != 'e';
+				});
+
+		replay(rulesEngine, model, from, whiteKing);
+
+		List<Square> result = rulesEngine.getLegalMoves(model, from);
+
+		assertFalse(result.isEmpty(),
+				"There must be at least one escape move from this check position");
+		for (Square sq : result) {
+			assertNotEquals('e', sq.getFile(),
+					"King must not move to a square still on the e-file while in check from e8");
+		}
+
+		verify(rulesEngine, model, from, whiteKing);
+	}
+
 	// Methods Under Test: isInCheck
 
 	@Test
