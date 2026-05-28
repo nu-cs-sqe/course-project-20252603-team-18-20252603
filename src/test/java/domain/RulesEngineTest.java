@@ -997,6 +997,48 @@ class RulesEngineTest {
 	}
 
 	// Methods Under Test: isInCheck
+
+	@Test
+	void isInCheck_kingNotAttacked_returnsFalse() {
+		// TC42: King Not In Check
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece whiteKing = EasyMock.createMock(Piece.class);
+
+		Square kingSquare = Square.create('e', 1);
+		kingSquare.setOccupant(whiteKing);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
+		EasyMock.expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
+
+		// Board setup: only e1 has a piece; all other squares are empty
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'e' && rank == 1) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(kingSquare).anyTimes();
+				} else {
+					Square empty = Square.create(file, rank);
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(empty).anyTimes();
+				}
+			}
+		}
+
+		EasyMock.expect(rulesEngine.isSquareAttacked(model, kingSquare, Color.BLACK)).andReturn(false);
+
+		EasyMock.replay(rulesEngine, model, board, whiteKing);
+
+		boolean result = rulesEngine.isInCheck(model, Color.WHITE);
+
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, model, board, whiteKing);
+	}
+
 	// Methods Under Test: isSquareAttacked
 	// Methods Under Test: isCheckmate
 	// Methods Under Test: isStalemate

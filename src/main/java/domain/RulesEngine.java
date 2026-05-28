@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RulesEngine {
+	protected static final char MINFILE = 'a';
+	protected static final char MAXFILE = 'h';
+	protected static final int MINRANK = 1;
+	protected static final int MAXRANK = 8;
 
 	public boolean isLegalMove(Move move, GameModel model) {
 		if (move == null) {
@@ -167,9 +171,28 @@ public class RulesEngine {
 	}
 
 	protected boolean isInCheck(GameModel model, Color color) {
+		Board board = model.getBoard();
+
+		for (char file = MINFILE; file <= MAXFILE; file++) {
+			for (int rank = MINRANK; rank <= MAXRANK; rank++) {
+				Square square = board.getSquare(file, rank);
+				Piece piece = square.getOccupant();
+				if (piece != null
+						&& piece.getType() == PieceType.KING
+						&& piece.getColor() == color) {
+					Color opponent = (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+					return isSquareAttacked(model, square, opponent);
+				}
+			}
+		}
+
+		return false;
+	}
+
+	protected boolean isSquareAttacked(GameModel model, Square square, Color color) {
 		return false;
 		// TODO
-		// Given model and color, return if king is in check
+		// Given GameModel, Square, and Color, check if the Square is being attacked by the Color
 	}
 
 	protected boolean isCastlingLegal(Move move, GameModel model) {
