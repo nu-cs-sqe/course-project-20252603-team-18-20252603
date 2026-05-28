@@ -13,10 +13,28 @@ import java.util.concurrent.atomic.AtomicReference;
 
 class RulesEngineTest {
 
+	// -------------------------------------------------------------------------
+	// Helper: create a fully-replayed Square mock with configurable occupant
+	// and isEmpty state. Pass occupant=null and isEmpty=true for empty squares.
+	// -------------------------------------------------------------------------
+	private Square mockSquare(char file, int rank, Piece occupant, boolean isEmpty) {
+		Square sq = EasyMock.createMock(Square.class);
+		expect(sq.getFile()).andReturn(file).anyTimes();
+		expect(sq.getRank()).andReturn(rank).anyTimes();
+		expect(sq.getOccupant()).andReturn(occupant).anyTimes();
+		expect(sq.isEmpty()).andReturn(isEmpty).anyTimes();
+		sq.setOccupant(anyObject());
+		expectLastCall().anyTimes();
+		replay(sq);
+		return sq;
+	}
+
+	// =========================================================================
 	// Methods Under Test: isLegalMove
+	// =========================================================================
+
 	@Test
 	void isLegalMove_nullMove_returnsFalse() {
-		// Arrange
 		RulesEngine rulesEngine = new RulesEngine();
 		GameModel model = EasyMock.createMock(GameModel.class);
 
@@ -29,7 +47,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_nullModel_returnsFalse() {
-		// Arrange
 		RulesEngine rulesEngine = new RulesEngine();
 		Move move = EasyMock.createMock(Move.class);
 
@@ -43,15 +60,14 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_emptyFromSquare_returnsFalse() {
-		// Arrange
 		RulesEngine rulesEngine = new RulesEngine();
 
 		Move move = EasyMock.createMock(Move.class);
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 
-		Square from = Square.create('e', 2);
-		Square fromBoardSquare = Square.create('e', 2);
+		Square from = mockSquare('e', 2, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, null, true);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -59,10 +75,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(move, model, board);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertFalse(result);
 
 		EasyMock.verify(move, model, board);
@@ -70,7 +84,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_fromSquareHasOpponentPiece_returnsFalse() {
-		// Arrange
 		RulesEngine rulesEngine = new RulesEngine();
 
 		Move move = EasyMock.createMock(Move.class);
@@ -78,9 +91,8 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece piece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square fromBoardSquare = Square.create('e', 2);
-		fromBoardSquare.setOccupant(piece);
+		Square from = mockSquare('e', 2, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, piece, false);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -90,10 +102,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(move, model, board, piece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertFalse(result);
 
 		EasyMock.verify(move, model, board, piece);
@@ -101,7 +111,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_destinationHasOwnPiece_returnsFalse() {
-		// Arrange
 		RulesEngine rulesEngine = new RulesEngine();
 
 		Move move = EasyMock.createMock(Move.class);
@@ -110,14 +119,10 @@ class RulesEngineTest {
 		Piece sourcePiece = EasyMock.createMock(Piece.class);
 		Piece destinationPiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square to = Square.create('e', 3);
-
-		Square fromBoardSquare = Square.create('e', 2);
-		Square toBoardSquare = Square.create('e', 3);
-
-		fromBoardSquare.setOccupant(sourcePiece);
-		toBoardSquare.setOccupant(destinationPiece);
+		Square from = mockSquare('e', 2, null, true);
+		Square to = mockSquare('e', 3, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, sourcePiece, false);
+		Square toBoardSquare = mockSquare('e', 3, destinationPiece, false);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -133,10 +138,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(move, model, board, sourcePiece, destinationPiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertFalse(result);
 
 		EasyMock.verify(move, model, board, sourcePiece, destinationPiece);
@@ -144,7 +147,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_destinationHasOpponentPiece_validCapture() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
 				.createMock();
@@ -155,14 +157,10 @@ class RulesEngineTest {
 		Piece sourcePiece = EasyMock.createMock(Piece.class);
 		Piece destinationPiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square to = Square.create('e', 3);
-
-		Square fromBoardSquare = Square.create('e', 2);
-		Square toBoardSquare = Square.create('e', 3);
-
-		fromBoardSquare.setOccupant(sourcePiece);
-		toBoardSquare.setOccupant(destinationPiece);
+		Square from = mockSquare('e', 2, null, true);
+		Square to = mockSquare('e', 3, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, sourcePiece, false);
+		Square toBoardSquare = mockSquare('e', 3, destinationPiece, false);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -180,10 +178,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, sourcePiece, destinationPiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertTrue(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, sourcePiece, destinationPiece);
@@ -191,7 +187,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_emptyDestinationSquare_validMove() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
 				.createMock();
@@ -201,13 +196,10 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece sourcePiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square to = Square.create('e', 3);
-
-		Square fromBoardSquare = Square.create('e', 2);
-		Square toBoardSquare = Square.create('e', 3);
-
-		fromBoardSquare.setOccupant(sourcePiece);
+		Square from = mockSquare('e', 2, null, true);
+		Square to = mockSquare('e', 3, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, sourcePiece, false);
+		Square toBoardSquare = mockSquare('e', 3, null, true);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -224,10 +216,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertTrue(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
@@ -235,7 +225,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_slidingPathBlocked_returnsFalse() {
-		// Arrange
 		RulesEngine rulesEngine = new RulesEngine();
 
 		Move move = EasyMock.createMock(Move.class);
@@ -244,15 +233,11 @@ class RulesEngineTest {
 		Piece sourcePiece = EasyMock.createMock(Piece.class);
 		Piece blockerPiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('a', 1);
-		Square to = Square.create('a', 4);
-
-		Square fromBoardSquare = Square.create('a', 1);
-		Square intermediateSquare = Square.create('a', 2);
-		Square toBoardSquare = Square.create('a', 4);
-
-		fromBoardSquare.setOccupant(sourcePiece);
-		intermediateSquare.setOccupant(blockerPiece);
+		Square from = mockSquare('a', 1, null, true);
+		Square to = mockSquare('a', 4, null, true);
+		Square fromBoardSquare = mockSquare('a', 1, sourcePiece, false);
+		Square intermediateSquare = mockSquare('a', 2, blockerPiece, false);
+		Square toBoardSquare = mockSquare('a', 4, null, true);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -269,10 +254,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(move, model, board, sourcePiece, blockerPiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertFalse(result);
 
 		EasyMock.verify(move, model, board, sourcePiece, blockerPiece);
@@ -280,7 +263,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_slidingPathClear_validMove() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
 				.createMock();
@@ -290,15 +272,12 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece sourcePiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('a', 1);
-		Square to = Square.create('a', 4);
-
-		Square fromBoardSquare = Square.create('a', 1);
-		Square intermediateSquareOne = Square.create('a', 2);
-		Square intermediateSquareTwo = Square.create('a', 3);
-		Square toBoardSquare = Square.create('a', 4);
-
-		fromBoardSquare.setOccupant(sourcePiece);
+		Square from = mockSquare('a', 1, null, true);
+		Square to = mockSquare('a', 4, null, true);
+		Square fromBoardSquare = mockSquare('a', 1, sourcePiece, false);
+		Square intermediateSquareOne = mockSquare('a', 2, null, true);
+		Square intermediateSquareTwo = mockSquare('a', 3, null, true);
+		Square toBoardSquare = mockSquare('a', 4, null, true);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -318,10 +297,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertTrue(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
@@ -329,7 +306,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_moveExposesOwnKing_returnsFalse() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
 				.createMock();
@@ -339,13 +315,10 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece sourcePiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square to = Square.create('f', 2);
-
-		Square fromBoardSquare = Square.create('e', 2);
-		Square toBoardSquare = Square.create('f', 2);
-
-		fromBoardSquare.setOccupant(sourcePiece);
+		Square from = mockSquare('e', 2, null, true);
+		Square to = mockSquare('f', 2, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, sourcePiece, false);
+		Square toBoardSquare = mockSquare('f', 2, null, true);
 
 		EasyMock.expect(move.getFrom()).andReturn(from).anyTimes();
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
@@ -363,10 +336,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertFalse(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
@@ -374,7 +345,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_moveKeepsKingSafe_validMove() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
 				.createMock();
@@ -384,13 +354,10 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece sourcePiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square to = Square.create('f', 2);
-
-		Square fromBoardSquare = Square.create('e', 2);
-		Square toBoardSquare = Square.create('f', 2);
-
-		fromBoardSquare.setOccupant(sourcePiece);
+		Square from = mockSquare('e', 2, null, true);
+		Square to = mockSquare('f', 2, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, sourcePiece, false);
+		Square toBoardSquare = mockSquare('f', 2, null, true);
 
 		EasyMock.expect(move.getFrom()).andReturn(from).anyTimes();
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
@@ -408,10 +375,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertTrue(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
@@ -419,7 +384,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_castlingHelperTrue_returnsTrue() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isCastlingLegal", Move.class, GameModel.class)
 				.createMock();
@@ -429,9 +393,8 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece sourcePiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 1);
-		Square fromBoardSquare = Square.create('e', 1);
-		fromBoardSquare.setOccupant(sourcePiece);
+		Square from = mockSquare('e', 1, null, true);
+		Square fromBoardSquare = mockSquare('e', 1, sourcePiece, false);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -444,10 +407,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertTrue(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
@@ -455,7 +416,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_promotionHelperTrue_returnsTrue() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isPromotionLegal", Move.class, GameModel.class)
 				.createMock();
@@ -465,9 +425,8 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece sourcePiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 7);
-		Square fromBoardSquare = Square.create('e', 7);
-		fromBoardSquare.setOccupant(sourcePiece);
+		Square from = mockSquare('e', 7, null, true);
+		Square fromBoardSquare = mockSquare('e', 7, sourcePiece, false);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -480,10 +439,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertTrue(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
@@ -491,7 +448,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_enPassantHelperTrue_returnsTrue() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isEnpassantLegal", Move.class, GameModel.class)
 				.createMock();
@@ -501,9 +457,8 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece sourcePiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 5);
-		Square fromBoardSquare = Square.create('e', 5);
-		fromBoardSquare.setOccupant(sourcePiece);
+		Square from = mockSquare('e', 5, null, true);
+		Square fromBoardSquare = mockSquare('e', 5, sourcePiece, false);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -516,10 +471,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, sourcePiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertTrue(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, sourcePiece);
@@ -527,7 +480,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_pawnTwoForwardAfterMoved_returnsFalse() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isCastlingLegal", Move.class, GameModel.class)
 				.addMockedMethod("isPromotionLegal", Move.class, GameModel.class)
@@ -539,13 +491,10 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece pawn = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square to = Square.create('e', 4);
-
-		Square fromBoardSquare = Square.create('e', 2);
-		Square toBoardSquare = Square.create('e', 4);
-
-		fromBoardSquare.setOccupant(pawn);
+		Square from = mockSquare('e', 2, null, true);
+		Square to = mockSquare('e', 4, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, pawn, false);
+		Square toBoardSquare = mockSquare('e', 4, null, true);
 
 		EasyMock.expect(move.getFrom()).andReturn(from);
 		EasyMock.expect(model.getBoard()).andReturn(board);
@@ -566,10 +515,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, pawn);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertFalse(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, pawn);
@@ -577,7 +524,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_pawnTwoForwardBeforeMovedPathClear_validMove() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isCastlingLegal", Move.class, GameModel.class)
 				.addMockedMethod("isPromotionLegal", Move.class, GameModel.class)
@@ -590,14 +536,11 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece pawn = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square to = Square.create('e', 4);
-
-		Square fromBoardSquare = Square.create('e', 2);
-		Square intermediateSquare = Square.create('e', 3);
-		Square toBoardSquare = Square.create('e', 4);
-
-		fromBoardSquare.setOccupant(pawn);
+		Square from = mockSquare('e', 2, null, true);
+		Square to = mockSquare('e', 4, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, pawn, false);
+		Square intermediateSquare = mockSquare('e', 3, null, true);
+		Square toBoardSquare = mockSquare('e', 4, null, true);
 
 		EasyMock.expect(move.getFrom()).andReturn(from).anyTimes();
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
@@ -621,10 +564,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, pawn);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertTrue(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, pawn);
@@ -632,7 +573,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_pawnForwardToOccupied_returnsFalse() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isCastlingLegal", Move.class, GameModel.class)
 				.addMockedMethod("isPromotionLegal", Move.class, GameModel.class)
@@ -645,14 +585,10 @@ class RulesEngineTest {
 		Piece pawn = EasyMock.createMock(Piece.class);
 		Piece blockingPiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square to = Square.create('e', 3);
-
-		Square fromBoardSquare = Square.create('e', 2);
-		Square toBoardSquare = Square.create('e', 3);
-
-		fromBoardSquare.setOccupant(pawn);
-		toBoardSquare.setOccupant(blockingPiece);
+		Square from = mockSquare('e', 2, null, true);
+		Square to = mockSquare('e', 3, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, pawn, false);
+		Square toBoardSquare = mockSquare('e', 3, blockingPiece, false);
 
 		EasyMock.expect(move.getFrom()).andReturn(from).anyTimes();
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
@@ -672,10 +608,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, pawn, blockingPiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertFalse(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, pawn, blockingPiece);
@@ -683,7 +617,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_pawnDiagonalToEmptyWithoutEnPassant_returnsFalse() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isCastlingLegal", Move.class, GameModel.class)
 				.addMockedMethod("isPromotionLegal", Move.class, GameModel.class)
@@ -695,13 +628,10 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece pawn = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square to = Square.create('f', 3);
-
-		Square fromBoardSquare = Square.create('e', 2);
-		Square toBoardSquare = Square.create('f', 3);
-
-		fromBoardSquare.setOccupant(pawn);
+		Square from = mockSquare('e', 2, null, true);
+		Square to = mockSquare('f', 3, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, pawn, false);
+		Square toBoardSquare = mockSquare('f', 3, null, true);
 
 		EasyMock.expect(move.getFrom()).andReturn(from).anyTimes();
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
@@ -721,10 +651,8 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, pawn);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertFalse(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, pawn);
@@ -732,7 +660,6 @@ class RulesEngineTest {
 
 	@Test
 	void isLegalMove_pawnDiagonalToOpponent_validCapture() {
-		// Arrange
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isCastlingLegal", Move.class, GameModel.class)
 				.addMockedMethod("isPromotionLegal", Move.class, GameModel.class)
@@ -746,14 +673,10 @@ class RulesEngineTest {
 		Piece pawn = EasyMock.createMock(Piece.class);
 		Piece capturedPiece = EasyMock.createMock(Piece.class);
 
-		Square from = Square.create('e', 2);
-		Square to = Square.create('f', 3);
-
-		Square fromBoardSquare = Square.create('e', 2);
-		Square toBoardSquare = Square.create('f', 3);
-
-		fromBoardSquare.setOccupant(pawn);
-		toBoardSquare.setOccupant(capturedPiece);
+		Square from = mockSquare('e', 2, null, true);
+		Square to = mockSquare('f', 3, null, true);
+		Square fromBoardSquare = mockSquare('e', 2, pawn, false);
+		Square toBoardSquare = mockSquare('f', 3, capturedPiece, false);
 
 		EasyMock.expect(move.getFrom()).andReturn(from).anyTimes();
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
@@ -776,17 +699,17 @@ class RulesEngineTest {
 
 		EasyMock.replay(rulesEngine, move, model, board, pawn, capturedPiece);
 
-		// Act
 		boolean result = rulesEngine.isLegalMove(move, model);
 
-		// Assert
 		assertTrue(result);
 
 		EasyMock.verify(rulesEngine, move, model, board, pawn, capturedPiece);
 	}
 
 
+	// =========================================================================
 	// Methods Under Test: getLegalMoves
+	// =========================================================================
 
 	@Test
 	void getLegalMoves_nullState_throwsException() {
@@ -889,29 +812,25 @@ class RulesEngineTest {
 
 		expect(rook.getLegalMoveDestinationSquares(from)).andReturn(candidates).anyTimes();
 
+		Piece whiteKing = mock(Piece.class);
+		expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
+		expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
+		replay(whiteKing);
+
 		for (char file = 'a'; file <= 'h'; file++) {
 			for (int rank = 1; rank <= 8; rank++) {
-				Square sq = mock(Square.class);
 				boolean isOrigin = (file == 'a' && rank == 1);
 				boolean isKing = (file == 'e' && rank == 1);
-				expect(sq.getFile()).andReturn(file).anyTimes();
-				expect(sq.getRank()).andReturn(rank).anyTimes();
 				if (isOrigin) {
-					expect(sq.getOccupant()).andReturn(rook).anyTimes();
+					expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, rook, false)).anyTimes();
 				} else if (isKing) {
-					Piece whiteKing = mock(Piece.class);
-					expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
-					expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
-					expect(sq.getOccupant()).andReturn(whiteKing).anyTimes();
-					replay(whiteKing);
+					expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, whiteKing, false)).anyTimes();
 				} else {
-					expect(sq.getOccupant()).andReturn(null).anyTimes();
+					expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
-				expect(sq.isEmpty()).andReturn(!isOrigin && !isKing).anyTimes();
-				sq.setOccupant(anyObject());
-				expectLastCall().anyTimes();
-				expect(board.getSquare(file, rank)).andReturn(sq).anyTimes();
-				replay(sq);
 			}
 		}
 
@@ -966,39 +885,26 @@ class RulesEngineTest {
 
 		expect(rook.getLegalMoveDestinationSquares(from)).andReturn(candidates).anyTimes();
 
+		Piece whiteKing = mock(Piece.class);
+		expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
+		expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
+		replay(whiteKing);
+
 		for (char file = 'a'; file <= 'h'; file++) {
 			for (int rank = 1; rank <= 8; rank++) {
 				boolean isOrigin = (file == 'h' && rank == 8);
 				boolean isKing = (file == 'e' && rank == 1);
-
 				if (isOrigin) {
 					expect(from.isEmpty()).andReturn(false).anyTimes();
 					from.setOccupant(anyObject());
 					expectLastCall().anyTimes();
 					expect(board.getSquare('h', 8)).andReturn(from).anyTimes();
 				} else if (isKing) {
-					Square sq = mock(Square.class);
-					Piece whiteKing = mock(Piece.class);
-					expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
-					expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
-					expect(sq.getFile()).andReturn(file).anyTimes();
-					expect(sq.getRank()).andReturn(rank).anyTimes();
-					expect(sq.getOccupant()).andReturn(whiteKing).anyTimes();
-					expect(sq.isEmpty()).andReturn(false).anyTimes();
-					sq.setOccupant(anyObject());
-					expectLastCall().anyTimes();
-					expect(board.getSquare(file, rank)).andReturn(sq).anyTimes();
-					replay(whiteKing, sq);
+					expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, whiteKing, false)).anyTimes();
 				} else {
-					Square sq = mock(Square.class);
-					expect(sq.getFile()).andReturn(file).anyTimes();
-					expect(sq.getRank()).andReturn(rank).anyTimes();
-					expect(sq.getOccupant()).andReturn(null).anyTimes();
-					expect(sq.isEmpty()).andReturn(true).anyTimes();
-					sq.setOccupant(anyObject());
-					expectLastCall().anyTimes();
-					expect(board.getSquare(file, rank)).andReturn(sq).anyTimes();
-					replay(sq);
+					expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1109,7 +1015,6 @@ class RulesEngineTest {
 		}
 		expect(whiteKing.getLegalMoveDestinationSquares(from)).andReturn(candidates).anyTimes();
 
-		// Moves back to e1 or to e-file squares still attacked by the black rook are illegal.
 		expect(rulesEngine.isLegalMove(anyObject(Move.class), eq(model)))
 				.andStubAnswer(() -> {
 					Move move = (Move) EasyMock.getCurrentArguments()[0];
@@ -1132,11 +1037,13 @@ class RulesEngineTest {
 		verify(rulesEngine, model, from, whiteKing);
 	}
 
+	// =========================================================================
 	// Methods Under Test: isInCheck
+	// =========================================================================
 
 	@Test
 	void isInCheck_kingNotAttacked_returnsFalse() {
-		// TC42: King Not In Check
+		// TC42
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
 				.createMock();
@@ -1145,21 +1052,19 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece whiteKing = EasyMock.createMock(Piece.class);
 
-		Square kingSquare = Square.create('e', 1);
-		kingSquare.setOccupant(whiteKing);
+		Square kingSquare = mockSquare('e', 1, whiteKing, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
 		EasyMock.expect(whiteKing.getColor()).andReturn(Color.WHITE).anyTimes();
 
-		// Board setup: only e1 has a piece; all other squares are empty
 		for (char file = 'a'; file <= 'h'; file++) {
 			for (int rank = 1; rank <= 8; rank++) {
 				if (file == 'e' && rank == 1) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(kingSquare).anyTimes();
 				} else {
-					Square empty = Square.create(file, rank);
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(empty).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1177,7 +1082,7 @@ class RulesEngineTest {
 
 	@Test
 	void isInCheck_attackedByRook_returnsTrue() {
-		// TC43: King In Check By Rook
+		// TC43
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
 				.createMock();
@@ -1187,11 +1092,8 @@ class RulesEngineTest {
 		Piece whiteKing = EasyMock.createMock(Piece.class);
 		Piece blackRook = EasyMock.createMock(Piece.class);
 
-		Square kingSquare = Square.create('e', 1);
-		kingSquare.setOccupant(whiteKing);
-
-		Square rookSquare = Square.create('e', 8);
-		rookSquare.setOccupant(blackRook);
+		Square kingSquare = mockSquare('e', 1, whiteKing, false);
+		Square rookSquare = mockSquare('e', 8, blackRook, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
@@ -1206,7 +1108,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 8) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(rookSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1224,7 +1127,7 @@ class RulesEngineTest {
 
 	@Test
 	void isInCheck_attackedByBishop_returnsTrue() {
-		// TC44: King In Check By Bishop
+		// TC44
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
 				.createMock();
@@ -1234,12 +1137,8 @@ class RulesEngineTest {
 		Piece whiteKing = EasyMock.createMock(Piece.class);
 		Piece blackBishop = EasyMock.createMock(Piece.class);
 
-		// White king e1, black bishop h4 — clear diagonal
-		Square kingSquare = Square.create('e', 1);
-		kingSquare.setOccupant(whiteKing);
-
-		Square bishopSquare = Square.create('h', 4);
-		bishopSquare.setOccupant(blackBishop);
+		Square kingSquare = mockSquare('e', 1, whiteKing, false);
+		Square bishopSquare = mockSquare('h', 4, blackBishop, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
@@ -1254,7 +1153,8 @@ class RulesEngineTest {
 				} else if (file == 'h' && rank == 4) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(bishopSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1272,7 +1172,7 @@ class RulesEngineTest {
 
 	@Test
 	void isInCheck_attackedByKnight_returnsTrue() {
-		// TC45: King In Check By Knight
+		// TC45
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
 				.createMock();
@@ -1282,12 +1182,8 @@ class RulesEngineTest {
 		Piece whiteKing = EasyMock.createMock(Piece.class);
 		Piece blackKnight = EasyMock.createMock(Piece.class);
 
-		// White king e1, black knight f3 — valid L-shape
-		Square kingSquare = Square.create('e', 1);
-		kingSquare.setOccupant(whiteKing);
-
-		Square knightSquare = Square.create('f', 3);
-		knightSquare.setOccupant(blackKnight);
+		Square kingSquare = mockSquare('e', 1, whiteKing, false);
+		Square knightSquare = mockSquare('f', 3, blackKnight, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
@@ -1302,7 +1198,8 @@ class RulesEngineTest {
 				} else if (file == 'f' && rank == 3) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(knightSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1320,7 +1217,7 @@ class RulesEngineTest {
 
 	@Test
 	void isInCheck_attackedByPawn_returnsTrue() {
-		// TC46: King In Check By Pawn
+		// TC46
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
 				.createMock();
@@ -1330,12 +1227,8 @@ class RulesEngineTest {
 		Piece whiteKing = EasyMock.createMock(Piece.class);
 		Piece blackPawn = EasyMock.createMock(Piece.class);
 
-		// White king e4, black pawn d5 — attacks diagonally forward (from black's perspective, downward)
-		Square kingSquare = Square.create('e', 4);
-		kingSquare.setOccupant(whiteKing);
-
-		Square pawnSquare = Square.create('d', 5);
-		pawnSquare.setOccupant(blackPawn);
+		Square kingSquare = mockSquare('e', 4, whiteKing, false);
+		Square pawnSquare = mockSquare('d', 5, blackPawn, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
@@ -1350,7 +1243,8 @@ class RulesEngineTest {
 				} else if (file == 'd' && rank == 5) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(pawnSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1368,7 +1262,7 @@ class RulesEngineTest {
 
 	@Test
 	void isInCheck_attackedByAdjacentKing_returnsTrue() {
-		// TC47: King In Check By Adjacent King
+		// TC47
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
 				.createMock();
@@ -1378,12 +1272,8 @@ class RulesEngineTest {
 		Piece whiteKing = EasyMock.createMock(Piece.class);
 		Piece blackKing = EasyMock.createMock(Piece.class);
 
-		// White king e4, black king e5 — adjacent; structurally illegal but boundary case
-		Square whiteKingSquare = Square.create('e', 4);
-		whiteKingSquare.setOccupant(whiteKing);
-
-		Square blackKingSquare = Square.create('e', 5);
-		blackKingSquare.setOccupant(blackKing);
+		Square whiteKingSquare = mockSquare('e', 4, whiteKing, false);
+		Square blackKingSquare = mockSquare('e', 5, blackKing, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
@@ -1398,7 +1288,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 5) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(blackKingSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1416,7 +1307,7 @@ class RulesEngineTest {
 
 	@Test
 	void isInCheck_blockedSlidingAttack_returnsFalse() {
-		// TC48: Blocked Sliding Attack Does Not Count As Check
+		// TC48
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
 				.createMock();
@@ -1427,15 +1318,9 @@ class RulesEngineTest {
 		Piece whiteBishop = EasyMock.createMock(Piece.class);
 		Piece blackRook = EasyMock.createMock(Piece.class);
 
-		// White king e1, white bishop e4 blocking, black rook e8
-		Square kingSquare = Square.create('e', 1);
-		kingSquare.setOccupant(whiteKing);
-
-		Square blockerSquare = Square.create('e', 4);
-		blockerSquare.setOccupant(whiteBishop);
-
-		Square rookSquare = Square.create('e', 8);
-		rookSquare.setOccupant(blackRook);
+		Square kingSquare = mockSquare('e', 1, whiteKing, false);
+		Square blockerSquare = mockSquare('e', 4, whiteBishop, false);
+		Square rookSquare = mockSquare('e', 8, blackRook, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(whiteKing.getType()).andReturn(PieceType.KING).anyTimes();
@@ -1454,12 +1339,12 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 8) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(rookSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
 
-		// isSquareAttacked is responsible for path-blocking logic; it returns false here
 		EasyMock.expect(rulesEngine.isSquareAttacked(model, kingSquare, Color.BLACK)).andReturn(false);
 
 		EasyMock.replay(rulesEngine, model, board, whiteKing, whiteBishop, blackRook);
@@ -1473,7 +1358,7 @@ class RulesEngineTest {
 
 	@Test
 	void isInCheck_nullColor_throwsException() {
-		// TC49: Null Color
+		// TC49
 		RulesEngine rulesEngine = new RulesEngine();
 		GameModel model = EasyMock.createMock(GameModel.class);
 
@@ -1488,7 +1373,7 @@ class RulesEngineTest {
 
 	@Test
 	void isInCheck_missingKing_throwsException() {
-		// TC50: Missing King
+		// TC50
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
@@ -1496,11 +1381,10 @@ class RulesEngineTest {
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 
-		// No white king on the board — all squares are empty
 		for (char file = 'a'; file <= 'h'; file++) {
 			for (int rank = 1; rank <= 8; rank++) {
 				EasyMock.expect(board.getSquare(file, rank))
-						.andReturn(Square.create(file, rank))
+						.andReturn(mockSquare(file, rank, null, true))
 						.anyTimes();
 			}
 		}
@@ -1514,20 +1398,21 @@ class RulesEngineTest {
 		EasyMock.verify(model, board);
 	}
 
+	// =========================================================================
 	// Methods Under Test: isSquareAttacked
+	// =========================================================================
 
 	@Test
 	void isSquareAttacked_byKnight_returnsTrue() {
-		// TC51: Square Attacked By Knight
+		// TC51
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece blackKnight = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('e', 1);
-		Square knightSquare = Square.create('f', 3);
-		knightSquare.setOccupant(blackKnight);
+		Square targetSquare = mockSquare('e', 1, null, true);
+		Square knightSquare = mockSquare('f', 3, blackKnight, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackKnight.getType()).andReturn(PieceType.KNIGHT).anyTimes();
@@ -1540,7 +1425,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 1) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1556,21 +1442,24 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_noAttackers_returnsFalse() {
-		// TC52: Square Not Attacked
+		// TC52
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 
-		Square targetSquare = Square.create('e', 4);
+		Square targetSquare = mockSquare('e', 4, null, true);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 
 		for (char file = 'a'; file <= 'h'; file++) {
 			for (int rank = 1; rank <= 8; rank++) {
-				EasyMock.expect(board.getSquare(file, rank))
-						.andReturn(Square.create(file, rank))
-						.anyTimes();
+				if (file == 'e' && rank == 4) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
+				}
 			}
 		}
 
@@ -1585,16 +1474,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_targetA1_returnsTrue() {
-		// TC53: Attacked Square At Lower Boundary (a1)
+		// TC53
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece blackBishop = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('a', 1);
-		Square bishopSquare = Square.create('b', 2);
-		bishopSquare.setOccupant(blackBishop);
+		Square targetSquare = mockSquare('a', 1, null, true);
+		Square bishopSquare = mockSquare('b', 2, blackBishop, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackBishop.getType()).andReturn(PieceType.BISHOP).anyTimes();
@@ -1607,7 +1495,8 @@ class RulesEngineTest {
 				} else if (file == 'a' && rank == 1) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1623,16 +1512,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_targetH8_returnsTrue() {
-		// TC54: Attacked Square At Upper Boundary (h8)
+		// TC54
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece blackBishop = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('h', 8);
-		Square bishopSquare = Square.create('g', 7);
-		bishopSquare.setOccupant(blackBishop);
+		Square targetSquare = mockSquare('h', 8, null, true);
+		Square bishopSquare = mockSquare('g', 7, blackBishop, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackBishop.getType()).andReturn(PieceType.BISHOP).anyTimes();
@@ -1645,7 +1533,8 @@ class RulesEngineTest {
 				} else if (file == 'h' && rank == 8) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1661,7 +1550,7 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_nullSquare_throwsException() {
-		// TC55: Null Target Square
+		// TC55
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
@@ -1676,11 +1565,11 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_nullColor_throwsException() {
-		// TC56: Null Attacking Color
+		// TC56
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
-		Square square = Square.create('e', 4);
+		Square square = mockSquare('e', 4, null, true);
 		EasyMock.replay(model);
 
 		assertThrows(IllegalArgumentException.class, () -> {
@@ -1692,16 +1581,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_byRook_returnsTrue() {
-		// TC57b: Black rook on e8, clear path to target e1.
+		// TC57b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece blackRook = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('e', 1);
-		Square rookSquare = Square.create('e', 8);
-		rookSquare.setOccupant(blackRook);
+		Square targetSquare = mockSquare('e', 1, null, true);
+		Square rookSquare = mockSquare('e', 8, blackRook, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackRook.getType()).andReturn(PieceType.ROOK).anyTimes();
@@ -1714,7 +1602,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 1) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1730,7 +1619,7 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_rookBlockedPath_returnsFalse() {
-		// TC58b: Black rook on e8, white piece on e4 blocks the path to e1.
+		// TC58b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
@@ -1738,11 +1627,9 @@ class RulesEngineTest {
 		Piece blackRook = EasyMock.createMock(Piece.class);
 		Piece whiteBlocker = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('e', 1);
-		Square rookSquare = Square.create('e', 8);
-		Square blockerSquare = Square.create('e', 4);
-		rookSquare.setOccupant(blackRook);
-		blockerSquare.setOccupant(whiteBlocker);
+		Square targetSquare = mockSquare('e', 1, null, true);
+		Square rookSquare = mockSquare('e', 8, blackRook, false);
+		Square blockerSquare = mockSquare('e', 4, whiteBlocker, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackRook.getType()).andReturn(PieceType.ROOK).anyTimes();
@@ -1758,7 +1645,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 1) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1774,16 +1662,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_byQueenDiagonal_returnsTrue() {
-		// TC59b: Black queen on h5, clear diagonal path to target e2.
+		// TC59b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece blackQueen = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('e', 2);
-		Square queenSquare = Square.create('h', 5);
-		queenSquare.setOccupant(blackQueen);
+		Square targetSquare = mockSquare('e', 2, null, true);
+		Square queenSquare = mockSquare('h', 5, blackQueen, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackQueen.getType()).andReturn(PieceType.QUEEN).anyTimes();
@@ -1796,7 +1683,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 2) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1812,16 +1700,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_byQueenStraight_returnsTrue() {
-		// TC60b: Black queen on e8, clear vertical path to target e1.
+		// TC60b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece blackQueen = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('e', 1);
-		Square queenSquare = Square.create('e', 8);
-		queenSquare.setOccupant(blackQueen);
+		Square targetSquare = mockSquare('e', 1, null, true);
+		Square queenSquare = mockSquare('e', 8, blackQueen, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackQueen.getType()).andReturn(PieceType.QUEEN).anyTimes();
@@ -1834,7 +1721,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 1) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1850,7 +1738,7 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_queenBlockedPath_returnsFalse() {
-		// TC61b: Black queen on e8, white piece on e4 blocks the path to e1.
+		// TC61b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
@@ -1858,11 +1746,9 @@ class RulesEngineTest {
 		Piece blackQueen = EasyMock.createMock(Piece.class);
 		Piece whiteBlocker = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('e', 1);
-		Square queenSquare = Square.create('e', 8);
-		Square blockerSquare = Square.create('e', 4);
-		queenSquare.setOccupant(blackQueen);
-		blockerSquare.setOccupant(whiteBlocker);
+		Square targetSquare = mockSquare('e', 1, null, true);
+		Square queenSquare = mockSquare('e', 8, blackQueen, false);
+		Square blockerSquare = mockSquare('e', 4, whiteBlocker, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackQueen.getType()).andReturn(PieceType.QUEEN).anyTimes();
@@ -1878,7 +1764,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 1) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1894,16 +1781,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_byKing_returnsTrue() {
-		// TC62b: Black king on e2, one step from target e1.
+		// TC62b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece blackKing = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('e', 1);
-		Square kingSquare = Square.create('e', 2);
-		kingSquare.setOccupant(blackKing);
+		Square targetSquare = mockSquare('e', 1, null, true);
+		Square kingSquare = mockSquare('e', 2, blackKing, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackKing.getType()).andReturn(PieceType.KING).anyTimes();
@@ -1916,7 +1802,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 1) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1932,16 +1819,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_kingTooFar_returnsFalse() {
-		// TC63b: Black king on e3, two ranks from target e1 — outside king reach.
+		// TC63b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece blackKing = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('e', 1);
-		Square kingSquare = Square.create('e', 3);
-		kingSquare.setOccupant(blackKing);
+		Square targetSquare = mockSquare('e', 1, null, true);
+		Square kingSquare = mockSquare('e', 3, blackKing, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackKing.getType()).andReturn(PieceType.KING).anyTimes();
@@ -1954,7 +1840,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 1) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -1970,16 +1857,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_byWhitePawn_returnsTrue() {
-		// TC64b: White pawn on d4 attacks e5 diagonally forward.
+		// TC64b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece whitePawn = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('e', 5);
-		Square pawnSquare = Square.create('d', 4);
-		pawnSquare.setOccupant(whitePawn);
+		Square targetSquare = mockSquare('e', 5, null, true);
+		Square pawnSquare = mockSquare('d', 4, whitePawn, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(whitePawn.getType()).andReturn(PieceType.PAWN).anyTimes();
@@ -1992,7 +1878,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 5) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -2008,16 +1895,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_byBlackPawn_returnsTrue() {
-		// TC65b: Black pawn on e5 attacks d4 diagonally forward (downward for black).
+		// TC65b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece blackPawn = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('d', 4);
-		Square pawnSquare = Square.create('e', 5);
-		pawnSquare.setOccupant(blackPawn);
+		Square targetSquare = mockSquare('d', 4, null, true);
+		Square pawnSquare = mockSquare('e', 5, blackPawn, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackPawn.getType()).andReturn(PieceType.PAWN).anyTimes();
@@ -2030,7 +1916,8 @@ class RulesEngineTest {
 				} else if (file == 'd' && rank == 4) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -2046,16 +1933,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_pawnStraightAhead_returnsFalse() {
-		// TC66b: White pawn on e4 — e5 is directly ahead, not a diagonal attack square.
+		// TC66b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece whitePawn = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('e', 5);
-		Square pawnSquare = Square.create('e', 4);
-		pawnSquare.setOccupant(whitePawn);
+		Square targetSquare = mockSquare('e', 5, null, true);
+		Square pawnSquare = mockSquare('e', 4, whitePawn, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(whitePawn.getType()).andReturn(PieceType.PAWN).anyTimes();
@@ -2068,7 +1954,8 @@ class RulesEngineTest {
 				} else if (file == 'e' && rank == 5) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -2084,16 +1971,15 @@ class RulesEngineTest {
 
 	@Test
 	void isSquareAttacked_pawnWrongDirection_returnsFalse() {
-		// TC67b: White pawn on e4 — d3 is behind and diagonal; pawns do not attack backward.
+		// TC67b
 		RulesEngine rulesEngine = new RulesEngine();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		Board board = EasyMock.createMock(Board.class);
 		Piece whitePawn = EasyMock.createMock(Piece.class);
 
-		Square targetSquare = Square.create('d', 3);
-		Square pawnSquare = Square.create('e', 4);
-		pawnSquare.setOccupant(whitePawn);
+		Square targetSquare = mockSquare('d', 3, null, true);
+		Square pawnSquare = mockSquare('e', 4, whitePawn, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(whitePawn.getType()).andReturn(PieceType.PAWN).anyTimes();
@@ -2106,7 +1992,8 @@ class RulesEngineTest {
 				} else if (file == 'd' && rank == 3) {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(targetSquare).anyTimes();
 				} else {
-					EasyMock.expect(board.getSquare(file, rank)).andReturn(Square.create(file, rank)).anyTimes();
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -2120,11 +2007,13 @@ class RulesEngineTest {
 		EasyMock.verify(model, board, whitePawn);
 	}
 
+	// =========================================================================
 	// Methods Under Test: isCheckmate
+	// =========================================================================
 
 	@Test
 	void isCheckmate_kingInCheckNoLegalMoves_returnsTrue() {
-		// TC57: Checkmate Position
+		// TC57
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
 				.addMockedMethod("getLegalMoves", GameModel.class, Square.class)
@@ -2134,8 +2023,7 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Piece blackKing = EasyMock.createMock(Piece.class);
 
-		Square kingSquare = Square.create('h', 8);
-		kingSquare.setOccupant(blackKing);
+		Square kingSquare = mockSquare('h', 8, blackKing, false);
 
 		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
 		EasyMock.expect(blackKing.getType()).andReturn(PieceType.KING).anyTimes();
@@ -2147,7 +2035,7 @@ class RulesEngineTest {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(kingSquare).anyTimes();
 				} else {
 					EasyMock.expect(board.getSquare(file, rank))
-							.andReturn(Square.create(file, rank)).anyTimes();
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -2167,7 +2055,7 @@ class RulesEngineTest {
 
 	@Test
 	void isCheckmate_kingCanEscape_returnsFalse() {
-		// TC58: In Check But Can Move King
+		// TC58
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
 				.addMockedMethod("getLegalMoves", GameModel.class, Square.class)
@@ -2190,7 +2078,7 @@ class RulesEngineTest {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(kingSquare).anyTimes();
 				} else {
 					EasyMock.expect(board.getSquare(file, rank))
-							.andReturn(Square.create(file, rank)).anyTimes();
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -2212,7 +2100,7 @@ class RulesEngineTest {
 
 	@Test
 	void isCheckmate_checkCanBeBlocked_returnsFalse() {
-		// TC59: In Check But Can Block
+		// TC59
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
 				.addMockedMethod("getLegalMoves", GameModel.class, Square.class)
@@ -2241,7 +2129,7 @@ class RulesEngineTest {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(rookSquare).anyTimes();
 				} else {
 					EasyMock.expect(board.getSquare(file, rank))
-							.andReturn(Square.create(file, rank)).anyTimes();
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -2263,7 +2151,7 @@ class RulesEngineTest {
 
 	@Test
 	void isCheckmate_attackerCanBeCaptured_returnsFalse() {
-		// TC60: In Check But Can Capture Attacker
+		// TC60
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
 				.addMockedMethod("getLegalMoves", GameModel.class, Square.class)
@@ -2297,7 +2185,7 @@ class RulesEngineTest {
 					EasyMock.expect(board.getSquare(file, rank)).andReturn(attackerSquare).anyTimes();
 				} else {
 					EasyMock.expect(board.getSquare(file, rank))
-							.andReturn(Square.create(file, rank)).anyTimes();
+							.andReturn(mockSquare(file, rank, null, true)).anyTimes();
 				}
 			}
 		}
@@ -2321,7 +2209,7 @@ class RulesEngineTest {
 
 	@Test
 	void isCheckmate_notInCheck_returnsFalse() {
-		// TC61: Not In Check
+		// TC61
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
 				.createMock();
@@ -2339,9 +2227,23 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model);
 	}
 
+	// =========================================================================
 	// Methods Under Test: isStalemate
+	// =========================================================================
+
+	// =========================================================================
 	// Methods Under Test: isCastlingLegal
+	// =========================================================================
+
+	// =========================================================================
 	// Methods Under Test: isEnPassantLegal
+	// =========================================================================
+
+	// =========================================================================
 	// Methods Under Test: isPromotionLegal
+	// =========================================================================
+
+	// =========================================================================
 	// Methods Under Test: getGameStatus
+	// =========================================================================
 }
