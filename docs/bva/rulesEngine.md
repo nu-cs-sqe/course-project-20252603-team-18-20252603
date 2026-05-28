@@ -708,6 +708,72 @@ The selected promotion piece for a pawn reaching the final rank.
 * **Expected output**: Throws `IllegalArgumentException`.
 * **Implemented at**: `isSquareAttacked_nullColor_throwsException`
 
+### TC57b: Square Attacked By Rook
+
+* **State of the system: Black rook on e8, target square e1, clear path between them.
+* **Expected output: Returns true.
+* **Implemented at: isSquareAttacked_byRook_returnsTrue
+
+### TC58b: Square Not Attacked By Rook (Blocked Path)
+
+* **State of the system: Black rook on e8, white piece on e4, target square e1.
+* **Expected output: Returns false.
+* **Implemented at: isSquareAttacked_rookBlockedPath_returnsFalse
+
+### TC59b: Square Attacked By Queen (Diagonal)
+
+* **State of the system: Black queen on h5, target square e2, clear diagonal path.
+* **Expected output: Returns true.
+* **Implemented at: isSquareAttacked_byQueenDiagonal_returnsTrue
+
+### TC60b: Square Attacked By Queen (Straight)
+
+* **State of the system: Black queen on e8, target square e1, clear vertical path.
+* **Expected output: Returns true.
+* **Implemented at: isSquareAttacked_byQueenStraight_returnsTrue
+
+### TC61b: Square Not Attacked By Queen (Blocked Path)
+
+* **State of the system: Black queen on e8, white piece on e4, target square e1.
+* **Expected output: Returns false.
+* **Implemented at: isSquareAttacked_queenBlockedPath_returnsFalse
+
+### TC62b: Square Attacked By King (Adjacent)
+
+* **State of the system: Black king on e2, target square e1.
+* **Expected output: Returns true.
+* **Implemented at: isSquareAttacked_byKing_returnsTrue
+
+### TC63b: Square Not Attacked By King (Too Far)
+
+* **State of the system: Black king on e3, target square e1.
+* **Expected output: Returns false.
+* **Implemented at: isSquareAttacked_kingTooFar_returnsFalse
+
+### TC64b: Square Attacked By White Pawn (Diagonal Forward)
+
+* **State of the system: White pawn on d4, target square e5.
+* **Expected output: Returns true.
+* **Implemented at: isSquareAttacked_byWhitePawn_returnsTrue
+
+### TC65b: Square Attacked By Black Pawn (Diagonal Forward)
+
+* **State of the system: Black pawn on e5, target square d4.
+* **Expected output: Returns true.
+* **Implemented at: isSquareAttacked_byBlackPawn_returnsTrue
+
+### TC66b: Square Not Attacked By Pawn (Directly Ahead)
+
+* **State of the system: White pawn on e4, target square e5 (directly in front — pawns do not attack straight ahead).
+* **Expected output: Returns false.
+* **Implemented at: isSquareAttacked_pawnStraightAhead_returnsFalse
+
+### TC67b: Square Not Attacked By Pawn (Wrong Direction)
+
+* **State of the system: White pawn on e4, target square d3 (behind and diagonal — pawns do not attack backward).
+* **Expected output: Returns false.
+* **Implemented at: isSquareAttacked_pawnWrongDirection_returnsFalse
+
 ---
 
 ## Method under test: `RulesEngine.isCheckmate(GameState state, Color color)`
