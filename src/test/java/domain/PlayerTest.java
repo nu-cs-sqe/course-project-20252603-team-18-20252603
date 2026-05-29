@@ -87,4 +87,14 @@ public class PlayerTest {
 
 		assertFalse(player.isHuman());
 	}
+
+	// -------------------------------------------------------------------------
+	// TC8: New player has no captured pieces
+	// -------------------------------------------------------------------------
+	@Test
+	void getCapturedPieces_newPlayer_returnsEmptyList() {
+		Player player = new Player(Color.WHITE, true);
+
+		assertTrue(player.getCapturedPieces().isEmpty());
+	}
 }
