@@ -444,6 +444,39 @@ public class QueenTest {
 		verify(whiteFrom, blackFrom);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC19: Queen Movement Does Not Depend On hasMoved
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_hasMovedDoesNotAffectCandidates() {
+		Queen unmovedQueen = new Queen(Color.WHITE);
+		Queen movedQueen = new Queen(Color.WHITE);
+		movedQueen.markMoved();
+
+		Square unmovedFrom = createMock(Square.class);
+		expect(unmovedFrom.getOccupant()).andReturn(unmovedQueen);
+		expect(unmovedFrom.getFile()).andReturn('d').anyTimes();
+		expect(unmovedFrom.getRank()).andReturn(4).anyTimes();
+
+		Square movedFrom = createMock(Square.class);
+		expect(movedFrom.getOccupant()).andReturn(movedQueen);
+		expect(movedFrom.getFile()).andReturn('d').anyTimes();
+		expect(movedFrom.getRank()).andReturn(4).anyTimes();
+
+		replay(unmovedFrom, movedFrom);
+
+		List<Square> unmovedCandidates = unmovedQueen.getLegalMoveDestinationSquares(unmovedFrom);
+		List<Square> movedCandidates = movedQueen.getLegalMoveDestinationSquares(movedFrom);
+
+		assertEquals(unmovedCandidates.size(), movedCandidates.size());
+		assertTrue(containsSquare(unmovedCandidates, 'e', 4));
+		assertTrue(containsSquare(movedCandidates, 'e', 4));
+		assertTrue(containsSquare(unmovedCandidates, 'e', 5));
+		assertTrue(containsSquare(movedCandidates, 'e', 5));
+
+		verify(unmovedFrom, movedFrom);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
