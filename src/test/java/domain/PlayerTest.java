@@ -150,4 +150,23 @@ public class PlayerTest {
 		assertEquals(1, capturedPieces.size());
 		assertEquals(capturedPiece, capturedPieces.get(0));
 	}
+
+	// -------------------------------------------------------------------------
+	// TC12: Add multiple captured pieces
+	// -------------------------------------------------------------------------
+	@Test
+	void addCapturedPiece_multiplePieces_addsAllPieces() {
+		Player player = new Player(Color.WHITE, true);
+		Piece firstCapturedPiece = new Pawn(Color.BLACK);
+		Piece secondCapturedPiece = new Queen(Color.BLACK);
+
+		player.addCapturedPiece(firstCapturedPiece);
+		player.addCapturedPiece(secondCapturedPiece);
+
+		List<Piece> capturedPieces = player.getCapturedPieces();
+
+		assertEquals(2, capturedPieces.size());
+		assertEquals(firstCapturedPiece, capturedPieces.get(0));
+		assertEquals(secondCapturedPiece, capturedPieces.get(1));
+	}
 }
