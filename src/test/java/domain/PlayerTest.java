@@ -67,4 +67,14 @@ public class PlayerTest {
 
 		assertEquals(Color.BLACK, player.getColor());
 	}
+
+	// -------------------------------------------------------------------------
+	// TC6: Human player returns true
+	// -------------------------------------------------------------------------
+	@Test
+	void isHuman_humanPlayer_returnsTrue() {
+		Player player = new Player(Color.WHITE, true);
+
+		assertTrue(player.isHuman());
+	}
 }
