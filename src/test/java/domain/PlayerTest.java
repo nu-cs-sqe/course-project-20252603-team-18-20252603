@@ -115,4 +115,23 @@ public class PlayerTest {
 		assertEquals(1, capturedPieces.size());
 		assertTrue(capturedPieces.contains(capturedPiece));
 	}
+
+	// -------------------------------------------------------------------------
+	// TC10: Player with multiple captured pieces returns all captured pieces
+	// -------------------------------------------------------------------------
+	@Test
+	void getCapturedPieces_multipleCapturedPieces_returnsAllPieces() {
+		Player player = new Player(Color.WHITE, true);
+		Piece firstCapturedPiece = new Pawn(Color.BLACK);
+		Piece secondCapturedPiece = new Rook(Color.BLACK);
+
+		player.addCapturedPiece(firstCapturedPiece);
+		player.addCapturedPiece(secondCapturedPiece);
+
+		List<Piece> capturedPieces = player.getCapturedPieces();
+
+		assertEquals(2, capturedPieces.size());
+		assertTrue(capturedPieces.contains(firstCapturedPiece));
+		assertTrue(capturedPieces.contains(secondCapturedPiece));
+	}
 }
