@@ -291,6 +291,32 @@ public class QueenTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC13: Queen at Corner a8 — Minimum Corner Candidate Count
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_cornerA8_returnsTwentyOneCandidates() {
+		Queen queen = new Queen(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(queen);
+		expect(from.getFile()).andReturn('a').anyTimes();
+		expect(from.getRank()).andReturn(8).anyTimes();
+		replay(from);
+
+		List<Square> candidates = queen.getLegalMoveDestinationSquares(from);
+
+		assertEquals(21, candidates.size());
+		assertTrue(containsSquare(candidates, 'b', 8));
+		assertTrue(containsSquare(candidates, 'h', 8));
+		assertTrue(containsSquare(candidates, 'a', 7));
+		assertTrue(containsSquare(candidates, 'a', 1));
+		assertTrue(containsSquare(candidates, 'b', 7));
+		assertTrue(containsSquare(candidates, 'h', 1));
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
