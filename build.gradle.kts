@@ -5,6 +5,7 @@ plugins {
     id("java")
     id("checkstyle")
     id("com.github.spotbugs") version "6.0.25"
+    id("info.solidsoft.pitest") version "1.15.0"
 }
 
 group = "nu.csse.sqe"
@@ -44,4 +45,17 @@ tasks.withType<Checkstyle>().configureEach {
 
 configure<CheckstyleExtension> {
     isIgnoreFailures = false
+}
+
+pitest {
+    junit5PluginVersion.set("1.2.1")
+
+    targetClasses.set(listOf("domain.*"))
+    targetTests.set(listOf("domain.*"))
+
+    threads.set(4)
+
+    outputFormats.set(setOf("HTML"))
+
+    timestampedReports.set(false)
 }
