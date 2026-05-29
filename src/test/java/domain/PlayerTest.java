@@ -57,4 +57,14 @@ public class PlayerTest {
 
 		assertEquals(Color.WHITE, player.getColor());
 	}
+
+	// -------------------------------------------------------------------------
+	// TC5: Get color on black player returns black
+	// -------------------------------------------------------------------------
+	@Test
+	void getColor_blackPlayer_returnsBlack() {
+		Player player = new Player(Color.BLACK, false);
+
+		assertEquals(Color.BLACK, player.getColor());
+	}
 }
