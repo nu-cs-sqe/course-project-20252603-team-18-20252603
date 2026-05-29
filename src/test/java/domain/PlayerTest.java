@@ -134,4 +134,20 @@ public class PlayerTest {
 		assertTrue(capturedPieces.contains(firstCapturedPiece));
 		assertTrue(capturedPieces.contains(secondCapturedPiece));
 	}
+
+	// -------------------------------------------------------------------------
+	// TC11: Add one captured piece
+	// -------------------------------------------------------------------------
+	@Test
+	void addCapturedPiece_validPiece_addsPiece() {
+		Player player = new Player(Color.WHITE, true);
+		Piece capturedPiece = new Bishop(Color.BLACK);
+
+		player.addCapturedPiece(capturedPiece);
+
+		List<Piece> capturedPieces = player.getCapturedPieces();
+
+		assertEquals(1, capturedPieces.size());
+		assertEquals(capturedPiece, capturedPieces.get(0));
+	}
 }
