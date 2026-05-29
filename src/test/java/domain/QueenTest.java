@@ -187,6 +187,32 @@ public class QueenTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC9: Queen at Maximum-File Edge — Right Candidates Absent
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_fileH_interiorRank_returnsTwentyOneCandidates() {
+		Queen queen = new Queen(Color.BLACK);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(queen);
+		expect(from.getFile()).andReturn('h').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = queen.getLegalMoveDestinationSquares(from);
+
+		assertEquals(21, candidates.size());
+		assertTrue(containsSquare(candidates, 'g', 4));
+		assertTrue(containsSquare(candidates, 'h', 5));
+		assertTrue(containsSquare(candidates, 'h', 3));
+		assertTrue(containsSquare(candidates, 'g', 5));
+		assertTrue(containsSquare(candidates, 'g', 3));
+		assertFalse(candidates.stream().anyMatch(s -> s.getFile() > 'h'));
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
