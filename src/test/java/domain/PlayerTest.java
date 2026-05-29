@@ -169,4 +169,18 @@ public class PlayerTest {
 		assertEquals(firstCapturedPiece, capturedPieces.get(0));
 		assertEquals(secondCapturedPiece, capturedPieces.get(1));
 	}
+
+	// -------------------------------------------------------------------------
+	// TC13: Add null captured piece throws exception
+	// -------------------------------------------------------------------------
+	@Test
+	void addCapturedPiece_nullPiece_throwsException() {
+		Player player = new Player(Color.WHITE, true);
+
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+			player.addCapturedPiece(null);
+		});
+
+		assertEquals("Captured piece can't be null.", exception.getMessage());
+	}
 }

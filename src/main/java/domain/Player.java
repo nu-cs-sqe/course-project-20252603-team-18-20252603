@@ -31,6 +31,9 @@ public final class Player {
 	}
 
 	public void addCapturedPiece(Piece piece) {
+		if (piece == null) {
+			throw new IllegalArgumentException("Captured piece can't be null.");
+		}
 		capturedPieces.add(piece);
 	}
 }
