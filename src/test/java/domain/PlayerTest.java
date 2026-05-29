@@ -47,4 +47,14 @@ public class PlayerTest {
 
 		assertEquals("Color can't be null.", exception.getMessage());
 	}
+
+	// -------------------------------------------------------------------------
+	// TC4: Get color on white player returns white
+	// -------------------------------------------------------------------------
+	@Test
+	void getColor_whitePlayer_returnsWhite() {
+		Player player = new Player(Color.WHITE, true);
+
+		assertEquals(Color.WHITE, player.getColor());
+	}
 }
