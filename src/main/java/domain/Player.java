@@ -29,4 +29,8 @@ public final class Player {
 	public List<Piece> getCapturedPieces() {
 		return new ArrayList<Piece>(capturedPieces);
 	}
+
+	public void addCapturedPiece(Piece piece) {
+		capturedPieces.add(piece);
+	}
 }

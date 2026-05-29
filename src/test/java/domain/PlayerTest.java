@@ -2,6 +2,8 @@ package domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -96,5 +98,21 @@ public class PlayerTest {
 		Player player = new Player(Color.WHITE, true);
 
 		assertTrue(player.getCapturedPieces().isEmpty());
+	}
+
+	// -------------------------------------------------------------------------
+	// TC9: Player with one captured piece returns list containing that piece
+	// -------------------------------------------------------------------------
+	@Test
+	void getCapturedPieces_oneCapturedPiece_returnsListWithPiece() {
+		Player player = new Player(Color.WHITE, true);
+		Piece capturedPiece = new Pawn(Color.BLACK);
+
+		player.addCapturedPiece(capturedPiece);
+
+		List<Piece> capturedPieces = player.getCapturedPieces();
+
+		assertEquals(1, capturedPieces.size());
+		assertTrue(capturedPieces.contains(capturedPiece));
 	}
 }
