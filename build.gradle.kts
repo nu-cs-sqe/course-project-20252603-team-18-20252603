@@ -6,6 +6,7 @@ plugins {
     id("checkstyle")
     id("com.github.spotbugs") version "6.0.25"
     id("info.solidsoft.pitest") version "1.15.0"
+    jacoco
 }
 
 group = "nu.csse.sqe"
@@ -33,6 +34,23 @@ tasks.compileJava {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(false)
+        csv.required.set(false)
+        html.required.set(true)
+
+        html.outputLocation.set(
+            layout.buildDirectory.dir("reports/jacoco")
+        )
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.pitest)
 }
 
 tasks.withType<Checkstyle>().configureEach {
@@ -58,4 +76,8 @@ pitest {
     outputFormats.set(setOf("HTML"))
 
     timestampedReports.set(false)
+}
+
+jacoco {
+    toolVersion = "0.8.11"
 }
