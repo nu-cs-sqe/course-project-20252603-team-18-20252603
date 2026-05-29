@@ -412,6 +412,38 @@ public class QueenTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC18: Queen Movement Does Not Depend On Color
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_colorDoesNotAffectCandidates() {
+		Queen whiteQueen = new Queen(Color.WHITE);
+		Queen blackQueen = new Queen(Color.BLACK);
+
+		Square whiteFrom = createMock(Square.class);
+		expect(whiteFrom.getOccupant()).andReturn(whiteQueen);
+		expect(whiteFrom.getFile()).andReturn('d').anyTimes();
+		expect(whiteFrom.getRank()).andReturn(4).anyTimes();
+
+		Square blackFrom = createMock(Square.class);
+		expect(blackFrom.getOccupant()).andReturn(blackQueen);
+		expect(blackFrom.getFile()).andReturn('d').anyTimes();
+		expect(blackFrom.getRank()).andReturn(4).anyTimes();
+
+		replay(whiteFrom, blackFrom);
+
+		List<Square> whiteCandidates = whiteQueen.getLegalMoveDestinationSquares(whiteFrom);
+		List<Square> blackCandidates = blackQueen.getLegalMoveDestinationSquares(blackFrom);
+
+		assertEquals(whiteCandidates.size(), blackCandidates.size());
+		assertTrue(containsSquare(whiteCandidates, 'e', 4));
+		assertTrue(containsSquare(blackCandidates, 'e', 4));
+		assertTrue(containsSquare(whiteCandidates, 'e', 5));
+		assertTrue(containsSquare(blackCandidates, 'e', 5));
+
+		verify(whiteFrom, blackFrom);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
