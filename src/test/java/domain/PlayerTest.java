@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PlayerTest {
 
@@ -30,5 +31,20 @@ public class PlayerTest {
 		assertEquals(Color.BLACK, player.getColor());
 		assertFalse(player.isHuman());
 		assertTrue(player.getCapturedPieces().isEmpty());
+	}
+
+	// -------------------------------------------------------------------------
+	// TC3: Constructor with null color throws exception
+	// -------------------------------------------------------------------------
+	@Test
+	void constructor_nullColor_throwsException() {
+		Color color = null;
+		boolean isHuman = true;
+
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+			new Player(color, isHuman);
+		});
+
+		assertEquals("Color can't be null.", exception.getMessage());
 	}
 }

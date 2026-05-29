@@ -3,12 +3,16 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public final class Player {
 	private final Color color;
 	private final boolean isHuman;
 	private final List<Piece> capturedPieces;
 
 	public Player(Color color, boolean isHuman) {
+		if (color == null) {
+			throw new IllegalArgumentException("Color can't be null.");
+		}
+
 		this.color = color;
 		this.isHuman = isHuman;
 		this.capturedPieces = new ArrayList<Piece>();
