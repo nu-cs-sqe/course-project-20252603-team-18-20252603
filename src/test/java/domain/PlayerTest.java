@@ -77,4 +77,14 @@ public class PlayerTest {
 
 		assertTrue(player.isHuman());
 	}
+
+	// -------------------------------------------------------------------------
+	// TC7: Computer player returns false
+	// -------------------------------------------------------------------------
+	@Test
+	void isHuman_computerPlayer_returnsFalse() {
+		Player player = new Player(Color.BLACK, false);
+
+		assertFalse(player.isHuman());
+	}
 }
