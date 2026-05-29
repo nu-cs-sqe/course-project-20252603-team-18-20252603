@@ -2,11 +2,16 @@ package domain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QueenTest {
 
@@ -38,5 +43,36 @@ public class QueenTest {
 		});
 
 		verify(from);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC3: Queen at Interior Square — All Eight Directions Generated
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_interiorSquare_containsAllEightDirections() {
+		Queen queen = new Queen(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(queen);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = queen.getLegalMoveDestinationSquares(from);
+
+		assertTrue(containsSquare(candidates, 'e', 4));
+		assertTrue(containsSquare(candidates, 'c', 4));
+		assertTrue(containsSquare(candidates, 'd', 5));
+		assertTrue(containsSquare(candidates, 'd', 3));
+		assertTrue(containsSquare(candidates, 'e', 5));
+		assertTrue(containsSquare(candidates, 'e', 3));
+		assertTrue(containsSquare(candidates, 'c', 5));
+		assertTrue(containsSquare(candidates, 'c', 3));
+
+		verify(from);
+	}
+
+	private boolean containsSquare(List<Square> squares, char file, int rank) {
+		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
 }
