@@ -72,6 +72,29 @@ public class QueenTest {
 		verify(from);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC4: Queen at Interior Square — Straight Candidates Present
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoveDestinationSquares_interiorSquare_containsStraightCandidates() {
+		Queen queen = new Queen(Color.WHITE);
+
+		Square from = createMock(Square.class);
+		expect(from.getOccupant()).andReturn(queen);
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(4).anyTimes();
+		replay(from);
+
+		List<Square> candidates = queen.getLegalMoveDestinationSquares(from);
+
+		assertTrue(containsSquare(candidates, 'e', 4));
+		assertTrue(containsSquare(candidates, 'c', 4));
+		assertTrue(containsSquare(candidates, 'd', 5));
+		assertTrue(containsSquare(candidates, 'd', 3));
+
+		verify(from);
+	}
+
 	private boolean containsSquare(List<Square> squares, char file, int rank) {
 		return squares.stream().anyMatch(s -> s.getFile() == file && s.getRank() == rank);
 	}
