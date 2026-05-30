@@ -2848,6 +2848,41 @@ class RulesEngineTest {
 		EasyMock.verify(model);
 	}
 
+	@Test
+	void isEnPassantLegal_wrongTargetRank_returnsFalse() {
+		// TC79
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = new Board();
+
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		Pawn blackPawn = new Pawn(Color.BLACK);
+
+		Square whitePawnSquare = board.getSquare('e', 4);
+		Square blackPawnStart = board.getSquare('c', 7);
+		Square blackPawnEnd = board.getSquare('c', 5);
+		Square wrongEnPassantTarget = board.getSquare('d', 5);
+
+		board.placePiece(blackPawn, blackPawnStart);
+		Move previousMove = Move.create(blackPawn, blackPawnStart, blackPawnEnd);
+		board.movePiece(blackPawnStart, blackPawnEnd);
+
+		board.placePiece(whitePawn, whitePawnSquare);
+		Move move = Move.create(whitePawn, whitePawnSquare, wrongEnPassantTarget);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(model.getMoveHistory()).andReturn(new Move[] { previousMove }).anyTimes();
+
+		EasyMock.replay(model);
+
+		boolean result = rulesEngine.isEnpassantLegal(move, model);
+
+		assertFalse(result);
+
+		EasyMock.verify(model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: isPromotionLegal
 	// =========================================================================
