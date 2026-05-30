@@ -241,4 +241,27 @@ public class GameStateTest {
 
 		verify(board, lastMove, pawn, from, to);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC14: Last Move Was Not A Pawn Move
+	// -------------------------------------------------------------------------
+	@Test
+	void getLastMove_nonPawnMove_noEnPassantWindow() {
+		Board board = createMock(Board.class);
+		Move lastMove = createMock(Move.class);
+		Piece rook = createMock(Piece.class);
+
+		expect(lastMove.getPiece()).andReturn(rook);
+		expect(rook.getType()).andReturn(PieceType.ROOK);
+
+		replay(board, lastMove, rook);
+
+		GameState state = GameState.create(board, Color.BLACK, lastMove);
+
+		Move retrievedMove = state.getLastMove();
+		assertNotNull(retrievedMove);
+		assertEquals(PieceType.ROOK, retrievedMove.getPiece().getType());
+
+		verify(board, lastMove, rook);
+	}
 }
