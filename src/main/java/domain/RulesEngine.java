@@ -10,16 +10,16 @@ public class RulesEngine {
 	protected static final int MINRANK = 1;
 	protected static final int MAXRANK = 8;
 
-	public boolean isLegalMove(Move move, GameModel model) {
+	public boolean isLegalMove(Move move, GameState gameState) {
 		if (move == null) {
 			return false;
 		}
 
-		if (model == null) {
+		if (gameState == null) {
 			return false;
 		}
 
-		Board board = model.getBoard();
+		Board board = gameState.getBoard();
 
 		Square from = move.getFrom();
 		Square fromBoardSquare = board.getSquare(
@@ -33,21 +33,21 @@ public class RulesEngine {
 			return false;
 		}
 
-		Color currentTurn = model.getCurrentTurn();
+		Color currentTurn = gameState.getCurrentTurn();
 
 		if (sourcePiece.getColor() != currentTurn) {
 			return false;
 		}
 
-		if (isCastlingLegal(move, model)) {
+		if (isCastlingLegal(move, gameState)) {
 			return true;
 		}
 
-		if (isPromotionLegal(move, model)) {
+		if (isPromotionLegal(move, gameState)) {
 			return true;
 		}
 
-		if (isEnpassantLegal(move, model)) {
+		if (isEnpassantLegal(move, gameState)) {
 			return true;
 		}
 
@@ -78,7 +78,7 @@ public class RulesEngine {
 		fromBoardSquare.setOccupant(null);
 		toBoardSquare.setOccupant(sourcePiece);
 
-		boolean kingInCheck = isInCheck(model, currentTurn);
+		boolean kingInCheck = isInCheck(gameState, currentTurn);
 
 		fromBoardSquare.setOccupant(sourcePiece);
 		toBoardSquare.setOccupant(capturedPiece);
@@ -170,12 +170,12 @@ public class RulesEngine {
 		return false;
 	}
 
-	protected boolean isInCheck(GameModel model, Color color) {
+	protected boolean isInCheck(GameState gameState, Color color) {
 		if (color == null) {
 			throw new IllegalArgumentException("Opponent Color cannot be null");
 		}
 
-		Board board = model.getBoard();
+		Board board = gameState.getBoard();
 
 		for (char file = MINFILE; file <= MAXFILE; file++) {
 			for (int rank = MINRANK; rank <= MAXRANK; rank++) {
@@ -185,7 +185,7 @@ public class RulesEngine {
 						&& piece.getType() == PieceType.KING
 						&& piece.getColor() == color) {
 					Color opponent = (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
-					return isSquareAttacked(model, square, opponent);
+					return isSquareAttacked(gameState, square, opponent);
 				}
 			}
 		}
@@ -193,17 +193,17 @@ public class RulesEngine {
 		throw new IllegalStateException("No " + color + " king found on the board");
 	}
 
-	public boolean isCheckmate(GameModel model, Color color) {
-		if (!isInCheck(model, color)) {
+	public boolean isCheckmate(GameState gameState, Color color) {
+		if (!isInCheck(gameState, color)) {
 			return false;
 		}
 
-		Board board = model.getBoard();
+		Board board = gameState.getBoard();
 
 		for (char file = MINFILE; file <= MAXFILE; file++) {
 			for (int rank = MINRANK; rank <= MAXRANK; rank++) {
 				Square square = board.getSquare(file, rank);
-				if (!getLegalMoves(model, square).isEmpty()) {
+				if (!getLegalMoves(gameState, square).isEmpty()) {
 					return false;
 				}
 			}
@@ -212,7 +212,7 @@ public class RulesEngine {
 		return true;
 	}
 
-	protected boolean isSquareAttacked(GameModel model, Square square, Color byColor) {
+	protected boolean isSquareAttacked(GameState gameState, Square square, Color byColor) {
 		if (square == null) {
 			throw new IllegalArgumentException("'square' cannot be null");
 		}
@@ -220,7 +220,7 @@ public class RulesEngine {
 			throw new IllegalArgumentException("'byColor' cannot be null");
 		}
 
-		Board board = model.getBoard();
+		Board board = gameState.getBoard();
 
 		final int SHORT_L_LEG = 1;
 		final int LONG_L_LEG = 2;
@@ -279,8 +279,8 @@ public class RulesEngine {
 		return false;
 	}
 
-	protected boolean isCastlingLegal(Move move, GameModel model) {
-		if (move == null || model == null) {
+	protected boolean isCastlingLegal(Move move, GameState gameState) {
+		if (move == null || gameState == null) {
 			return false;
 		}
 
@@ -288,7 +288,7 @@ public class RulesEngine {
 			return false;
 		}
 
-		Board board = model.getBoard();
+		Board board = gameState.getBoard();
 		if (board == null) {
 			return false;
 		}
@@ -340,7 +340,7 @@ public class RulesEngine {
 			}
 		}
 
-		if (isInCheck(model, color)) {
+		if (isInCheck(gameState, color)) {
 			return false;
 		}
 
@@ -351,7 +351,7 @@ public class RulesEngine {
 			file != (char) (to.getFile() + fileStep);
 			file = (char) (file + fileStep)) {
 			Square square = board.getSquare(file, homeRank);
-			if (isSquareAttacked(model, square, opponentColor)) {
+			if (isSquareAttacked(gameState, square, opponentColor)) {
 				return false;
 			}
 		}
@@ -359,15 +359,15 @@ public class RulesEngine {
 		return true;
 	}
 
-	protected boolean isPromotionLegal(Move move, GameModel model) {
-		if (move == null || model == null) {
+	protected boolean isPromotionLegal(Move move, GameState gameState) {
+		if (move == null || gameState == null) {
 			return false;
 		}
 		if (move.getClass() != Move.class) {
 			return false;
 		}
 
-		Board board = model.getBoard();
+		Board board = gameState.getBoard();
 		Square from = move.getFrom();
 		Square to = move.getTo();
 		if (board == null || from == null || to == null) {
@@ -403,7 +403,7 @@ public class RulesEngine {
 		fromBoardSquare.setOccupant(null);
 		toBoardSquare.setOccupant(sourcePiece);
 
-		boolean kingInCheck = isInCheck(model, sourcePiece.getColor());
+		boolean kingInCheck = isInCheck(gameState, sourcePiece.getColor());
 
 		fromBoardSquare.setOccupant(sourcePiece);
 		toBoardSquare.setOccupant(capturedPiece);
@@ -411,8 +411,8 @@ public class RulesEngine {
 		return !kingInCheck;
 	}
 
-	protected boolean isEnpassantLegal(Move move, GameModel model) {
-		if (move == null || model == null) {
+	protected boolean isEnpassantLegal(Move move, GameState gameState) {
+		if (move == null || gameState == null) {
 			return false;
 		}
 
@@ -420,7 +420,7 @@ public class RulesEngine {
 			return false;
 		}
 
-		Board board = model.getBoard();
+		Board board = gameState.getBoard();
 		if (board == null) {
 			return false;
 		}
@@ -445,12 +445,7 @@ public class RulesEngine {
 			return false;
 		}
 
-		Move[] moveHistory = model.getMoveHistory();
-		if (moveHistory == null || moveHistory.length == 0) {
-			return false;
-		}
-
-		Move previousMove = moveHistory[moveHistory.length - 1];
+		Move previousMove = gameState.getLastMove();
 		if (previousMove == null) {
 			return false;
 		}
@@ -520,7 +515,7 @@ public class RulesEngine {
 		capturedPawnSquare.setOccupant(null);
 		toBoardSquare.setOccupant(sourcePiece);
 
-		boolean kingInCheck = isInCheck(model, sourcePiece.getColor());
+		boolean kingInCheck = isInCheck(gameState, sourcePiece.getColor());
 
 		fromBoardSquare.setOccupant(sourcePiece);
 		capturedPawnSquare.setOccupant(capturedPiece);
@@ -529,29 +524,29 @@ public class RulesEngine {
 		return !kingInCheck;
 	}
 
-	public GameStatus getGameStatus(GameModel model) {
-		if (model == null) {
-			throw new IllegalArgumentException("GameModel cannot be null");
+	public GameStatus getGameStatus(GameState gameState) {
+		if (gameState == null) {
+			throw new IllegalArgumentException("GameState cannot be null");
 		}
-		Color turn = model.getCurrentTurn();
-		if (isInCheck(model, turn)) {
-			if (isCheckmate(model, turn)) {
+		Color turn = gameState.getCurrentTurn();
+		if (isInCheck(gameState, turn)) {
+			if (isCheckmate(gameState, turn)) {
 				return GameStatus.CHECKMATE;
 			}
 			return GameStatus.CHECK;
 		}
-		if (isStalemate(model, turn)) {
+		if (isStalemate(gameState, turn)) {
 			return GameStatus.STALEMATE;
 		}
 		return GameStatus.ONGOING;
 	}
 
-	protected boolean isStalemate(GameModel model, Color color) {
-		if (isInCheck(model, color)) {
+	protected boolean isStalemate(GameState gameState, Color color) {
+		if (isInCheck(gameState, color)) {
 			return false;
 		}
 
-		Board board = model.getBoard();
+		Board board = gameState.getBoard();
 
 		for (char file = MINFILE; file <= MAXFILE; file++) {
 			for (int rank = MINRANK; rank <= MAXRANK; rank++) {
@@ -559,7 +554,7 @@ public class RulesEngine {
 				Piece piece = square.getOccupant();
 
 				if (piece != null && piece.getColor() == color
-						&& !getLegalMoves(model, square).isEmpty()) {
+						&& !getLegalMoves(gameState, square).isEmpty()) {
 					return false;
 				}
 			}
@@ -568,9 +563,9 @@ public class RulesEngine {
 		return true;
 	}
 
-	public List<Square> getLegalMoves(GameModel model, Square from) {
-		if (model == null) {
-			throw new IllegalArgumentException("GameModel cannot be null");
+	public List<Square> getLegalMoves(GameState gameState, Square from) {
+		if (gameState == null) {
+			throw new IllegalArgumentException("GameState cannot be null");
 		}
 		if (from == null) {
 			throw new IllegalArgumentException("'from' Square cannot be null");
@@ -578,13 +573,13 @@ public class RulesEngine {
 
 		Piece piece = from.getOccupant();
 
-		if (piece == null || piece.getColor() != model.getCurrentTurn()) {
+		if (piece == null || piece.getColor() != gameState.getCurrentTurn()) {
 			return new ArrayList<>();
 		}
 
 		return piece.getLegalMoveDestinationSquares(from)
 				.stream()
-				.filter(to -> isLegalMove(Move.create(piece, from, to), model))
+				.filter(to -> isLegalMove(Move.create(piece, from, to), gameState))
 				.collect(Collectors.toList());
 	}
 }
