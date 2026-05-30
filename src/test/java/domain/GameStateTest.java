@@ -148,4 +148,19 @@ public class GameStateTest {
 
 		verify(board);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC10: getLastMove Returns Null When No Last Move Was Supplied
+	// -------------------------------------------------------------------------
+	@Test
+	void getLastMove_null_returnsNull() {
+		Board board = createMock(Board.class);
+		replay(board);
+
+		GameState state = GameState.create(board, Color.WHITE, null);
+
+		assertNull(state.getLastMove());
+
+		verify(board);
+	}
 }
