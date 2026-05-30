@@ -17,6 +17,9 @@ public class GameState {
 		if (board == null) {
 			throw new IllegalArgumentException("Board cannot be null");
 		}
+		if (currentTurn == null) {
+			throw new IllegalArgumentException("Color 'currentTurn' cannot be null");
+		}
 		return new GameState(board, currentTurn, lastMove);
 	}
 

@@ -73,4 +73,19 @@ public class GameStateTest {
 
 		verify(lastMove);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC5: Null currentTurn
+	// -------------------------------------------------------------------------
+	@Test
+	void constructor_nullCurrentTurn_throwsException() {
+		Board board = createMock(Board.class);
+		replay(board);
+
+		assertThrows(IllegalArgumentException.class, () -> {
+			GameState.create(board, null, null);
+		});
+
+		verify(board);
+	}
 }
