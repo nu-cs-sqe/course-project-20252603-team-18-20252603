@@ -2660,6 +2660,44 @@ class RulesEngineTest {
 	// Methods Under Test: isEnPassantLegal
 	// =========================================================================
 
+	@Test
+	void isEnPassantLegal_whiteValid_returnsTrue() {
+		// TC74
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = new Board();
+
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		Pawn blackPawn = new Pawn(Color.BLACK);
+
+		Square whitePawnSquare = board.getSquare('e', 5);
+		Square blackPawnStart = board.getSquare('d', 7);
+		Square blackPawnEnd = board.getSquare('d', 5);
+		Square enPassantTarget = board.getSquare('d', 6);
+
+		board.placePiece(blackPawn, blackPawnStart);
+		Move previousMove = Move.create(blackPawn, blackPawnStart, blackPawnEnd);
+		board.movePiece(blackPawnStart, blackPawnEnd);
+
+		board.placePiece(whitePawn, whitePawnSquare);
+		Move move = Move.create(whitePawn, whitePawnSquare, enPassantTarget);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(model.getMoveHistory()).andReturn(new Move[] { previousMove }).anyTimes();
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(false);
+
+		EasyMock.replay(rulesEngine, model);
+
+		boolean result = rulesEngine.isEnpassantLegal(move, model);
+
+		assertTrue(result);
+
+		EasyMock.verify(rulesEngine, model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: isPromotionLegal
 	// =========================================================================

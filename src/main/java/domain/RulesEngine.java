@@ -408,8 +408,117 @@ public class RulesEngine {
 	}
 
 	protected boolean isEnpassantLegal(Move move, GameModel model) {
-		return false;
-		// TODO
+		if (move == null || model == null) {
+			return false;
+		}
+
+		Board board = model.getBoard();
+		if (board == null) {
+			return false;
+		}
+
+		Square from = move.getFrom();
+		Square to = move.getTo();
+		if (from == null || to == null) {
+			return false;
+		}
+
+		Square fromBoardSquare = board.getSquare(from.getFile(), from.getRank());
+		Square toBoardSquare = board.getSquare(to.getFile(), to.getRank());
+		Piece sourcePiece = fromBoardSquare.getOccupant();
+
+		if (sourcePiece == null
+				|| sourcePiece != move.getPiece()
+				|| sourcePiece.getType() != PieceType.PAWN) {
+			return false;
+		}
+
+		if (!toBoardSquare.isEmpty()) {
+			return false;
+		}
+
+		Move[] moveHistory = model.getMoveHistory();
+		if (moveHistory == null || moveHistory.length == 0) {
+			return false;
+		}
+
+		Move previousMove = moveHistory[moveHistory.length - 1];
+		if (previousMove == null) {
+			return false;
+		}
+
+		Piece previousPiece = previousMove.getPiece();
+		Square previousFrom = previousMove.getFrom();
+		Square previousTo = previousMove.getTo();
+
+		if (previousPiece == null
+				|| previousFrom == null
+				|| previousTo == null
+				|| previousPiece.getType() != PieceType.PAWN
+				|| previousPiece.getColor() == sourcePiece.getColor()) {
+			return false;
+		}
+
+		int previousPawnDirection = previousPiece.getColor() == Color.WHITE
+				? WHITE_PAWN_DIRECTION
+				: BLACK_PAWN_DIRECTION;
+
+		boolean previousMoveWasDoublePawnMove =
+				previousFrom.getFile() == previousTo.getFile()
+						&& previousTo.getRank() - previousFrom.getRank()
+						== previousPawnDirection * PAWN_INITIAL_MOVE_DISTANCE;
+
+		if (!previousMoveWasDoublePawnMove) {
+			return false;
+		}
+
+		int sourcePawnDirection = sourcePiece.getColor() == Color.WHITE
+				? WHITE_PAWN_DIRECTION
+				: BLACK_PAWN_DIRECTION;
+
+		int fileDifference = to.getFile() - from.getFile();
+		int rankDifference = to.getRank() - from.getRank();
+
+		boolean isDiagonalPawnMove =
+				Math.abs(fileDifference) == PAWN_DIAGONAL_FILE_DISTANCE
+						&& rankDifference == sourcePawnDirection * PAWN_SINGLE_MOVE_DISTANCE;
+
+		if (!isDiagonalPawnMove) {
+			return false;
+		}
+
+		int enPassantTargetRank = sourcePiece.getColor() == Color.WHITE ? 6 : 3;
+		if (to.getRank() != enPassantTargetRank) {
+			return false;
+		}
+
+		int expectedTargetRank = (previousFrom.getRank() + previousTo.getRank()) / 2;
+		if (to.getFile() != previousTo.getFile() || to.getRank() != expectedTargetRank) {
+			return false;
+		}
+
+		if (previousTo.getRank() != from.getRank()) {
+			return false;
+		}
+
+		Square capturedPawnSquare = board.getSquare(previousTo.getFile(), previousTo.getRank());
+		if (capturedPawnSquare.getOccupant() != previousPiece) {
+			return false;
+		}
+
+		Piece capturedPiece = capturedPawnSquare.getOccupant();
+
+		fromBoardSquare.setOccupant(null);
+		capturedPawnSquare.setOccupant(null);
+		toBoardSquare.setOccupant(sourcePiece);
+
+		boolean kingInCheck = isInCheck(model, sourcePiece.getColor());
+
+		fromBoardSquare.setOccupant(sourcePiece);
+		capturedPawnSquare.setOccupant(capturedPiece);
+		toBoardSquare.setOccupant(null);
+
+		return !kingInCheck;
 	}
 
 	public GameStatus getGameStatus(GameModel model) {
