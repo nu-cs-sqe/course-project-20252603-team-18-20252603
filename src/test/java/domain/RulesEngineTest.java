@@ -2602,4 +2602,11 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model);
 	}
 
+	@Test
+	void getGameStatus_nullState_throwsException() {
+		RulesEngine rulesEngine = new RulesEngine();
+
+		assertThrows(IllegalArgumentException.class, () -> rulesEngine.getGameStatus(null));
+	}
+
 }
