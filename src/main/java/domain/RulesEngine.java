@@ -284,6 +284,10 @@ public class RulesEngine {
 			return false;
 		}
 
+		if (move.getClass() != Move.class) {
+			return false;
+		}
+
 		Board board = model.getBoard();
 		if (board == null) {
 			return false;
@@ -344,8 +348,8 @@ public class RulesEngine {
 		int fileStep = isKingside ? 1 : -1;
 
 		for (char file = (char) (from.getFile() + fileStep);
-		     file != (char) (to.getFile() + fileStep);
-		     file = (char) (file + fileStep)) {
+			file != (char) (to.getFile() + fileStep);
+			file = (char) (file + fileStep)) {
 			Square square = board.getSquare(file, homeRank);
 			if (isSquareAttacked(model, square, opponentColor)) {
 				return false;
@@ -409,6 +413,10 @@ public class RulesEngine {
 
 	protected boolean isEnpassantLegal(Move move, GameModel model) {
 		if (move == null || model == null) {
+			return false;
+		}
+
+		if (move.getClass() != Move.class) {
 			return false;
 		}
 
