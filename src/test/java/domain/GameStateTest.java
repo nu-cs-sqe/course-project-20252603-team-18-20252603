@@ -103,4 +103,19 @@ public class GameStateTest {
 
 		verify(board);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC7: getBoard Returns The Board Supplied At Construction
+	// -------------------------------------------------------------------------
+	@Test
+	void getBoard_returnsBoardSuppliedAtConstruction() {
+		Board board = createMock(Board.class);
+		replay(board);
+
+		GameState state = GameState.create(board, Color.WHITE, null);
+
+		assertSame(board, state.getBoard());
+
+		verify(board);
+	}
 }
