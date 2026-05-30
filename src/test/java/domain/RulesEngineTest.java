@@ -2517,4 +2517,29 @@ class RulesEngineTest {
 	// =========================================================================
 	// Methods Under Test: getGameStatus
 	// =========================================================================
-}
+
+	@Test
+	void getGameStatus_ongoing_returnsOngoing() {
+		RulesEngine rulesEngine = new RulesEngine();
+
+		Board board = new Board();
+		King whiteKing = new King(Color.WHITE);
+		King blackKing = new King(Color.BLACK);
+		Knight whiteKnight = new Knight(Color.WHITE);
+		board.placePiece(whiteKing, board.getSquare('a', 1));
+		board.placePiece(blackKing, board.getSquare('h', 8));
+		board.placePiece(whiteKnight, board.getSquare('b', 1));
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		EasyMock.replay(model);
+
+		GameStatus result = rulesEngine.getGameStatus(model);
+
+		assertEquals(GameStatus.ONGOING, result);
+
+		EasyMock.verify(model);
+	}
+
+	}

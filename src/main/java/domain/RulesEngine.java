@@ -348,6 +348,13 @@ public class RulesEngine {
 		// TODO
 	}
 
+	public GameStatus getGameStatus(GameModel model) {
+		if (model == null) {
+			throw new IllegalArgumentException("GameModel cannot be null");
+		}
+		return GameStatus.ONGOING;
+	}
+
 	public List<Square> getLegalMoves(GameModel model, Square from) {
 		if (model == null) {
 			throw new IllegalArgumentException("GameModel cannot be null");
