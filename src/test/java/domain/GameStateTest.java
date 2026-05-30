@@ -23,4 +23,21 @@ public class GameStateTest {
 
 		verify(board);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC2: Valid Construction — Black Turn, No Last Move
+	// -------------------------------------------------------------------------
+	@Test
+	void constructor_validBlackTurnNullLastMove_createsGameState() {
+		Board board = createMock(Board.class);
+		replay(board);
+
+		GameState state = new GameState(board, Color.BLACK, null);
+
+		assertSame(board, state.getBoard());
+		assertEquals(Color.BLACK, state.getCurrentTurn());
+		assertNull(state.getLastMove());
+
+		verify(board);
+	}
 }
