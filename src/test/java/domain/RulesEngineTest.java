@@ -2831,7 +2831,6 @@ class RulesEngineTest {
 		Square enPassantTarget = board.getSquare('d', 6);
 
 		board.placePiece(blackPawn, blackPawnStart);
-		Move previousMove = Move.create(blackPawn, blackPawnStart, blackPawnEnd);
 		board.movePiece(blackPawnStart, blackPawnEnd);
 
 		board.placePiece(whiteRook, rookSquare);
