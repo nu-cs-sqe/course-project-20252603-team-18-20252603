@@ -2374,6 +2374,33 @@ class RulesEngineTest {
 		EasyMock.verify(board, model);
 	}
 
+	@Test
+	void isPromotionLegal_promotionBeforeFinalRank_returnsFalse() {
+		// TC85
+		RulesEngine rulesEngine = new RulesEngine();
+
+		Board board = EasyMock.createMock(Board.class);
+		Pawn pawn = new Pawn(Color.WHITE);
+		Square from = mockSquare('e', 6, pawn, false);
+		EasyMock.expect(board.getSquare('e', 6)).andReturn(from);
+
+		Move move = Move.create(pawn, from, Square.create('e', 7));
+		Piece promotionPiece = EasyMock.createMock(Piece.class);
+		EasyMock.expect(promotionPiece.getColor()).andReturn(Color.WHITE).anyTimes();
+		EasyMock.expect(promotionPiece.getType()).andReturn(PieceType.QUEEN).anyTimes();
+		move.setPromotionPiece(promotionPiece);
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.replay(board, promotionPiece, model);
+
+		boolean result = rulesEngine.isPromotionLegal(move, model);
+
+		assertFalse(result);
+
+		EasyMock.verify(board, promotionPiece, model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: getGameStatus
 	// =========================================================================
