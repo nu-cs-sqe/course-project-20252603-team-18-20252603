@@ -2542,4 +2542,22 @@ class RulesEngineTest {
 		EasyMock.verify(model);
 	}
 
+	@Test
+	void getGameStatus_inCheckHasLegalMove_returnsCheck() {
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE);
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(true);
+		EasyMock.replay(rulesEngine, model);
+
+		GameStatus result = rulesEngine.getGameStatus(model);
+
+		assertEquals(GameStatus.CHECK, result);
+
+		EasyMock.verify(rulesEngine, model);
+	}
+
 	}

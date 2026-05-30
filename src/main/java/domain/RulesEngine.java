@@ -352,6 +352,9 @@ public class RulesEngine {
 		if (model == null) {
 			throw new IllegalArgumentException("GameModel cannot be null");
 		}
+		if (isInCheck(model, model.getCurrentTurn())) {
+			return GameStatus.CHECK;
+		}
 		return GameStatus.ONGOING;
 	}
 
