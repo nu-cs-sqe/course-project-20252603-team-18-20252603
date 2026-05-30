@@ -280,10 +280,79 @@ public class RulesEngine {
 	}
 
 	protected boolean isCastlingLegal(Move move, GameModel model) {
-		return false;
-		// TODO
-		// Given Move, validate if move is castling shaped
-		// Are all Castling conditions legal?
+		if (move == null || model == null) {
+			return false;
+		}
+
+		Board board = model.getBoard();
+		if (board == null) {
+			return false;
+		}
+
+		Square from = move.getFrom();
+		Square to = move.getTo();
+		if (from == null || to == null) {
+			return false;
+		}
+
+		Square fromBoardSquare = board.getSquare(from.getFile(), from.getRank());
+		Piece king = fromBoardSquare.getOccupant();
+
+		if (king == null || king.getType() != PieceType.KING || king.hasMoved()) {
+			return false;
+		}
+
+		Color color = king.getColor();
+		int homeRank = (color == Color.WHITE) ? MINRANK : MAXRANK;
+
+		if (from.getFile() != 'e' || from.getRank() != homeRank || to.getRank() != homeRank) {
+			return false;
+		}
+
+		boolean isKingside = to.getFile() == 'g';
+		boolean isQueenside = to.getFile() == 'c';
+
+		if (!isKingside && !isQueenside) {
+			return false;
+		}
+
+		char rookFile = isKingside ? 'h' : 'a';
+		Square rookSquare = board.getSquare(rookFile, homeRank);
+		Piece rook = rookSquare.getOccupant();
+
+		if (rook == null
+				|| rook.getType() != PieceType.ROOK
+				|| rook.getColor() != color
+				|| rook.hasMoved()) {
+			return false;
+		}
+
+		char firstFileBetweenKingAndRook = (char) (Math.min(from.getFile(), rookFile) + 1);
+		char lastFileBetweenKingAndRook = (char) (Math.max(from.getFile(), rookFile) - 1);
+
+		for (char file = firstFileBetweenKingAndRook; file <= lastFileBetweenKingAndRook; file++) {
+			if (!board.getSquare(file, homeRank).isEmpty()) {
+				return false;
+			}
+		}
+
+		if (isInCheck(model, color)) {
+			return false;
+		}
+
+		Color opponentColor = (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+		int fileStep = isKingside ? 1 : -1;
+
+		for (char file = (char) (from.getFile() + fileStep);
+		     file != (char) (to.getFile() + fileStep);
+		     file = (char) (file + fileStep)) {
+			Square square = board.getSquare(file, homeRank);
+			if (isSquareAttacked(model, square, opponentColor)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	protected boolean isPromotionLegal(Move move, GameModel model) {
