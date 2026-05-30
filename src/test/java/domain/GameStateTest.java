@@ -264,4 +264,22 @@ public class GameStateTest {
 
 		verify(board, lastMove, rook);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC15: getBoard Returns Same Reference On Repeated Calls
+	// -------------------------------------------------------------------------
+	@Test
+	void getBoard_calledTwice_returnsSameReference() {
+		Board board = createMock(Board.class);
+		replay(board);
+
+		GameState state = GameState.create(board, Color.WHITE, null);
+
+		Board firstCall = state.getBoard();
+		Board secondCall = state.getBoard();
+
+		assertSame(firstCall, secondCall);
+
+		verify(board);
+	}
 }
