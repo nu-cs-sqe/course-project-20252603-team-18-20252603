@@ -2272,6 +2272,25 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model, board, whiteKing);
 	}
 
+	@Test
+	void isStalemate_inCheck_returnsFalse() {
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(true);
+
+		EasyMock.replay(rulesEngine, model);
+
+		boolean result = rulesEngine.isStalemate(model, Color.WHITE);
+
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: isCastlingLegal
 	// =========================================================================
