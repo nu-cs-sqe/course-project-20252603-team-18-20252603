@@ -252,28 +252,23 @@ public class RulesEngine {
 					if (isPawnAttack) {
 						return true;
 					}
-				}
-				else if (piece.getType() == PieceType.KNIGHT) {
+				} else if (piece.getType() == PieceType.KNIGHT) {
 					if (isLShape) {
 						return true;
 					}
-				}
-				else if (piece.getType() == PieceType.BISHOP) {
+				} else if (piece.getType() == PieceType.BISHOP) {
 					if (isDiagonal && !isPathBlocked(candidateSquare, square, board)) {
 						return true;
 					}
-				}
-				else if (piece.getType() == PieceType.ROOK) {
+				} else if (piece.getType() == PieceType.ROOK) {
 					if (isStraight && !isPathBlocked(candidateSquare, square, board)) {
 						return true;
 					}
-				}
-				else if (piece.getType() == PieceType.QUEEN) {
+				} else if (piece.getType() == PieceType.QUEEN) {
 					if ((isDiagonal || isStraight) && !isPathBlocked(candidateSquare, square, board)) {
 						return true;
 					}
-				}
-				else if (piece.getType() == PieceType.KING) {
+				} else if (piece.getType() == PieceType.KING) {
 					if (isAdjacent) {
 						return true;
 					}
