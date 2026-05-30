@@ -361,8 +361,25 @@ public class RulesEngine {
 	}
 
 	protected boolean isStalemate(GameModel model, Color color) {
-		return false;
-		// TODO
+		if (isInCheck(model, color)) {
+			return false;
+		}
+
+		Board board = model.getBoard();
+
+		for (char file = MINFILE; file <= MAXFILE; file++) {
+			for (int rank = MINRANK; rank <= MAXRANK; rank++) {
+				Square square = board.getSquare(file, rank);
+				Piece piece = square.getOccupant();
+
+				if (piece != null && piece.getColor() == color
+						&& !getLegalMoves(model, square).isEmpty()) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	public List<Square> getLegalMoves(GameModel model, Square from) {
