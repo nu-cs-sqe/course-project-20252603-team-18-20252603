@@ -210,4 +210,35 @@ public class GameStateTest {
 
 		verify(board, lastMove, pawn, from, to);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC13: Last Move Was A One-Square Pawn Advance
+	// -------------------------------------------------------------------------
+	@Test
+	void getLastMove_oneSquarePawnAdvance_noEnPassantWindow() {
+		Board board = createMock(Board.class);
+		Move lastMove = createMock(Move.class);
+		Piece pawn = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square to = createMock(Square.class);
+
+		expect(lastMove.getPiece()).andReturn(pawn);
+		expect(pawn.getType()).andReturn(PieceType.PAWN);
+		expect(lastMove.getFrom()).andReturn(from);
+		expect(lastMove.getTo()).andReturn(to);
+		expect(from.getRank()).andReturn(2);
+		expect(to.getRank()).andReturn(3);
+
+		replay(board, lastMove, pawn, from, to);
+
+		GameState state = GameState.create(board, Color.BLACK, lastMove);
+
+		Move retrievedMove = state.getLastMove();
+		assertNotNull(retrievedMove);
+		assertEquals(PieceType.PAWN, retrievedMove.getPiece().getType());
+		int rankDifference = retrievedMove.getTo().getRank() - retrievedMove.getFrom().getRank();
+		assertEquals(1, Math.abs(rankDifference));
+
+		verify(board, lastMove, pawn, from, to);
+	}
 }
