@@ -2485,6 +2485,40 @@ class RulesEngineTest {
 		EasyMock.verify(model);
 	}
 
+	@Test
+	void isCastlingLegal_pathBlocked_returnsFalse() {
+		// TC69
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = new Board();
+
+		King king = new King(Color.WHITE);
+		Rook rook = new Rook(Color.WHITE);
+		Bishop blocker = new Bishop(Color.WHITE);
+
+		Square from = board.getSquare('e', 1);
+		Square to = board.getSquare('g', 1);
+		Square rookSquare = board.getSquare('h', 1);
+		Square blockerSquare = board.getSquare('f', 1);
+
+		board.placePiece(king, from);
+		board.placePiece(rook, rookSquare);
+		board.placePiece(blocker, blockerSquare);
+
+		Move move = Move.create(king, from, to);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+
+		EasyMock.replay(model);
+
+		boolean result = rulesEngine.isCastlingLegal(move, model);
+
+		assertFalse(result);
+
+		EasyMock.verify(model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: isEnPassantLegal
 	// =========================================================================
