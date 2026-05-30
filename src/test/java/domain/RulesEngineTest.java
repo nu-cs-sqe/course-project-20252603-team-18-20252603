@@ -2590,6 +2590,44 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model);
 	}
 
+	@Test
+	void isCastlingLegal_destinationAttacked_returnsFalse() {
+		// TC72
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.addMockedMethod("isSquareAttacked", GameModel.class, Square.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = new Board();
+
+		King king = new King(Color.WHITE);
+		Rook rook = new Rook(Color.WHITE);
+
+		Square from = board.getSquare('e', 1);
+		Square to = board.getSquare('g', 1);
+		Square rookSquare = board.getSquare('h', 1);
+		Square pathSquare = board.getSquare('f', 1);
+
+		board.placePiece(king, from);
+		board.placePiece(rook, rookSquare);
+
+		Move move = Move.create(king, from, to);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(false);
+		EasyMock.expect(rulesEngine.isSquareAttacked(model, pathSquare, Color.BLACK)).andReturn(false);
+		EasyMock.expect(rulesEngine.isSquareAttacked(model, to, Color.BLACK)).andReturn(true);
+
+		EasyMock.replay(rulesEngine, model);
+
+		boolean result = rulesEngine.isCastlingLegal(move, model);
+
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: isEnPassantLegal
 	// =========================================================================
