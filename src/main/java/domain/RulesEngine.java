@@ -292,8 +292,34 @@ public class RulesEngine {
 	}
 
 	protected boolean isPromotionLegal(Move move, GameModel model) {
-		return false;
-		// TODO
+		if (move == null || model == null) {
+			return false;
+		}
+
+		Board board = model.getBoard();
+		Square from = move.getFrom();
+		Square to = move.getTo();
+		if (board == null || from == null || to == null) {
+			return false;
+		}
+
+		Piece sourcePiece = board.getSquare(from.getFile(), from.getRank()).getOccupant();
+		if (!(sourcePiece instanceof Pawn)) {
+			return false;
+		}
+
+		if (sourcePiece.getColor() == Color.WHITE && to.getRank() != MAXRANK) {
+			return false;
+		}
+		if (sourcePiece.getColor() == Color.BLACK && to.getRank() != MINRANK) {
+			return false;
+		}
+
+		Piece promotionPiece = move.getPromotionPiece();
+		return promotionPiece != null
+				&& promotionPiece.getColor() == sourcePiece.getColor()
+				&& promotionPiece.getType() != PieceType.KING
+				&& promotionPiece.getType() != PieceType.PAWN;
 	}
 
 	protected boolean isEnpassantLegal(Move move, GameModel model) {

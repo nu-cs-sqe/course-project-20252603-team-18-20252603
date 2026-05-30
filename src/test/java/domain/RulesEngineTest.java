@@ -2243,6 +2243,41 @@ class RulesEngineTest {
 	// Methods Under Test: isPromotionLegal
 	// =========================================================================
 
+	@Test
+	void isPromotionLegal_whiteQueenPromotion_returnsTrue() {
+		// TC80
+		RulesEngine rulesEngine = new RulesEngine();
+
+		Board board = new Board();
+		Pawn pawn = new Pawn(Color.WHITE);
+		King whiteKing = new King(Color.WHITE);
+		King blackKing = new King(Color.BLACK);
+		board.placePiece(whiteKing, board.getSquare('a', 1));
+		board.placePiece(blackKing, board.getSquare('h', 8));
+		Square from = board.getSquare('e', 7);
+		Square to = board.getSquare('e', 8);
+		board.placePiece(pawn, from);
+
+		Move move = Move.create(pawn, from, to);
+		Piece promotionPiece = new Piece(Color.WHITE, PieceType.QUEEN) {
+			@Override
+			public List<Square> getLegalMoveDestinationSquares(Square from) {
+				return new ArrayList<>();
+			}
+		};
+		move.setPromotionPiece(promotionPiece);
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		expect(model.getBoard()).andReturn(board).anyTimes();
+		replay(model);
+
+		boolean result = rulesEngine.isPromotionLegal(move, model);
+
+		assertTrue(result);
+
+		verify(model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: getGameStatus
 	// =========================================================================
