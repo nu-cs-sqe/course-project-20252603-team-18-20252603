@@ -352,7 +352,11 @@ public class RulesEngine {
 		if (model == null) {
 			throw new IllegalArgumentException("GameModel cannot be null");
 		}
-		if (isInCheck(model, model.getCurrentTurn())) {
+		Color turn = model.getCurrentTurn();
+		if (isInCheck(model, turn)) {
+			if (isCheckmate(model, turn)) {
+				return GameStatus.CHECKMATE;
+			}
 			return GameStatus.CHECK;
 		}
 		return GameStatus.ONGOING;

@@ -2546,11 +2546,13 @@ class RulesEngineTest {
 	void getGameStatus_inCheckHasLegalMove_returnsCheck() {
 		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
 				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.addMockedMethod("isCheckmate", GameModel.class, Color.class)
 				.createMock();
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE);
 		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(true);
+		EasyMock.expect(rulesEngine.isCheckmate(model, Color.WHITE)).andReturn(false);
 		EasyMock.replay(rulesEngine, model);
 
 		GameStatus result = rulesEngine.getGameStatus(model);
@@ -2560,4 +2562,24 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model);
 	}
 
+	@Test
+	void getGameStatus_checkmate_returnsCheckmate() {
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.addMockedMethod("isCheckmate", GameModel.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE);
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(true);
+		EasyMock.expect(rulesEngine.isCheckmate(model, Color.WHITE)).andReturn(true);
+		EasyMock.replay(rulesEngine, model);
+
+		GameStatus result = rulesEngine.getGameStatus(model);
+
+		assertEquals(GameStatus.CHECKMATE, result);
+
+		EasyMock.verify(rulesEngine, model);
 	}
+
+}
