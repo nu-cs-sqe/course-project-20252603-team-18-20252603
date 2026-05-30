@@ -282,4 +282,23 @@ public class GameStateTest {
 
 		verify(board);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC16: getCurrentTurn Returns Same Value On Repeated Calls
+	// -------------------------------------------------------------------------
+	@Test
+	void getCurrentTurn_calledTwice_returnsSameValue() {
+		Board board = createMock(Board.class);
+		replay(board);
+
+		GameState state = GameState.create(board, Color.WHITE, null);
+
+		Color firstCall = state.getCurrentTurn();
+		Color secondCall = state.getCurrentTurn();
+
+		assertEquals(firstCall, secondCall);
+		assertEquals(Color.WHITE, firstCall);
+
+		verify(board);
+	}
 }
