@@ -2453,6 +2453,38 @@ class RulesEngineTest {
 		EasyMock.verify(model);
 	}
 
+	@Test
+	void isCastlingLegal_rookMoved_returnsFalse() {
+		// TC68
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = new Board();
+
+		King king = new King(Color.WHITE);
+		Rook rook = new Rook(Color.WHITE);
+		rook.markMoved();
+
+		Square from = board.getSquare('e', 1);
+		Square to = board.getSquare('g', 1);
+		Square rookSquare = board.getSquare('h', 1);
+
+		board.placePiece(king, from);
+		board.placePiece(rook, rookSquare);
+
+		Move move = Move.create(king, from, to);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+
+		EasyMock.replay(model);
+
+		boolean result = rulesEngine.isCastlingLegal(move, model);
+
+		assertFalse(result);
+
+		EasyMock.verify(model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: isEnPassantLegal
 	// =========================================================================
