@@ -359,7 +359,15 @@ public class RulesEngine {
 			}
 			return GameStatus.CHECK;
 		}
+		if (isStalemate(model, turn)) {
+			return GameStatus.STALEMATE;
+		}
 		return GameStatus.ONGOING;
+	}
+
+	protected boolean isStalemate(GameModel model, Color color) {
+		return false;
+		// TODO
 	}
 
 	public List<Square> getLegalMoves(GameModel model, Square from) {

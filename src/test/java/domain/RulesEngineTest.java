@@ -2582,4 +2582,24 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model);
 	}
 
+	@Test
+	void getGameStatus_stalemate_returnsStalemate() {
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.addMockedMethod("isStalemate", GameModel.class, Color.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		EasyMock.expect(model.getCurrentTurn()).andReturn(Color.WHITE);
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(false);
+		EasyMock.expect(rulesEngine.isStalemate(model, Color.WHITE)).andReturn(true);
+		EasyMock.replay(rulesEngine, model);
+
+		GameStatus result = rulesEngine.getGameStatus(model);
+
+		assertEquals(GameStatus.STALEMATE, result);
+
+		EasyMock.verify(rulesEngine, model);
+	}
+
 }
