@@ -15,7 +15,7 @@ public class GameStateTest {
 		Board board = createMock(Board.class);
 		replay(board);
 
-		GameState state = new GameState(board, Color.WHITE, null);
+		GameState state = GameState.create(board, Color.WHITE, null);
 
 		assertSame(board, state.getBoard());
 		assertEquals(Color.WHITE, state.getCurrentTurn());
@@ -32,7 +32,7 @@ public class GameStateTest {
 		Board board = createMock(Board.class);
 		replay(board);
 
-		GameState state = new GameState(board, Color.BLACK, null);
+		GameState state = GameState.create(board, Color.BLACK, null);
 
 		assertSame(board, state.getBoard());
 		assertEquals(Color.BLACK, state.getCurrentTurn());
@@ -50,12 +50,27 @@ public class GameStateTest {
 		Move lastMove = createMock(Move.class);
 		replay(board, lastMove);
 
-		GameState state = new GameState(board, Color.BLACK, lastMove);
+		GameState state = GameState.create(board, Color.BLACK, lastMove);
 
 		assertSame(board, state.getBoard());
 		assertEquals(Color.BLACK, state.getCurrentTurn());
 		assertSame(lastMove, state.getLastMove());
 
 		verify(board, lastMove);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC4: Null Board
+	// -------------------------------------------------------------------------
+	@Test
+	void constructor_nullBoard_throwsException() {
+		Move lastMove = createMock(Move.class);
+		replay(lastMove);
+
+		assertThrows(IllegalArgumentException.class, () -> {
+			GameState.create(null, Color.WHITE, lastMove);
+		});
+
+		verify(lastMove);
 	}
 }
