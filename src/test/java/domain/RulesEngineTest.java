@@ -2401,6 +2401,38 @@ class RulesEngineTest {
 		EasyMock.verify(board, promotionPiece, model);
 	}
 
+	@Test
+	void isPromotionLegal_nonPawnPromotion_returnsFalse() {
+		// TC86
+		RulesEngine rulesEngine = new RulesEngine();
+
+		Board board = EasyMock.createMock(Board.class);
+		Piece rook = new Piece(Color.WHITE, PieceType.ROOK) {
+			@Override
+			public List<Square> getLegalMoveDestinationSquares(Square from) {
+				return new ArrayList<>();
+			}
+		};
+		Square from = mockSquare('e', 7, rook, false);
+		EasyMock.expect(board.getSquare('e', 7)).andReturn(from);
+
+		Move move = Move.create(rook, from, Square.create('e', 8));
+		Piece promotionPiece = EasyMock.createMock(Piece.class);
+		EasyMock.expect(promotionPiece.getColor()).andReturn(Color.WHITE).anyTimes();
+		EasyMock.expect(promotionPiece.getType()).andReturn(PieceType.QUEEN).anyTimes();
+		move.setPromotionPiece(promotionPiece);
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.replay(board, promotionPiece, model);
+
+		boolean result = rulesEngine.isPromotionLegal(move, model);
+
+		assertFalse(result);
+
+		EasyMock.verify(board, promotionPiece, model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: getGameStatus
 	// =========================================================================
