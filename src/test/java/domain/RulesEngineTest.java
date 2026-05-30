@@ -2628,6 +2628,34 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model);
 	}
 
+	@Test
+	void isCastlingLegal_rookMissing_returnsFalse() {
+		// TC73
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = new Board();
+
+		King king = new King(Color.WHITE);
+
+		Square from = board.getSquare('e', 1);
+		Square to = board.getSquare('g', 1);
+
+		board.placePiece(king, from);
+
+		Move move = Move.create(king, from, to);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+
+		EasyMock.replay(model);
+
+		boolean result = rulesEngine.isCastlingLegal(move, model);
+
+		assertFalse(result);
+
+		EasyMock.verify(model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: isEnPassantLegal
 	// =========================================================================
