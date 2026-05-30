@@ -133,4 +133,19 @@ public class GameStateTest {
 
 		verify(board);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC9: getCurrentTurn Returns BLACK When Constructed With BLACK
+	// -------------------------------------------------------------------------
+	@Test
+	void getCurrentTurn_black_returnsBlack() {
+		Board board = createMock(Board.class);
+		replay(board);
+
+		GameState state = GameState.create(board, Color.BLACK, null);
+
+		assertEquals(Color.BLACK, state.getCurrentTurn());
+
+		verify(board);
+	}
 }
