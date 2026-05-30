@@ -2246,12 +2246,16 @@ class RulesEngineTest {
 	@Test
 	void isPromotionLegal_whiteQueenPromotion_returnsTrue() {
 		// TC80
-		RulesEngine rulesEngine = new RulesEngine();
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
 
 		Board board = EasyMock.createMock(Board.class);
 		Pawn pawn = new Pawn(Color.WHITE);
 		Square from = mockSquare('e', 7, pawn, false);
+		Square to = mockSquare('e', 8, null, true);
 		EasyMock.expect(board.getSquare('e', 7)).andReturn(from);
+		EasyMock.expect(board.getSquare('e', 8)).andReturn(to);
 
 		Move move = Move.create(pawn, from, Square.create('e', 8));
 		Piece promotionPiece = EasyMock.createMock(Piece.class);
@@ -2261,24 +2265,60 @@ class RulesEngineTest {
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(false);
 		EasyMock.replay(board, promotionPiece, model);
+		EasyMock.replay(rulesEngine);
 
 		boolean result = rulesEngine.isPromotionLegal(move, model);
 
 		assertTrue(result);
 
-		EasyMock.verify(board, promotionPiece, model);
+		EasyMock.verify(rulesEngine, board, promotionPiece, model);
+	}
+
+	@Test
+	void isPromotionLegal_promotionPieceColorMismatch_returnsFalse() {
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
+
+		Board board = EasyMock.createMock(Board.class);
+		Pawn pawn = new Pawn(Color.WHITE);
+		Square from = mockSquare('e', 7, pawn, false);
+		Square to = mockSquare('e', 8, null, true);
+		EasyMock.expect(board.getSquare('e', 7)).andReturn(from);
+		EasyMock.expect(board.getSquare('e', 8)).andReturn(to);
+
+		Move move = Move.create(pawn, from, Square.create('e', 8));
+		Piece promotionPiece = EasyMock.createMock(Piece.class);
+		EasyMock.expect(promotionPiece.getColor()).andReturn(Color.BLACK);
+		EasyMock.expect(promotionPiece.getType()).andReturn(PieceType.QUEEN).anyTimes();
+		move.setPromotionPiece(promotionPiece);
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.replay(board, promotionPiece, model, rulesEngine);
+
+		boolean result = rulesEngine.isPromotionLegal(move, model);
+
+		assertFalse(result);
+
+		EasyMock.verify(board, promotionPiece, model, rulesEngine);
 	}
 
 	@Test
 	void isPromotionLegal_blackKnightPromotion_returnsTrue() {
 		// TC81
-		RulesEngine rulesEngine = new RulesEngine();
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
 
 		Board board = EasyMock.createMock(Board.class);
 		Pawn pawn = new Pawn(Color.BLACK);
 		Square from = mockSquare('e', 2, pawn, false);
+		Square to = mockSquare('e', 1, null, true);
 		EasyMock.expect(board.getSquare('e', 2)).andReturn(from);
+		EasyMock.expect(board.getSquare('e', 1)).andReturn(to);
 
 		Move move = Move.create(pawn, from, Square.create('e', 1));
 		Piece promotionPiece = EasyMock.createMock(Piece.class);
@@ -2288,13 +2328,46 @@ class RulesEngineTest {
 
 		GameModel model = EasyMock.createMock(GameModel.class);
 		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.BLACK)).andReturn(false);
 		EasyMock.replay(board, promotionPiece, model);
+		EasyMock.replay(rulesEngine);
 
 		boolean result = rulesEngine.isPromotionLegal(move, model);
 
 		assertTrue(result);
 
-		EasyMock.verify(board, promotionPiece, model);
+		EasyMock.verify(rulesEngine, board, promotionPiece, model);
+	}
+
+	@Test
+	void isPromotionLegal_leavesKingInCheck_returnsFalse() {
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.createMock();
+
+		Board board = EasyMock.createMock(Board.class);
+		Pawn pawn = new Pawn(Color.WHITE);
+		Square from = mockSquare('e', 7, pawn, false);
+		Square to = mockSquare('e', 8, null, true);
+		EasyMock.expect(board.getSquare('e', 7)).andReturn(from);
+		EasyMock.expect(board.getSquare('e', 8)).andReturn(to);
+
+		Move move = Move.create(pawn, from, Square.create('e', 8));
+		Piece promotionPiece = EasyMock.createMock(Piece.class);
+		EasyMock.expect(promotionPiece.getColor()).andReturn(Color.WHITE);
+		EasyMock.expect(promotionPiece.getType()).andReturn(PieceType.QUEEN).anyTimes();
+		move.setPromotionPiece(promotionPiece);
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		EasyMock.expect(model.getBoard()).andReturn(board);
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(true);
+		EasyMock.replay(board, promotionPiece, model, rulesEngine);
+
+		boolean result = rulesEngine.isPromotionLegal(move, model);
+
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, board, promotionPiece, model);
 	}
 
 	@Test
@@ -2305,7 +2378,9 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Pawn pawn = new Pawn(Color.WHITE);
 		Square from = mockSquare('e', 7, pawn, false);
+		Square to = mockSquare('e', 8, null, true);
 		EasyMock.expect(board.getSquare('e', 7)).andReturn(from);
+		EasyMock.expect(board.getSquare('e', 8)).andReturn(to);
 
 		Move move = Move.create(pawn, from, Square.create('e', 8));
 		Piece promotionPiece = EasyMock.createMock(Piece.class);
@@ -2332,7 +2407,9 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Pawn pawn = new Pawn(Color.WHITE);
 		Square from = mockSquare('e', 7, pawn, false);
+		Square to = mockSquare('e', 8, null, true);
 		EasyMock.expect(board.getSquare('e', 7)).andReturn(from);
+		EasyMock.expect(board.getSquare('e', 8)).andReturn(to);
 
 		Move move = Move.create(pawn, from, Square.create('e', 8));
 		Piece promotionPiece = EasyMock.createMock(Piece.class);
@@ -2359,7 +2436,9 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Pawn pawn = new Pawn(Color.WHITE);
 		Square from = mockSquare('e', 7, pawn, false);
+		Square to = mockSquare('e', 8, null, true);
 		EasyMock.expect(board.getSquare('e', 7)).andReturn(from);
+		EasyMock.expect(board.getSquare('e', 8)).andReturn(to);
 
 		Move move = Move.create(pawn, from, Square.create('e', 8));
 
@@ -2382,7 +2461,9 @@ class RulesEngineTest {
 		Board board = EasyMock.createMock(Board.class);
 		Pawn pawn = new Pawn(Color.WHITE);
 		Square from = mockSquare('e', 6, pawn, false);
+		Square to = mockSquare('e', 7, null, true);
 		EasyMock.expect(board.getSquare('e', 6)).andReturn(from);
+		EasyMock.expect(board.getSquare('e', 7)).andReturn(to);
 
 		Move move = Move.create(pawn, from, Square.create('e', 7));
 		Piece promotionPiece = EasyMock.createMock(Piece.class);

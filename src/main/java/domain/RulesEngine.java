@@ -306,11 +306,16 @@ public class RulesEngine {
 			return false;
 		}
 
-		Piece sourcePiece = board.getSquare(from.getFile(), from.getRank()).getOccupant();
+		Square fromBoardSquare = board.getSquare(from.getFile(), from.getRank());
+		Piece sourcePiece = fromBoardSquare.getOccupant();
 		if (!(sourcePiece instanceof Pawn)) {
 			return false;
 		}
 
+		Square toBoardSquare = board.getSquare(to.getFile(), to.getRank());
+		if (!isNormalPawnMoveLegal(sourcePiece, from, to, toBoardSquare, board)) {
+			return false;
+		}
 		if (sourcePiece.getColor() == Color.WHITE && to.getRank() != MAXRANK) {
 			return false;
 		}
@@ -319,10 +324,23 @@ public class RulesEngine {
 		}
 
 		Piece promotionPiece = move.getPromotionPiece();
-		return promotionPiece != null
-				&& promotionPiece.getColor() == sourcePiece.getColor()
-				&& promotionPiece.getType() != PieceType.KING
-				&& promotionPiece.getType() != PieceType.PAWN;
+		if (promotionPiece == null
+				|| promotionPiece.getColor() != sourcePiece.getColor()
+				|| promotionPiece.getType() == PieceType.KING
+				|| promotionPiece.getType() == PieceType.PAWN) {
+			return false;
+		}
+
+		Piece capturedPiece = toBoardSquare.getOccupant();
+		fromBoardSquare.setOccupant(null);
+		toBoardSquare.setOccupant(sourcePiece);
+
+		boolean kingInCheck = isInCheck(model, sourcePiece.getColor());
+
+		fromBoardSquare.setOccupant(sourcePiece);
+		toBoardSquare.setOccupant(capturedPiece);
+
+		return !kingInCheck;
 	}
 
 	protected boolean isEnpassantLegal(Move move, GameModel model) {
