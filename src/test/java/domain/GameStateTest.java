@@ -163,4 +163,20 @@ public class GameStateTest {
 
 		verify(board);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC11: getLastMove Returns Last Move When One Was Supplied
+	// -------------------------------------------------------------------------
+	@Test
+	void getLastMove_validMove_returnsSuppliedMove() {
+		Board board = createMock(Board.class);
+		Move lastMove = createMock(Move.class);
+		replay(board, lastMove);
+
+		GameState state = GameState.create(board, Color.WHITE, lastMove);
+
+		assertSame(lastMove, state.getLastMove());
+
+		verify(board, lastMove);
+	}
 }
