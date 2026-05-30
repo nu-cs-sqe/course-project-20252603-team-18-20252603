@@ -118,4 +118,19 @@ public class GameStateTest {
 
 		verify(board);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC8: getCurrentTurn Returns WHITE When Constructed With WHITE
+	// -------------------------------------------------------------------------
+	@Test
+	void getCurrentTurn_white_returnsWhite() {
+		Board board = createMock(Board.class);
+		replay(board);
+
+		GameState state = GameState.create(board, Color.WHITE, null);
+
+		assertEquals(Color.WHITE, state.getCurrentTurn());
+
+		verify(board);
+	}
 }
