@@ -295,6 +295,9 @@ public class RulesEngine {
 		if (move == null || model == null) {
 			return false;
 		}
+		if (move.getClass() != Move.class) {
+			return false;
+		}
 
 		Board board = model.getBoard();
 		Square from = move.getFrom();

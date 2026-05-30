@@ -2278,6 +2278,76 @@ class RulesEngineTest {
 		verify(model);
 	}
 
+	@Test
+	void isPromotionLegal_blackKnightPromotion_returnsTrue() {
+		// TC81
+		RulesEngine rulesEngine = new RulesEngine();
+
+		Board board = new Board();
+		Pawn pawn = new Pawn(Color.BLACK);
+		King whiteKing = new King(Color.WHITE);
+		King blackKing = new King(Color.BLACK);
+		board.placePiece(whiteKing, board.getSquare('a', 1));
+		board.placePiece(blackKing, board.getSquare('h', 8));
+		Square from = board.getSquare('e', 2);
+		Square to = board.getSquare('e', 1);
+		board.placePiece(pawn, from);
+
+		Move move = Move.create(pawn, from, to);
+		Piece promotionPiece = new Piece(Color.BLACK, PieceType.KNIGHT) {
+			@Override
+			public List<Square> getLegalMoveDestinationSquares(Square from) {
+				return new ArrayList<>();
+			}
+		};
+		move.setPromotionPiece(promotionPiece);
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		expect(model.getBoard()).andReturn(board).anyTimes();
+		replay(model);
+
+		boolean result = rulesEngine.isPromotionLegal(move, model);
+
+		assertTrue(result);
+
+		verify(model);
+	}
+
+	@Test
+	void isPromotionLegal_promotionToKing_returnsFalse() {
+		// TC82
+		RulesEngine rulesEngine = new RulesEngine();
+
+		Board board = new Board();
+		Pawn pawn = new Pawn(Color.WHITE);
+		King whiteKing = new King(Color.WHITE);
+		King blackKing = new King(Color.BLACK);
+		board.placePiece(whiteKing, board.getSquare('a', 1));
+		board.placePiece(blackKing, board.getSquare('h', 8));
+		Square from = board.getSquare('e', 7);
+		Square to = board.getSquare('e', 8);
+		board.placePiece(pawn, from);
+
+		Move move = Move.create(pawn, from, to);
+		Piece promotionPiece = new Piece(Color.WHITE, PieceType.KING) {
+			@Override
+			public List<Square> getLegalMoveDestinationSquares(Square from) {
+				return new ArrayList<>();
+			}
+		};
+		move.setPromotionPiece(promotionPiece);
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		expect(model.getBoard()).andReturn(board).anyTimes();
+		replay(model);
+
+		boolean result = rulesEngine.isPromotionLegal(move, model);
+
+		assertFalse(result);
+
+		verify(model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: getGameStatus
 	// =========================================================================
