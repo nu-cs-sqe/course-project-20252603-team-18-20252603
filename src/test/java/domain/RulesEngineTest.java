@@ -2771,6 +2771,49 @@ class RulesEngineTest {
 		EasyMock.verify(model);
 	}
 
+	@Test
+	void isEnPassantLegal_staleTarget_returnsFalse() {
+		// TC77
+		RulesEngine rulesEngine = new RulesEngine();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = new Board();
+
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		Pawn blackPawn = new Pawn(Color.BLACK);
+		Rook whiteRook = new Rook(Color.WHITE);
+
+		Square whitePawnSquare = board.getSquare('e', 5);
+		Square blackPawnStart = board.getSquare('d', 7);
+		Square blackPawnEnd = board.getSquare('d', 5);
+		Square enPassantTarget = board.getSquare('d', 6);
+
+		Square rookStart = board.getSquare('a', 1);
+		Square rookEnd = board.getSquare('a', 2);
+
+		board.placePiece(blackPawn, blackPawnStart);
+		Move doublePawnMove = Move.create(blackPawn, blackPawnStart, blackPawnEnd);
+		board.movePiece(blackPawnStart, blackPawnEnd);
+
+		board.placePiece(whiteRook, rookStart);
+		Move interveningMove = Move.create(whiteRook, rookStart, rookEnd);
+		board.movePiece(rookStart, rookEnd);
+
+		board.placePiece(whitePawn, whitePawnSquare);
+		Move move = Move.create(whitePawn, whitePawnSquare, enPassantTarget);
+
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+		EasyMock.expect(model.getMoveHistory()).andReturn(new Move[] { doublePawnMove, interveningMove }).anyTimes();
+
+		EasyMock.replay(model);
+
+		boolean result = rulesEngine.isEnpassantLegal(move, model);
+
+		assertFalse(result);
+
+		EasyMock.verify(model);
+	}
+
 	// =========================================================================
 	// Methods Under Test: isPromotionLegal
 	// =========================================================================
