@@ -2291,6 +2291,52 @@ class RulesEngineTest {
 		EasyMock.verify(rulesEngine, model);
 	}
 
+	@Test
+	void isStalemate_hasLegalMove_returnsFalse() {
+		RulesEngine rulesEngine = EasyMock.partialMockBuilder(RulesEngine.class)
+				.addMockedMethod("isInCheck", GameModel.class, Color.class)
+				.addMockedMethod("getLegalMoves", GameModel.class, Square.class)
+				.createMock();
+
+		GameModel model = EasyMock.createMock(GameModel.class);
+		Board board = EasyMock.createMock(Board.class);
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+
+		Square pieceSquare = mockSquare('e', 1, whitePiece, false);
+		Square legalDestination = mockSquare('e', 2, null, true);
+
+		List<Square> legalMoves = new ArrayList<Square>();
+		legalMoves.add(legalDestination);
+
+		EasyMock.expect(rulesEngine.isInCheck(model, Color.WHITE)).andReturn(false);
+		EasyMock.expect(model.getBoard()).andReturn(board).anyTimes();
+
+		EasyMock.expect(whitePiece.getColor()).andReturn(Color.WHITE).anyTimes();
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			for (int rank = 1; rank <= 8; rank++) {
+				if (file == 'e' && rank == 1) {
+					EasyMock.expect(board.getSquare(file, rank)).andReturn(pieceSquare).anyTimes();
+					EasyMock.expect(rulesEngine.getLegalMoves(model, pieceSquare))
+							.andReturn(legalMoves)
+							.anyTimes();
+				} else {
+					EasyMock.expect(board.getSquare(file, rank))
+							.andReturn(mockSquare(file, rank, null, true))
+							.anyTimes();
+				}
+			}
+		}
+
+		EasyMock.replay(rulesEngine, model, board, whitePiece);
+
+		boolean result = rulesEngine.isStalemate(model, Color.WHITE);
+
+		assertFalse(result);
+
+		EasyMock.verify(rulesEngine, model, board, whitePiece);
+	}
+
 	// =========================================================================
 	// Methods Under Test: isCastlingLegal
 	// =========================================================================
