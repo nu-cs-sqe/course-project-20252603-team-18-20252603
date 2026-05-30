@@ -88,4 +88,19 @@ public class GameStateTest {
 
 		verify(board);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC6: Null lastMove Is Accepted
+	// -------------------------------------------------------------------------
+	@Test
+	void create_nullLastMove_isAccepted() {
+		Board board = createMock(Board.class);
+		replay(board);
+
+		GameState state = GameState.create(board, Color.WHITE, null);
+
+		assertNull(state.getLastMove());
+
+		verify(board);
+	}
 }
