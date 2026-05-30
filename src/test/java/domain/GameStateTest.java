@@ -40,4 +40,22 @@ public class GameStateTest {
 
 		verify(board);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC3: Valid Construction — With Last Move Supplied
+	// -------------------------------------------------------------------------
+	@Test
+	void constructor_validWithLastMove_createsGameState() {
+		Board board = createMock(Board.class);
+		Move lastMove = createMock(Move.class);
+		replay(board, lastMove);
+
+		GameState state = new GameState(board, Color.BLACK, lastMove);
+
+		assertSame(board, state.getBoard());
+		assertEquals(Color.BLACK, state.getCurrentTurn());
+		assertSame(lastMove, state.getLastMove());
+
+		verify(board, lastMove);
+	}
 }
