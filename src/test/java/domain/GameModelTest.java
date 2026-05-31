@@ -247,4 +247,27 @@ public class GameModelTest {
 		new GameModel(board, engine);
 		verify(board, engine);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC12: Exactly 32 placePiece calls are made (no extras, no missing ranks)
+	// -------------------------------------------------------------------------
+	@Test
+	void newGame_exactly32PiecesPlaced() {
+		Board board = EasyMock.createMock(Board.class);
+		RulesEngine engine = EasyMock.createMock(RulesEngine.class);
+
+		int[] count = {0};
+
+		expect(board.getSquare(anyChar(), anyInt()))
+				.andAnswer(() -> EasyMock.createNiceMock(Square.class))
+				.times(32);
+		board.placePiece(anyObject(Piece.class), anyObject(Square.class));
+		expectLastCall().andAnswer(() -> { count[0]++; return null; }).times(32);
+
+		replay(board, engine);
+		new GameModel(board, engine);
+		verify(board, engine);
+
+		assertEquals(32, count[0]);
+	}
 }
