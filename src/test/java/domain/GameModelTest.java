@@ -650,4 +650,22 @@ public class GameModelTest {
 
 		verify(mockBoard, mockEngine, whitePiece, move);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC24: getStatus returns ONGOING at construction
+	// -------------------------------------------------------------------------
+	@Test
+	void getStatus_afterConstruction_returnsOngoing() {
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+
+		expectRemainingBoardCalls(mockBoard);
+		replay(mockBoard, mockEngine);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		assertEquals(GameStatus.ONGOING, model.getStatus());
+
+		verify(mockBoard, mockEngine);
+	}
 }
