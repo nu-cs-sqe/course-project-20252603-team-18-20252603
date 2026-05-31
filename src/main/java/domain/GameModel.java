@@ -3,8 +3,12 @@ package domain;
 public class GameModel {
 	private GameStatus status;
 
-	private GameModel() {
+	GameModel(Board board, RulesEngine rulesEngine) {
 		this.status = GameStatus.ONGOING;
+	}
+
+	private GameModel() {
+		this(new Board(), new RulesEngine());
 	}
 
 	public static GameModel newGame(Player white, Player black) {
