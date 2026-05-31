@@ -25,6 +25,7 @@ public class GameModel {
 		}
 
 		final int WHITE_BACK_RANK = 1;
+		final int BLACK_BACK_RANK = 8;
 		char[] files = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
 		PieceType[] backRowPieces = {
 				PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, PieceType.QUEEN,
@@ -35,18 +36,25 @@ public class GameModel {
 			switch (backRowPieces[i]) {
 				case ROOK:
 					board.placePiece(new Rook(Color.WHITE),   board.getSquare(files[i], WHITE_BACK_RANK));
+					board.placePiece(new Rook(Color.BLACK),   board.getSquare(files[i], BLACK_BACK_RANK));
 					break;
 				case KNIGHT:
 					board.placePiece(new Knight(Color.WHITE), board.getSquare(files[i], WHITE_BACK_RANK));
+					board.placePiece(new Knight(Color.BLACK), board.getSquare(files[i], BLACK_BACK_RANK));
 					break;
 				case BISHOP:
 					board.placePiece(new Bishop(Color.WHITE), board.getSquare(files[i], WHITE_BACK_RANK));
+					board.placePiece(new Bishop(Color.BLACK), board.getSquare(files[i], BLACK_BACK_RANK));
 					break;
 				case QUEEN:
 					board.placePiece(new Queen(Color.WHITE),  board.getSquare(files[i], WHITE_BACK_RANK));
+					board.placePiece(new Queen(Color.BLACK),  board.getSquare(files[i], BLACK_BACK_RANK));
 					break;
 				case KING:
 					board.placePiece(new King(Color.WHITE),   board.getSquare(files[i], WHITE_BACK_RANK));
+					board.placePiece(new King(Color.BLACK),   board.getSquare(files[i], BLACK_BACK_RANK));
+					break;
+				default:
 					break;
 			}
 		}
