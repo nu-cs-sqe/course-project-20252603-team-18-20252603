@@ -563,5 +563,47 @@ public class GameModelTest {
 		verify(mockBoard, mockEngine, whitePiece, move);
 	}
 
+	// -------------------------------------------------------------------------
+	// TC22: Move after CHECKMATE is rejected with IllegalStateException
+	// -------------------------------------------------------------------------
+	@Test
+	void applyMove_afterCheckmate_throwsIllegalStateException() {
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
 
+		expectRemainingBoardCalls(mockBoard);
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Move move = EasyMock.createMock(Move.class);
+		expect(move.getPiece()).andReturn(whitePiece);
+		expect(whitePiece.getColor()).andReturn(Color.WHITE);
+		expect(move.getFrom()).andReturn(EasyMock.createMock(Square.class));
+		expect(move.getTo()).andReturn(EasyMock.createMock(Square.class));
+		expect(move.isCastle()).andReturn(false);
+		expect(move.isEnPassant()).andReturn(false);
+		expect(move.getPromotionPiece()).andReturn(null);
+
+		expect(mockEngine.isLegalMove(eq(move), anyObject(GameState.class)))
+				.andReturn(true);
+		mockBoard.movePiece(anyObject(Square.class), anyObject(Square.class));
+		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
+				.andReturn(GameStatus.CHECKMATE);
+
+		replay(mockBoard, mockEngine, whitePiece, move);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		model.applyMove(move);
+		assertEquals(GameStatus.CHECKMATE, model.getStatus());
+
+		Piece anyPiece = EasyMock.createMock(Piece.class);
+		Move anyMove   = EasyMock.createMock(Move.class);
+		expect(anyMove.getPiece()).andReturn(anyPiece).anyTimes();
+		expect(anyPiece.getColor()).andReturn(Color.BLACK).anyTimes();
+		replay(anyPiece, anyMove);
+
+		assertThrows(IllegalStateException.class, () -> model.applyMove(anyMove));
+
+		verify(mockBoard, mockEngine, whitePiece, move);
+	}
 }

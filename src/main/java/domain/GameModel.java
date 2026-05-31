@@ -97,6 +97,9 @@ public class GameModel {
 	}
 
 	public void applyMove(Move move) {
+		if (status == GameStatus.CHECKMATE) {
+			throw new IllegalStateException("Game is already over");
+		}
 		if (move == null) {
 			throw new IllegalArgumentException("Move must not be null");
 		}
@@ -127,17 +130,17 @@ public class GameModel {
 			final char QUEENSIDE_TARGET_FILE = 'c';
 
 			if (move.getTo().getFile() == KINGSIDE_TARGET_FILE) {  // Kingside castle
-				final char ROOKTO_FILE = 'h';
-				final char ROOKFROM_FILE = 'f';
-				Square rookFrom = board.getSquare(ROOKTO_FILE, homeRank);
-				Square rookTo = board.getSquare(ROOKFROM_FILE, homeRank);
+				final char ROOK_FROM_FILE = 'h';
+				final char ROOK_TO_FILE = 'f';
+				Square rookFrom = board.getSquare(ROOK_FROM_FILE, homeRank);
+				Square rookTo = board.getSquare(ROOK_TO_FILE, homeRank);
 				board.movePiece(rookFrom, rookTo);
 			}
 			else if (move.getTo().getFile() == QUEENSIDE_TARGET_FILE) {  // Queenside castle
-				final char ROOKTO_FILE = 'a';
-				final char ROOKFROM_FILE = 'd';
-				Square rookFrom = board.getSquare(ROOKTO_FILE, homeRank);
-				Square rookTo = board.getSquare(ROOKFROM_FILE, homeRank);
+				final char ROOK_FROM_FILE = 'a';
+				final char ROOK_TO_FILE = 'd';
+				Square rookFrom = board.getSquare(ROOK_FROM_FILE, homeRank);
+				Square rookTo = board.getSquare(ROOK_TO_FILE, homeRank);
 				board.movePiece(rookFrom, rookTo);
 			}
 		}
