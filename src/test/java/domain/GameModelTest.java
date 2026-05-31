@@ -3,8 +3,7 @@ package domain;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameModelTest {
@@ -35,6 +34,14 @@ public class GameModelTest {
 
 	private void verifyMocks() {
 		verify(mockBoard, mockEngine);
+	}
+
+	private void expectRemainingBoardCalls(Board board) {
+		expect(board.getSquare(anyChar(), anyInt()))
+				.andAnswer(() -> EasyMock.createNiceMock(Square.class))
+				.anyTimes();
+		board.placePiece(anyObject(Piece.class), anyObject(Square.class));
+		expectLastCall().anyTimes();
 	}
 
 	// -------------------------------------------------------------------------
@@ -99,11 +106,44 @@ public class GameModelTest {
 	// -------------------------------------------------------------------------
 	@Test
 	void newGame_initialStatus_isOngoing() {
-		GameModel model = modelWithMocks();
-		replayMocks();
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+
+		expectRemainingBoardCalls(mockBoard);
+		replay(mockBoard, mockEngine);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
 
 		assertEquals(GameStatus.ONGOING, model.getStatus());
 
-		verifyMocks();
+		verify(mockBoard, mockEngine);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC8: White pawns placed on rank 2
+	// -------------------------------------------------------------------------
+
+	@Test
+	void newGame_whitePawnsPlacedOnRank2() {
+		Board board = EasyMock.createMock(Board.class);
+		RulesEngine engine = EasyMock.createMock(RulesEngine.class);
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			Square sq = EasyMock.createNiceMock(Square.class);
+			replay(sq);
+			expect(board.getSquare(file, 2)).andReturn(sq);
+			board.placePiece(anyObject(Piece.class), eq(sq));
+			expectLastCall().andAnswer(() -> {
+				Piece placed = (Piece) EasyMock.getCurrentArguments()[0];
+				assertTrue(placed instanceof Pawn,  "Expected a Pawn on rank 2");
+				assertEquals(Color.WHITE, placed.getColor(), "Expected a White piece on rank 2");
+				return null;
+			});
+		}
+		expectRemainingBoardCalls(board);
+
+		replay(board, engine);
+		new GameModel(board, engine);
+		verify(board, engine);
 	}
 }

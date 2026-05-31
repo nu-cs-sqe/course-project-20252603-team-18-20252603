@@ -1,14 +1,26 @@
 package domain;
 
 public class GameModel {
+	protected static final char MINFILE = 'a';
+	protected static final char MAXFILE = 'h';
+	private final Board board;
 	private GameStatus status;
 
 	GameModel(Board board, RulesEngine rulesEngine) {
+		this.board = board;
 		this.status = GameStatus.ONGOING;
+		placeStartingPieces();
 	}
 
 	private GameModel() {
 		this(new Board(), new RulesEngine());
+	}
+
+	private void placeStartingPieces() {
+		final int WHITE_PAWN_RANK = 2;
+		for (char file = MINFILE; file <= MAXFILE; file++) {
+			board.placePiece(new Pawn(Color.WHITE), board.getSquare(file, WHITE_PAWN_RANK));
+		}
 	}
 
 	public static GameModel newGame(Player white, Player black) {
