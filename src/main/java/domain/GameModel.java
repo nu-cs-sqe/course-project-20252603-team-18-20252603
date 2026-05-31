@@ -8,6 +8,9 @@ public class GameModel {
 	}
 
 	public static GameModel newGame(Player white, Player black) {
+		if (white == null) {
+			throw new IllegalArgumentException("White player must not be null");
+		}
 		return new GameModel();
 	}
 
