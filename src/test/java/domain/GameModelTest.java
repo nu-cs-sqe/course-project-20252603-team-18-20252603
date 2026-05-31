@@ -59,4 +59,13 @@ public class GameModelTest {
 		assertThrows(IllegalArgumentException.class, () ->
 				GameModel.newGame(new Player(Color.BLACK, true), humanBlack()));
 	}
+
+	// -------------------------------------------------------------------------
+	// TC6: Black player has wrong colour
+	// -------------------------------------------------------------------------
+	@Test
+	void newGame_blackPlayerHasWhiteColor_throwsException() {
+		assertThrows(IllegalArgumentException.class, () ->
+				GameModel.newGame(humanWhite(), new Player(Color.WHITE, true)));
+	}
 }
