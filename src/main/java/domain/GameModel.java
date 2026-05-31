@@ -1,5 +1,7 @@
 package domain;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,6 +124,14 @@ public class GameModel {
 		status = rulesEngine.getGameStatus(newState);
 
 		currentTurn = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
+	}
+
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP",
+			justification = "GameModel intentionally exposes moveHistory."
+	)
+	public List<Move> getMoveHistory() {
+		return moveHistory;
 	}
 
 	public GameStatus getStatus() {

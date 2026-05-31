@@ -443,4 +443,44 @@ public class GameModelTest {
 
 		verify(mockBoard, mockEngine, from, to, whitePiece, move);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC19: Legal move appends to moveHistory
+	// -------------------------------------------------------------------------
+	@Test
+	void applyMove_legalMove_appendsToMoveHistory() {
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+
+		expectRemainingBoardCalls(mockBoard);
+
+		Square from = EasyMock.createMock(Square.class);
+		Square to   = EasyMock.createMock(Square.class);
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		expect(whitePiece.getColor()).andReturn(Color.WHITE);
+		Move move = EasyMock.createMock(Move.class);
+		expect(move.getPiece()).andReturn(whitePiece);
+		expect(move.getFrom()).andReturn(from);
+		expect(move.getTo()).andReturn(to);
+		expect(move.isCastle()).andReturn(false);
+		expect(move.isEnPassant()).andReturn(false);
+		expect(move.getPromotionPiece()).andReturn(null);
+
+		expect(mockEngine.isLegalMove(eq(move), anyObject(GameState.class)))
+				.andReturn(true);
+		mockBoard.movePiece(from, to);
+		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
+				.andReturn(GameStatus.ONGOING);
+
+		replay(mockBoard, mockEngine, from, to, whitePiece, move);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		assertTrue(model.getMoveHistory().isEmpty());
+		model.applyMove(move);
+		assertEquals(1, model.getMoveHistory().size());
+		assertSame(move, model.getMoveHistory().get(0));
+
+		verify(mockBoard, mockEngine, from, to, whitePiece, move);
+	}
 }
