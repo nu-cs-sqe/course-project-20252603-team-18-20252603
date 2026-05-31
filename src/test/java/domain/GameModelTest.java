@@ -379,4 +379,31 @@ public class GameModelTest {
 
 		verify(mockBoard, mockEngine, blackPiece, blackMove, blackPiece2, blackMove2);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC17: Illegal move (rulesEngine returns false) throws
+	// -------------------------------------------------------------------------
+	@Test
+	void applyMove_illegalMove_throwsException() {
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+
+		expectRemainingBoardCalls(mockBoard);
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		expect(whitePiece.getColor()).andReturn(Color.WHITE);
+		Move move = EasyMock.createMock(Move.class);
+		expect(move.getPiece()).andReturn(whitePiece);
+
+		expect(mockEngine.isLegalMove(eq(move), anyObject(GameState.class)))
+				.andReturn(false);
+
+		replay(mockBoard, mockEngine, whitePiece, move);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		assertThrows(IllegalArgumentException.class, () -> model.applyMove(move));
+
+		verify(mockBoard, mockEngine, whitePiece, move);
+	}
 }

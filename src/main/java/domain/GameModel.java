@@ -101,6 +101,9 @@ public class GameModel {
 		if (move.getPiece().getColor() != currentTurn) {
 			throw new IllegalArgumentException("Wrong move color");
 		}
+		if (!rulesEngine.isLegalMove(move, snapshot())) {
+			throw new IllegalArgumentException("Illegal move");
+		}
 	}
 
 	public GameStatus getStatus() {
