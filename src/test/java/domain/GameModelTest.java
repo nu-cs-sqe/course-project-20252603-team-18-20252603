@@ -406,4 +406,41 @@ public class GameModelTest {
 
 		verify(mockBoard, mockEngine, whitePiece, move);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC18: Legal move is applied — board.movePiece is called
+	// -------------------------------------------------------------------------
+	@Test
+	void applyMove_legalMove_callsBoardMovePiece() {
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+
+		expectRemainingBoardCalls(mockBoard);
+
+		Square from = EasyMock.createMock(Square.class);
+		Square to   = EasyMock.createMock(Square.class);
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		expect(whitePiece.getColor()).andReturn(Color.WHITE);
+		Move move = EasyMock.createMock(Move.class);
+		expect(move.getPiece()).andReturn(whitePiece);
+		expect(move.getFrom()).andReturn(from);
+		expect(move.getTo()).andReturn(to);
+		expect(move.isCastle()).andReturn(false);
+		expect(move.isEnPassant()).andReturn(false);
+		expect(move.getPromotionPiece()).andReturn(null);
+
+		expect(mockEngine.isLegalMove(eq(move), anyObject(GameState.class)))
+				.andReturn(true);
+		mockBoard.movePiece(from, to);
+		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
+				.andReturn(GameStatus.ONGOING);
+
+		replay(mockBoard, mockEngine, from, to, whitePiece, move);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		model.applyMove(move);
+
+		verify(mockBoard, mockEngine, from, to, whitePiece, move);
+	}
 }

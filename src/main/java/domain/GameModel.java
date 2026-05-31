@@ -104,6 +104,24 @@ public class GameModel {
 		if (!rulesEngine.isLegalMove(move, snapshot())) {
 			throw new IllegalArgumentException("Illegal move");
 		}
+
+		board.movePiece(move.getFrom(), move.getTo());
+
+		if (move.getPromotionPiece() != null) {
+		}
+
+		if (move.isEnPassant()) {
+		}
+
+		if (move.isCastle()) {
+		}
+
+		moveHistory.add(move);
+
+		GameState newState = snapshot();
+		status = rulesEngine.getGameStatus(newState);
+
+		currentTurn = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
 
 	public GameStatus getStatus() {
