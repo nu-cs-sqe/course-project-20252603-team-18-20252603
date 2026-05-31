@@ -483,4 +483,47 @@ public class GameModelTest {
 
 		verify(mockBoard, mockEngine, from, to, whitePiece, move);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC20: Legal move flips currentTurn to BLACK
+	// -------------------------------------------------------------------------
+	@Test
+	void applyMove_legalMove_flipsTurnToBlack() {
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+
+		expectRemainingBoardCalls(mockBoard);
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Move move = EasyMock.createMock(Move.class);
+		expect(move.getPiece()).andReturn(whitePiece);
+		expect(whitePiece.getColor()).andReturn(Color.WHITE);
+		expect(move.getFrom()).andReturn(EasyMock.createMock(Square.class));
+		expect(move.getTo()).andReturn(EasyMock.createMock(Square.class));
+		expect(move.isCastle()).andReturn(false);
+		expect(move.isEnPassant()).andReturn(false);
+		expect(move.getPromotionPiece()).andReturn(null);
+
+		expect(mockEngine.isLegalMove(eq(move), anyObject(GameState.class)))
+				.andReturn(true);
+		mockBoard.movePiece(anyObject(Square.class), anyObject(Square.class));
+		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
+				.andReturn(GameStatus.ONGOING);
+
+		replay(mockBoard, mockEngine, whitePiece, move);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		model.applyMove(move);
+
+		Piece whitePiece2 = EasyMock.createMock(Piece.class);
+		Move whiteMove2   = EasyMock.createMock(Move.class);
+		expect(whiteMove2.getPiece()).andReturn(whitePiece2);
+		expect(whitePiece2.getColor()).andReturn(Color.WHITE);
+		replay(whitePiece2, whiteMove2);
+
+		assertThrows(IllegalArgumentException.class, () -> model.applyMove(whiteMove2));
+
+		verify(mockBoard, mockEngine, whitePiece, move, whitePiece2, whiteMove2);
+	}
 }
