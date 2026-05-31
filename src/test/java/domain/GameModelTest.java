@@ -24,21 +24,6 @@ public class GameModelTest {
 	private Board mockBoard;
 	private RulesEngine mockEngine;
 
-	private GameModel modelWithMocks() {
-		mockBoard  = EasyMock.createMock(Board.class);
-		mockEngine = EasyMock.createMock(RulesEngine.class);
-		expectRemainingBoardCalls(mockBoard);
-		return new GameModel(mockBoard, mockEngine);
-	}
-
-	private void replayMocks() {
-		replay(mockBoard, mockEngine);
-	}
-
-	private void verifyMocks() {
-		verify(mockBoard, mockEngine);
-	}
-
 	private void expectRemainingBoardCalls(Board board) {
 		expect(board.getSquare(anyChar(), anyInt()))
 				.andAnswer(() -> EasyMock.createNiceMock(Square.class))
