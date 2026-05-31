@@ -23,6 +23,33 @@ public class GameModel {
 			board.placePiece(new Pawn(Color.WHITE), board.getSquare(file, WHITE_PAWN_RANK));
 			board.placePiece(new Pawn(Color.BLACK), board.getSquare(file, BLACK_PAWN_RANK));
 		}
+
+		final int WHITE_BACK_RANK = 1;
+		char[] files = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+		PieceType[] backRowPieces = {
+				PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, PieceType.QUEEN,
+				PieceType.KING, PieceType.BISHOP, PieceType.KNIGHT, PieceType.ROOK
+		};
+
+		for (int i = 0; i < files.length; i++) {
+			switch (backRowPieces[i]) {
+				case ROOK:
+					board.placePiece(new Rook(Color.WHITE),   board.getSquare(files[i], WHITE_BACK_RANK));
+					break;
+				case KNIGHT:
+					board.placePiece(new Knight(Color.WHITE), board.getSquare(files[i], WHITE_BACK_RANK));
+					break;
+				case BISHOP:
+					board.placePiece(new Bishop(Color.WHITE), board.getSquare(files[i], WHITE_BACK_RANK));
+					break;
+				case QUEEN:
+					board.placePiece(new Queen(Color.WHITE),  board.getSquare(files[i], WHITE_BACK_RANK));
+					break;
+				case KING:
+					board.placePiece(new King(Color.WHITE),   board.getSquare(files[i], WHITE_BACK_RANK));
+					break;
+			}
+		}
 	}
 
 	public static GameModel newGame(Player white, Player black) {
