@@ -1,14 +1,21 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameModel {
 	protected static final char MINFILE = 'a';
 	protected static final char MAXFILE = 'h';
 	private final Board board;
+	private final RulesEngine rulesEngine;
+	private final List<Move> moveHistory;
 	private Color currentTurn;
 	private GameStatus status;
 
 	GameModel(Board board, RulesEngine rulesEngine) {
 		this.board = board;
+		this.rulesEngine = rulesEngine;
+		this.moveHistory = new ArrayList<>();
 		this.currentTurn = Color.WHITE;
 		this.status = GameStatus.ONGOING;
 		placeStartingPieces();
@@ -16,6 +23,11 @@ public class GameModel {
 
 	private GameModel() {
 		this(new Board(), new RulesEngine());
+	}
+
+	private GameState snapshot() {
+		Move lastMove = moveHistory.isEmpty() ? null : moveHistory.get(moveHistory.size() - 1);
+		return GameState.create(board, currentTurn, lastMove);
 	}
 
 	private void placeStartingPieces() {
@@ -76,6 +88,10 @@ public class GameModel {
 			throw new IllegalArgumentException("Black player must have the color black");
 		}
 		return new GameModel();
+	}
+
+	public List<Square> getLegalMoves(Square square) {
+		return rulesEngine.getLegalMoves(snapshot(), square);
 	}
 
 	public void applyMove(Move move) {

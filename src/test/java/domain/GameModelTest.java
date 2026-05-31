@@ -3,6 +3,8 @@ package domain;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.easymock.EasyMock.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,6 +27,8 @@ public class GameModelTest {
 	private GameModel modelWithMocks() {
 		mockBoard  = EasyMock.createMock(Board.class);
 		mockEngine = EasyMock.createMock(RulesEngine.class);
+		expectRemainingBoardCalls(mockBoard);
+		replay(mockBoard, mockEngine);
 		return new GameModel(mockBoard, mockEngine);
 	}
 
@@ -295,5 +299,34 @@ public class GameModelTest {
 
 		verify(blackPiece, blackMove);
 		verify(mockBoard, mockEngine);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC14: getLegalMoves delegates to RulesEngine and returns its result
+	// -------------------------------------------------------------------------
+	@Test
+	void getLegalMoves_delegatesToRulesEngine_returnsEngineResult() {
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+
+		expectRemainingBoardCalls(mockBoard);
+
+		Square square = EasyMock.createMock(Square.class);
+		Square mockSquare1 = EasyMock.createMock(Square.class);
+		List<Square> engineResult = List.of(mockSquare1);
+
+		expect(mockEngine.getLegalMoves(anyObject(), eq(square)))
+				.andReturn(engineResult);
+
+		replay(mockBoard, mockEngine, square, mockSquare1);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		List<Square> result = model.getLegalMoves(square);
+
+		assertSame(engineResult, result,
+				"GameModel must return exactly the list the engine produced");
+
+		verify(mockBoard, mockEngine, square, mockSquare1);
 	}
 }
