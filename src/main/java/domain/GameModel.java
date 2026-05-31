@@ -1,30 +1,17 @@
 package domain;
 
-public interface GameModel {
+public class GameModel {
+	private GameStatus status;
 
-	Board getBoard();
+	private GameModel() {
+		this.status = GameStatus.ONGOING;
+	}
 
-	Player[] getPlayers();
+	public static GameModel newGame(Player white, Player black) {
+		return new GameModel();
+	}
 
-	Color getCurrentTurn();
-
-	GameStatus getStatus();
-
-	Move[] getMoveHistory();
-
-	void initGame();
-
-	Square[] getLegalMoves(Square square);
-
-	void applyMove(Move move);
-
-	void setBoard(Board board);
-
-	void setPlayers(Player[] players);
-
-	void setCurrentTurn(Color currentTurn);
-
-	void setStatus(GameStatus status);
-
-	void setMoveHistory(Move[] moveHistory);
+	public GameStatus getStatus() {
+		return status;
+	}
 }
