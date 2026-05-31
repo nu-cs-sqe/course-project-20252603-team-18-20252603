@@ -28,7 +28,6 @@ public class GameModelTest {
 		mockBoard  = EasyMock.createMock(Board.class);
 		mockEngine = EasyMock.createMock(RulesEngine.class);
 		expectRemainingBoardCalls(mockBoard);
-		replay(mockBoard, mockEngine);
 		return new GameModel(mockBoard, mockEngine);
 	}
 
@@ -328,5 +327,23 @@ public class GameModelTest {
 				"GameModel must return exactly the list the engine produced");
 
 		verify(mockBoard, mockEngine, square, mockSquare1);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC15: Null move throws
+	// -------------------------------------------------------------------------
+	@Test
+	void applyMove_nullMove_throwsException() {
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+
+		expectRemainingBoardCalls(mockBoard);
+		replay(mockBoard, mockEngine);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		assertThrows(IllegalArgumentException.class, () -> model.applyMove(null));
+
+		verify(mockBoard, mockEngine);
 	}
 }

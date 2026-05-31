@@ -95,6 +95,9 @@ public class GameModel {
 	}
 
 	public void applyMove(Move move) {
+		if (move == null) {
+			throw new IllegalArgumentException("Move must not be null");
+		}
 		if (move.getPiece().getColor() != currentTurn) {
 			throw new IllegalArgumentException("Wrong move color");
 		}
