@@ -4,10 +4,12 @@ public class GameModel {
 	protected static final char MINFILE = 'a';
 	protected static final char MAXFILE = 'h';
 	private final Board board;
+	private Color currentTurn;
 	private GameStatus status;
 
 	GameModel(Board board, RulesEngine rulesEngine) {
 		this.board = board;
+		this.currentTurn = Color.WHITE;
 		this.status = GameStatus.ONGOING;
 		placeStartingPieces();
 	}
@@ -74,6 +76,12 @@ public class GameModel {
 			throw new IllegalArgumentException("Black player must have the color black");
 		}
 		return new GameModel();
+	}
+
+	public void applyMove(Move move) {
+		if (move.getPiece().getColor() != currentTurn) {
+			throw new IllegalArgumentException("Wrong move color");
+		}
 	}
 
 	public GameStatus getStatus() {

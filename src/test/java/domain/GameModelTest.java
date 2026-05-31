@@ -270,4 +270,30 @@ public class GameModelTest {
 
 		assertEquals(32, count[0]);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC13: Initial turn is WHITE — wrong-color move is immediately rejected
+	// -------------------------------------------------------------------------
+	@Test
+	void newGame_initialTurn_isWhite_wrongColourMoveRejected() {
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+
+		expectRemainingBoardCalls(mockBoard);
+		replay(mockBoard, mockEngine);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		Piece blackPiece = EasyMock.createMock(Piece.class);
+		expect(blackPiece.getColor()).andReturn(Color.BLACK);
+		Move blackMove = EasyMock.createMock(Move.class);
+		expect(blackMove.getPiece()).andReturn(blackPiece);
+
+		replay(blackPiece, blackMove);
+
+		assertThrows(IllegalArgumentException.class, () -> model.applyMove(blackMove));
+
+		verify(blackPiece, blackMove);
+		verify(mockBoard, mockEngine);
+	}
 }
