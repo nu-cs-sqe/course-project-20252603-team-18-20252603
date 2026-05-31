@@ -11,6 +11,9 @@ public class GameModel {
 		if (white == null) {
 			throw new IllegalArgumentException("White player must not be null");
 		}
+		if (black == null) {
+			throw new IllegalArgumentException("Black player must not be null");
+		}
 		return new GameModel();
 	}
 

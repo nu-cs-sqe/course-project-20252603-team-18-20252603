@@ -31,4 +31,14 @@ public class GameModelTest {
 		assertThrows(IllegalArgumentException.class, () ->
 				GameModel.newGame(null, humanBlack()));
 	}
+
+
+	// -------------------------------------------------------------------------
+	// TC3: Null black player
+	// -------------------------------------------------------------------------
+	@Test
+	void newGame_nullBlackPlayer_throwsException() {
+		assertThrows(IllegalArgumentException.class, () ->
+				GameModel.newGame(humanWhite(), null));
+	}
 }
