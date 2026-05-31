@@ -110,12 +110,36 @@ public class GameModel {
 		board.movePiece(move.getFrom(), move.getTo());
 
 		if (move.getPromotionPiece() != null) {
+			Square to = move.getTo();
+			Piece promotionPiece = move.getPromotionPiece();
+			board.placePiece(promotionPiece, to);
 		}
 
 		if (move.isEnPassant()) {
+			int captureRank = (currentTurn == Color.WHITE) ? move.getTo().getRank() - 1 : move.getTo().getRank() + 1;
+			Square captureSquare = board.getSquare(move.getTo().getFile(), captureRank);
+			captureSquare.setOccupant(null);
 		}
 
 		if (move.isCastle()) {
+			int homeRank = (currentTurn == Color.WHITE) ? 1 : 8;
+			final char KINGSIDE_TARGET_FILE = 'g';
+			final char QUEENSIDE_TARGET_FILE = 'c';
+
+			if (move.getTo().getFile() == KINGSIDE_TARGET_FILE) {  // Kingside castle
+				final char ROOKTO_FILE = 'h';
+				final char ROOKFROM_FILE = 'f';
+				Square rookFrom = board.getSquare(ROOKTO_FILE, homeRank);
+				Square rookTo = board.getSquare(ROOKFROM_FILE, homeRank);
+				board.movePiece(rookFrom, rookTo);
+			}
+			else if (move.getTo().getFile() == QUEENSIDE_TARGET_FILE) {  // Queenside castle
+				final char ROOKTO_FILE = 'a';
+				final char ROOKFROM_FILE = 'd';
+				Square rookFrom = board.getSquare(ROOKTO_FILE, homeRank);
+				Square rookTo = board.getSquare(ROOKFROM_FILE, homeRank);
+				board.movePiece(rookFrom, rookTo);
+			}
 		}
 
 		moveHistory.add(move);
