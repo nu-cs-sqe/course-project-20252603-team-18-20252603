@@ -346,4 +346,37 @@ public class GameModelTest {
 
 		verify(mockBoard, mockEngine);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC16: Wrong-colour move is rejected; turn does not change
+	// -------------------------------------------------------------------------
+	@Test
+	void applyMove_wrongColorMove_throwsAndTurnUnchanged() {
+		mockBoard = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+
+		expectRemainingBoardCalls(mockBoard);
+		replay(mockBoard, mockEngine);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		Piece blackPiece = EasyMock.createMock(Piece.class);
+		expect(blackPiece.getColor()).andReturn(Color.BLACK);
+		Move blackMove = EasyMock.createMock(Move.class);
+		expect(blackMove.getPiece()).andReturn(blackPiece);
+
+		replay(blackPiece, blackMove);
+
+		assertThrows(IllegalArgumentException.class, () -> model.applyMove(blackMove));
+
+		Piece blackPiece2 = EasyMock.createMock(Piece.class);
+		expect(blackPiece2.getColor()).andReturn(Color.BLACK);
+		Move blackMove2 = EasyMock.createMock(Move.class);
+		expect(blackMove2.getPiece()).andReturn(blackPiece2);
+		replay(blackPiece2, blackMove2);
+
+		assertThrows(IllegalArgumentException.class, () -> model.applyMove(blackMove2));
+
+		verify(mockBoard, mockEngine, blackPiece, blackMove, blackPiece2, blackMove2);
+	}
 }
