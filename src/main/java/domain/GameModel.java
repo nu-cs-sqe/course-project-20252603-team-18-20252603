@@ -18,8 +18,10 @@ public class GameModel {
 
 	private void placeStartingPieces() {
 		final int WHITE_PAWN_RANK = 2;
+		final int BLACK_PAWN_RANK = 7;
 		for (char file = MINFILE; file <= MAXFILE; file++) {
 			board.placePiece(new Pawn(Color.WHITE), board.getSquare(file, WHITE_PAWN_RANK));
+			board.placePiece(new Pawn(Color.BLACK), board.getSquare(file, BLACK_PAWN_RANK));
 		}
 	}
 

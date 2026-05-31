@@ -146,4 +146,31 @@ public class GameModelTest {
 		new GameModel(board, engine);
 		verify(board, engine);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC9: Black pawns placed on rank 7
+	// -------------------------------------------------------------------------
+	@Test
+	void newGame_blackPawnsPlacedOnRank7() {
+		Board board     = EasyMock.createMock(Board.class);
+		RulesEngine engine = EasyMock.createMock(RulesEngine.class);
+
+		for (char file = 'a'; file <= 'h'; file++) {
+			Square sq = EasyMock.createNiceMock(Square.class);
+			replay(sq);
+			expect(board.getSquare(file, 7)).andReturn(sq);
+			board.placePiece(anyObject(Piece.class), eq(sq));
+			expectLastCall().andAnswer(() -> {
+				Piece placed = (Piece) EasyMock.getCurrentArguments()[0];
+				assertTrue(placed instanceof Pawn,  "Expected a Pawn on rank 7");
+				assertEquals(Color.BLACK, placed.getColor(), "Expected a Black piece on rank 7");
+				return null;
+			});
+		}
+		expectRemainingBoardCalls(board);
+
+		replay(board, engine);
+		new GameModel(board, engine);
+		verify(board, engine);
+	}
 }
