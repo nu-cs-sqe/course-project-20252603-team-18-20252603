@@ -14,6 +14,9 @@ public class GameModel {
 		if (black == null) {
 			throw new IllegalArgumentException("Black player must not be null");
 		}
+		if (white.getColor() != Color.WHITE) {
+			throw new IllegalArgumentException("White player must have the color white");
+		}
 		return new GameModel();
 	}
 
