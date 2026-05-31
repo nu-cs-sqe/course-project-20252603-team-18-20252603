@@ -1,5 +1,4 @@
 @startuml Chess_MVC_Architecture
-
 skinparam backgroundColor #FAFAFA
 skinparam classBackgroundColor #FFFFFF
 skinparam classBorderColor #333333
@@ -9,7 +8,6 @@ skinparam packageBorderColor #7090CC
 skinparam titleFontSize 18
 skinparam noteBackgroundColor #FFFDE7
 skinparam noteBorderColor #BFAF60
-
 title Chess Application — MVC Architecture
 
 ' ─────────────────────────────────────────
@@ -19,16 +17,51 @@ package "Model" {
 
   class GameModel {
     - board: Board
-    - players: Player[2]
+    - rulesEngine: RulesEngine
+    - moveHistory: List<Move>
     - currentTurn: Color
     - status: GameStatus
-    - moveHistory: Move[]
     --
-    + initGame()
-    + getLegalMoves(square: Square): Square[]
+    + {static} newGame(white: Player, black: Player): GameModel
+    ~ GameModel(board: Board, rulesEngine: RulesEngine)
+    - snapshot(): GameState
+    - placeStartingPieces(): void
+    + getLegalMoves(square: Square): List<Square>
     + applyMove(move: Move): void
+    + getMoveHistory(): List<Move>
     + getStatus(): GameStatus
   }
+
+  note right of GameModel
+    newGame() validates players and
+    calls private no-arg constructor.
+    Package-private constructor accepts
+    injected collaborators for testing.
+    snapshot() builds GameState from
+    board, currentTurn, and last move
+    in moveHistory (null if empty).
+  end note
+
+  class GameState {
+    - board: Board       {final}
+    - currentTurn: Color {final}
+    - lastMove: Move     {final}
+    --
+    + {static} create(board: Board, currentTurn: Color, lastMove: Move): GameState
+    + getBoard(): Board
+    + getCurrentTurn(): Color
+    + getLastMove(): Move
+  }
+
+  note right of GameState
+    Static factory validates:
+    · board != null
+    · currentTurn != null
+    · lastMove may be null
+    Private constructor — use create()
+    Immutable snapshot of game state
+    passed to RulesEngine
+  end note
 
   class Board {
     - grid: Square[8][8]
@@ -60,11 +93,15 @@ package "Model" {
   end note
 
   abstract class Piece {
-    + color: Color
-    + type: PieceType
-    + hasMoved: boolean
+    - color: Color       {final}
+    - type: PieceType    {final}
+    - hasMoved: boolean
     --
-    + {abstract} getLegalMoves(board: Board): Square[]
+    + getColor(): Color
+    + getType(): PieceType
+    + hasMoved(): boolean
+    + markMoved(): void
+    + {abstract} getLegalMoveDestinationSquares(from: Square): List<Square>
   }
 
   class King extends Piece
@@ -75,9 +112,11 @@ package "Model" {
   class Pawn extends Piece
 
   class Player {
-    + color: Color
-    + isHuman: boolean
-    + capturedPieces: Piece[]
+    - color: Color
+    - isHuman: boolean
+    --
+    + getColor(): Color
+    + isHuman(): boolean
   }
 
   class Move {
@@ -99,6 +138,8 @@ package "Model" {
     ~ setCapturedPiece(p: Piece): void
     ~ getPromotionPiece(): Piece
     ~ setPromotionPiece(p: Piece): void
+    ~ setEnPassant(b: boolean): void
+    ~ setCastle(b: boolean): void
     ~ isEnPassant(): boolean
     ~ isCastle(): boolean
     ~ isCausedCheck(): boolean
@@ -118,29 +159,26 @@ package "Model" {
 
   class RulesEngine <<service>> {
     + isLegalMove(move: Move, state: GameState): boolean
-    + getLegalMoves(color: Color, state: GameState): Move[]
-
-    + isInCheck(color: Color, state: GameState): boolean
-    + isSquareAttack(state: GameState, square: Square, color:Color): boolean
-    + isCheckmate(color: Color, state: GameState): boolean
-    + isStalemate(color: Color, state: GameState): boolean
-
+    + getLegalMoves(state: GameState, from: Square): List<Square>
+    + isInCheck(state: GameState, color: Color): boolean
+    + isSquareAttacked(state: GameState, square: Square, byColor: Color): boolean
+    + isCheckmate(state: GameState, color: Color): boolean
+    + isStalemate(state: GameState, color: Color): boolean
     + isEnPassantLegal(move: Move, state: GameState): boolean
     + isCastlingLegal(move: Move, state: GameState): boolean
-    + isPromotionLegas(move: Move, state: GameState): boolean
-
-    + getGameStatus(state: GameState)
+    + isPromotionLegal(move: Move, state: GameState): boolean
+    + getGameStatus(state: GameState): GameStatus
   }
 
   ' Model internal relationships
-  GameModel "1" *-- "1"  Board        : owns
-  GameModel "1" *-- "2"  Player       : owns
-  GameModel "1" *-- "*"  Move         : history
-  GameModel       ..>     RulesEngine  : uses
-
-  Board "1" *-- "64" Square           : grid
-  Square "1" o-- "0..1" Piece        : occupant
-
+  GameModel "1" *-- "1"  Board          : owns
+  GameModel "1" *-- "1"  RulesEngine    : uses
+  GameModel "1" *-- "*"  Move           : history
+  GameModel       ..>     GameState      : creates via snapshot()
+  GameState       ..>     Board          : references
+  GameState       ..>     Move           : references (lastMove)
+  Board   "1" *-- "64"   Square         : grid
+  Square  "1" o-- "0..1" Piece          : occupant
 }
 
 ' ─────────────────────────────────────────
@@ -171,7 +209,6 @@ package "View" {
 
   note right of PromotionView
     Returns Promise<Piece>
-    (previously Promise<PieceType>)
     — aligns with Move.promotionPiece: Piece
   end note
 
@@ -210,13 +247,11 @@ GameController "1" *-- "1" BoardView          : owns
 GameController "1" *-- "1" NotificationView   : owns
 GameController "1" *-- "1" PromotionView      : owns
 GameController "1" *-- "1" CapturedPiecesView : owns
-
 GameController ..> GameModel          : calls
 GameController ..> BoardView          : updates
 GameController ..> NotificationView   : updates
 GameController ..> PromotionView      : awaits
 GameController ..> CapturedPiecesView : updates
-
-BoardView ..> GameController : emits onSquareClick
+BoardView ..> GameController          : emits onSquareClick
 
 @enduml
