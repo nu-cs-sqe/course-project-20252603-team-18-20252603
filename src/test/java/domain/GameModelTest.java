@@ -41,4 +41,13 @@ public class GameModelTest {
 		assertThrows(IllegalArgumentException.class, () ->
 				GameModel.newGame(humanWhite(), null));
 	}
+
+	// -------------------------------------------------------------------------
+	// TC4: Both players null
+	// -------------------------------------------------------------------------
+	@Test
+	void newGame_bothPlayersNull_throwsException() {
+		assertThrows(IllegalArgumentException.class, () ->
+				GameModel.newGame(null, null));
+	}
 }
