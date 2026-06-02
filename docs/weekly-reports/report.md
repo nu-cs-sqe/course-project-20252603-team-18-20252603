@@ -42,3 +42,17 @@ N/A
 8. [done] David: Refactor Square Class to remove magic numbers (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/37)
 9. [done] David: BVA for Rules Engine (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
 10. [30%] David: Method Is_Legal_Move TDD (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+
+# Week 9 (05/25/2026 - 06/01/2026)
+**Planning and Progress Tracking**:
+1. [done] Eric Fei: Completed Pawn Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/40)
+2. [done] Eric Fei: Completed Knight Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/48)
+3. [done] Eric Fei: Completed King Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/50)
+4. [done] Eric Fei: Completed GameState Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/56)
+5. [done] Eric Fei: Completed GameModel Class (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/58)
+6. [done] Eric Fei: Completed RulesEngine.getLegalMoves() (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+7. [done] Eric Fei: Completed RulesEngine.isInCheck() (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+8. [done] Eric Fei: Completed RulesEngine.isSquareAttacked() (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+9. [done] Eric Fei: Completed RulesEngine.isCheckmate() (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+10. [done] Eric Fei: Completed JaCoCo and PIT setup (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/53)
+11. [90%] Eric Fei: Update Design Diagram for RulesEngine, GameModel, and GameState (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/35)
