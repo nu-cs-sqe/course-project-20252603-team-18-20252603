@@ -1,0 +1,53 @@
+package controller;
+
+import model.GameModel;
+import model.Square;
+import view.BoardView;
+import view.CapturedPiecesView;
+import view.NotificationView;
+import view.PromotionView;
+
+import java.util.List;
+
+public class GameController {
+
+	private final GameModel model;
+	private final BoardView boardView;
+	private final NotificationView notificationView;
+	private final PromotionView promotionView;
+	private final CapturedPiecesView capturedView;
+
+	private Square selectedSquare;
+
+	GameController(GameModel model, BoardView boardView, NotificationView notificationView,
+	               PromotionView promotionView, CapturedPiecesView capturedView) {
+		this.model = model;
+		this.boardView = boardView;
+		this.notificationView = notificationView;
+		this.promotionView = promotionView;
+		this.capturedView = capturedView;
+	}
+
+	void onSquareClick(Square square) {
+		if (square == null) {
+			return;
+		}
+
+		if (selectedSquare == null) {
+			handlePieceSelection(square);
+		}
+	}
+
+	private void handlePieceSelection(Square square) {
+		if (square.getOccupant() == null) {
+			return;
+		}
+		if (square.getOccupant().getColor() != model.getCurrentTurn()) {
+			return;
+		}
+
+		List<Square> legalMoves = model.getLegalMoves(square);
+		selectedSquare = square;
+		boardView.highlightSquares(legalMoves);
+	}
+}
