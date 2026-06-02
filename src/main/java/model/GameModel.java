@@ -161,6 +161,11 @@ public class GameModel {
 		return moveHistory;
 	}
 
+	public Color getCurrentTurn() {
+		// TODO Implement getCurrentTurn
+		return null;
+	}
+
 	public GameStatus getStatus() {
 		return status;
 	}
