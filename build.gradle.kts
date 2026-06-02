@@ -69,8 +69,8 @@ configure<CheckstyleExtension> {
 pitest {
     junit5PluginVersion.set("1.2.1")
 
-    targetClasses.set(listOf("domain.*"))
-    targetTests.set(listOf("domain.*"))
+    targetClasses.set(listOf("model.*"))
+    targetTests.set(listOf("model.*"))
 
     threads.set(4)
 
