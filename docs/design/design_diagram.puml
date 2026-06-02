@@ -114,9 +114,12 @@ package "Model" {
   class Player {
     - color: Color
     - isHuman: boolean
+    - capturedPieces: List<Piece>
     --
     + getColor(): Color
     + isHuman(): boolean
+    + getCapturedPieces(): List<Piece>
+    + addCapturedPiece(piece: Piece): void
   }
 
   class Move {
