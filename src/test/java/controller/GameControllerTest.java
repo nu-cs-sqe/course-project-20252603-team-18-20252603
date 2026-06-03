@@ -396,4 +396,27 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC31: Refresh At Game Start (Called From init())
+	// -------------------------------------------------------------------------
+	@Test
+	void refreshViews_calledFromInit_rendersStartingState() {
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		boardView.render(null);
+		expectLastCall().once();
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		notificationView.showTurn("WHITE");
+		expectLastCall().once();
+		capturedView.update(List.of(), List.of());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView);
+
+		controller.refreshViews();
+
+		verify(model, boardView, notificationView, promotionView, capturedView);
+	}
 }
