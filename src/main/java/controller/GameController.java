@@ -88,4 +88,14 @@ public class GameController {
 			}
 		});
 	}
+
+	void refreshViews() {
+		GameStatus status = model.getStatus();
+		boardView.render(null);
+		if (status == GameStatus.ONGOING) {
+			boardView.clearCheckIndicator();
+			notificationView.showTurn(model.getCurrentTurn().name());
+		}
+		capturedView.update(List.of(), List.of());
+	}
 }

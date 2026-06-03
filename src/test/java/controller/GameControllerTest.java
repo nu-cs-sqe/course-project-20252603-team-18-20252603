@@ -262,4 +262,30 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC26: Refresh After Standard Move — Status ONGOING
+	// -------------------------------------------------------------------------
+	@Test
+	void refreshViews_ongoingStatus_rendersNormally() {
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+
+		boardView.render(null);
+		expectLastCall().once();
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		notificationView.showTurn("WHITE");
+		expectLastCall().once();
+
+		capturedView.update(List.of(), List.of());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView);
+
+		controller.refreshViews();
+
+		verify(model, boardView, notificationView, promotionView, capturedView);
+	}
 }
