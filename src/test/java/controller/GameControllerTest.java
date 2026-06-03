@@ -288,4 +288,30 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC27: Refresh After Move Causing Check
+	// -------------------------------------------------------------------------
+	@Test
+	void refreshViews_checkStatus_showsCheckIndicator() {
+		expect(model.getStatus()).andReturn(GameStatus.CHECK).once();
+
+		boardView.render(null);
+		expectLastCall().once();
+
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showCheck("BLACK");
+		expectLastCall().once();
+		boardView.showCheckIndicator(null);
+		expectLastCall().once();
+
+		capturedView.update(List.of(), List.of());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView);
+
+		controller.refreshViews();
+
+		verify(model, boardView, notificationView, promotionView, capturedView);
+	}
 }

@@ -96,6 +96,10 @@ public class GameController {
 			boardView.clearCheckIndicator();
 			notificationView.showTurn(model.getCurrentTurn().name());
 		}
+		else if (status == GameStatus.CHECK) {
+			notificationView.showCheck(model.getCurrentTurn().name());
+			boardView.showCheckIndicator(null);
+		}
 		capturedView.update(List.of(), List.of());
 	}
 }
