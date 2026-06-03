@@ -137,4 +137,36 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, knight);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC23: Player Attempts to Dismiss PromotionView Without Selecting
+	// -------------------------------------------------------------------------
+	@Test
+	void handlePromotion_dismissedWithoutSelection_remainsOpen() {
+		Piece pawn = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square to = createMock(Square.class);
+		List<Square> legalMoves = List.of(to);
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(from.getOccupant()).andReturn(pawn).anyTimes();
+		expect(from.getFile()).andReturn('c').anyTimes();
+		expect(from.getRank()).andReturn(7).anyTimes();
+		expect(to.getFile()).andReturn('c').anyTimes();
+		expect(to.getRank()).andReturn(8).anyTimes();
+		expect(pawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves);
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		java.util.concurrent.CompletableFuture<Piece> future = java.util.concurrent.CompletableFuture.completedFuture(null);
+		expect(promotionView.show("WHITE")).andReturn(future);
+
+		replay(model, boardView, notificationView, promotionView, capturedView, pawn, from, to);
+
+		controller.onSquareClick(from);
+		controller.handlePromotion(to);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to);
+	}
 }
