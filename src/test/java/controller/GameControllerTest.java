@@ -361,4 +361,39 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView, clickedAfterStalemate);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC30: Refresh After Check Is Resolved
+	// -------------------------------------------------------------------------
+	@Test
+	void refreshViews_checkResolved_clearsCheckIndicator() {
+		expect(model.getStatus()).andReturn(GameStatus.CHECK).once();
+		boardView.render(null);
+		expectLastCall().once();
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showCheck("BLACK");
+		expectLastCall().once();
+		boardView.showCheckIndicator(null);
+		expectLastCall().once();
+		capturedView.update(List.of(), List.of());
+		expectLastCall().once();
+
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		boardView.render(null);
+		expectLastCall().once();
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		notificationView.showTurn("WHITE");
+		expectLastCall().once();
+		capturedView.update(List.of(), List.of());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView);
+
+		controller.refreshViews();
+		controller.refreshViews();
+
+		verify(model, boardView, notificationView, promotionView, capturedView);
+	}
 }
