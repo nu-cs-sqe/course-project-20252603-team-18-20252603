@@ -56,3 +56,6 @@ N/A
 9. [done] Eric Fei: Completed RulesEngine.isCheckmate() (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
 10. [done] Eric Fei: Completed JaCoCo and PIT setup (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/53)
 11. [90%] Eric Fei: Update Design Diagram for RulesEngine, GameModel, and GameState (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/35)
+12. [done] David Yim: Completed RulesEngine isLegalMove (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+13. [done] David Yim: Completed RulesEngine isPromotionLegal (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+14. [done] David Yim: Completed RulesEngine getGameStatus (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
