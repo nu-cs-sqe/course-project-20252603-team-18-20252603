@@ -1,6 +1,8 @@
 package controller;
 
 import model.GameModel;
+import model.Move;
+import model.Piece;
 import model.Square;
 import view.BoardView;
 import view.CapturedPiecesView;
@@ -49,5 +51,28 @@ public class GameController {
 		List<Square> legalMoves = model.getLegalMoves(square);
 		selectedSquare = square;
 		boardView.highlightSquares(legalMoves);
+	}
+
+	void handlePromotion(Square square) {
+		if (square == null || selectedSquare == null) {
+			return;
+		}
+
+		Piece piece = selectedSquare.getOccupant();
+		if (piece == null) {
+			return;
+		}
+
+		String color = model.getCurrentTurn().name();
+		java.util.concurrent.CompletableFuture<Piece> future = promotionView.show(color);
+		future.thenAccept(promotionPiece -> {
+			if (promotionPiece == null) {
+				// keep the promotion view open per spec
+				return;
+			}
+			Move move = Move.create(piece, selectedSquare, square);
+			model.applyMove(move);
+			promotionView.hide();
+		});
 	}
 }
