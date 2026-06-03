@@ -2,6 +2,7 @@ package controller;
 
 import model.Color;
 import model.GameModel;
+import model.GameStatus;
 import model.Move;
 import model.Piece;
 import model.Square;
@@ -87,6 +88,7 @@ public class GameControllerTest {
 
 		model.applyMove(isA(Move.class));
 		expectLastCall().once();
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
 
 		promotionView.hide();
 		expectLastCall().once();
@@ -126,6 +128,7 @@ public class GameControllerTest {
 
 		model.applyMove(isA(Move.class));
 		expectLastCall().once();
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
 
 		promotionView.hide();
 		expectLastCall().once();
@@ -168,5 +171,50 @@ public class GameControllerTest {
 		controller.handlePromotion(to);
 
 		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC24: Promotion Results In Checkmate
+	// -------------------------------------------------------------------------
+	@Test
+	void handlePromotion_promotionCausesCheckmate_locksGame() {
+		Piece pawn = createMock(Piece.class);
+		Piece queen = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square to = createMock(Square.class);
+		Square anotherClick = createMock(Square.class);
+		List<Square> legalMoves = List.of(to);
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(from.getOccupant()).andReturn(pawn).anyTimes();
+		expect(from.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(7).anyTimes();
+		expect(to.getFile()).andReturn('d').anyTimes();
+		expect(to.getRank()).andReturn(8).anyTimes();
+		expect(pawn.getColor()).andReturn(Color.WHITE).once();
+		expect(pawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves);
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		java.util.concurrent.CompletableFuture<Piece> future = java.util.concurrent.CompletableFuture.completedFuture(queen);
+		expect(promotionView.show("WHITE")).andReturn(future);
+
+		model.applyMove(isA(Move.class));
+		expectLastCall().once();
+		expect(model.getStatus()).andReturn(GameStatus.CHECKMATE).once();
+
+		promotionView.hide();
+		expectLastCall().once();
+		notificationView.showCheckmate("WHITE");
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen, anotherClick);
+
+		controller.onSquareClick(from);
+		controller.handlePromotion(to);
+		controller.onSquareClick(anotherClick);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen, anotherClick);
 	}
 }

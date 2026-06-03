@@ -1,6 +1,7 @@
 package controller;
 
 import model.GameModel;
+import model.GameStatus;
 import model.Move;
 import model.Piece;
 import model.Square;
@@ -20,6 +21,7 @@ public class GameController {
 	private final CapturedPiecesView capturedView;
 
 	private Square selectedSquare;
+	private boolean gameLocked;
 
 	GameController(GameModel model, BoardView boardView, NotificationView notificationView,
 	               PromotionView promotionView, CapturedPiecesView capturedView) {
@@ -31,7 +33,7 @@ public class GameController {
 	}
 
 	void onSquareClick(Square square) {
-		if (square == null) {
+		if (gameLocked || square == null) {
 			return;
 		}
 
@@ -73,6 +75,10 @@ public class GameController {
 			Move move = Move.create(piece, selectedSquare, square);
 			model.applyMove(move);
 			promotionView.hide();
+			if (model.getStatus() == GameStatus.CHECKMATE) {
+				notificationView.showCheckmate(piece.getColor().name());
+				gameLocked = true;
+			}
 		});
 	}
 }
