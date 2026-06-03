@@ -98,4 +98,43 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC22: Valid Promotion — Knight Selected
+	// -------------------------------------------------------------------------
+	@Test
+	void handlePromotion_knightSelected_setsPromotionPiece() {
+		Piece pawn = createMock(Piece.class);
+		Piece knight = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square to = createMock(Square.class);
+		List<Square> legalMoves = List.of(to);
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(from.getOccupant()).andReturn(pawn).anyTimes();
+		expect(from.getFile()).andReturn('b').anyTimes();
+		expect(from.getRank()).andReturn(7).anyTimes();
+		expect(to.getFile()).andReturn('b').anyTimes();
+		expect(to.getRank()).andReturn(8).anyTimes();
+		expect(pawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves);
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		java.util.concurrent.CompletableFuture<Piece> future = java.util.concurrent.CompletableFuture.completedFuture(knight);
+		expect(promotionView.show("WHITE")).andReturn(future);
+
+		model.applyMove(isA(Move.class));
+		expectLastCall().once();
+
+		promotionView.hide();
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, knight);
+
+		controller.onSquareClick(from);
+		controller.handlePromotion(to);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, knight);
+	}
 }
