@@ -100,6 +100,11 @@ public class GameController {
 			notificationView.showCheck(model.getCurrentTurn().name());
 			boardView.showCheckIndicator(null);
 		}
+		else if (status == GameStatus.CHECKMATE) {
+			Color winner = model.getCurrentTurn() == Color.WHITE ? Color.BLACK : Color.WHITE;
+			notificationView.showCheckmate(winner.name());
+			gameLocked = true;
+		}
 		capturedView.update(List.of(), List.of());
 	}
 }

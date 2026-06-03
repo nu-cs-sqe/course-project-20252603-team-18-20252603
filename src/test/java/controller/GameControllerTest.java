@@ -314,4 +314,28 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC28: Refresh After Checkmate
+	// -------------------------------------------------------------------------
+	@Test
+	void refreshViews_checkmateStatus_locksGame() {
+		Square clickedAfterMate = createMock(Square.class);
+
+		expect(model.getStatus()).andReturn(GameStatus.CHECKMATE).once();
+		boardView.render(null);
+		expectLastCall().once();
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showCheckmate("WHITE");
+		expectLastCall().once();
+		capturedView.update(List.of(), List.of());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, clickedAfterMate);
+
+		controller.refreshViews();
+		controller.onSquareClick(clickedAfterMate);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, clickedAfterMate);
+	}
 }
