@@ -80,8 +80,7 @@ public class GameController {
 			if (status == GameStatus.CHECKMATE) {
 				notificationView.showCheckmate(piece.getColor().name());
 				gameLocked = true;
-			}
-			else if (status == GameStatus.CHECK) {
+			} else if (status == GameStatus.CHECK) {
 				String checkedColor = piece.getColor() == Color.WHITE ? Color.BLACK.name() : Color.WHITE.name();
 				notificationView.showCheck(checkedColor);
 				boardView.showCheckIndicator(square);
@@ -95,17 +94,14 @@ public class GameController {
 		if (status == GameStatus.ONGOING) {
 			boardView.clearCheckIndicator();
 			notificationView.showTurn(model.getCurrentTurn().name());
-		}
-		else if (status == GameStatus.CHECK) {
+		} else if (status == GameStatus.CHECK) {
 			notificationView.showCheck(model.getCurrentTurn().name());
 			boardView.showCheckIndicator(null);
-		}
-		else if (status == GameStatus.CHECKMATE) {
+		} else if (status == GameStatus.CHECKMATE) {
 			Color winner = model.getCurrentTurn() == Color.WHITE ? Color.BLACK : Color.WHITE;
 			notificationView.showCheckmate(winner.name());
 			gameLocked = true;
-		}
-		else if (status == GameStatus.STALEMATE) {
+		} else if (status == GameStatus.STALEMATE) {
 			notificationView.showStalemate();
 			gameLocked = true;
 		}
