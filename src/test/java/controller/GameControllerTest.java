@@ -217,4 +217,49 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen, anotherClick);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC25: Promotion Results In Check
+	// -------------------------------------------------------------------------
+	@Test
+	void handlePromotion_promotionCausesCheck_showsCheck() {
+		Piece pawn = createMock(Piece.class);
+		Piece queen = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square to = createMock(Square.class);
+		List<Square> legalMoves = List.of(to);
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(from.getOccupant()).andReturn(pawn).anyTimes();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(7).anyTimes();
+		expect(to.getFile()).andReturn('e').anyTimes();
+		expect(to.getRank()).andReturn(8).anyTimes();
+		expect(pawn.getColor()).andReturn(Color.WHITE).once();
+		expect(pawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves);
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		java.util.concurrent.CompletableFuture<Piece> future = java.util.concurrent.CompletableFuture.completedFuture(queen);
+		expect(promotionView.show("WHITE")).andReturn(future);
+
+		model.applyMove(isA(Move.class));
+		expectLastCall().once();
+		expect(model.getStatus()).andReturn(GameStatus.CHECK).once();
+
+		promotionView.hide();
+		expectLastCall().once();
+		notificationView.showCheck("BLACK");
+		expectLastCall().once();
+		boardView.showCheckIndicator(to);
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen);
+
+		controller.onSquareClick(from);
+		controller.handlePromotion(to);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen);
+	}
 }

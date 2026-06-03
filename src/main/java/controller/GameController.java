@@ -5,6 +5,7 @@ import model.GameStatus;
 import model.Move;
 import model.Piece;
 import model.Square;
+import model.Color;
 import view.BoardView;
 import view.CapturedPiecesView;
 import view.NotificationView;
@@ -75,9 +76,15 @@ public class GameController {
 			Move move = Move.create(piece, selectedSquare, square);
 			model.applyMove(move);
 			promotionView.hide();
-			if (model.getStatus() == GameStatus.CHECKMATE) {
+			GameStatus status = model.getStatus();
+			if (status == GameStatus.CHECKMATE) {
 				notificationView.showCheckmate(piece.getColor().name());
 				gameLocked = true;
+			}
+			else if (status == GameStatus.CHECK) {
+				String checkedColor = piece.getColor() == Color.WHITE ? Color.BLACK.name() : Color.WHITE.name();
+				notificationView.showCheck(checkedColor);
+				boardView.showCheckIndicator(square);
 			}
 		});
 	}
