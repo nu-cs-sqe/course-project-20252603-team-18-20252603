@@ -105,6 +105,10 @@ public class GameController {
 			notificationView.showCheckmate(winner.name());
 			gameLocked = true;
 		}
+		else if (status == GameStatus.STALEMATE) {
+			notificationView.showStalemate();
+			gameLocked = true;
+		}
 		capturedView.update(List.of(), List.of());
 	}
 }

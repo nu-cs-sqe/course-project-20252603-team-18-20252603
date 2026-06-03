@@ -13,4 +13,8 @@ public class NotificationView {
 	public void showCheckmate(String winner) {
 		// TODO: implement checkmate notification logic
 	}
+
+	public void showStalemate() {
+		// TODO: implement stalemate notification logic
+	}
 }

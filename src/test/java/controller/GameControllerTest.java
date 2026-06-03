@@ -338,4 +338,27 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView, clickedAfterMate);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC29: Refresh After Stalemate
+	// -------------------------------------------------------------------------
+	@Test
+	void refreshViews_stalemateStatus_noCheckIndicatorInputLocked() {
+		Square clickedAfterStalemate = createMock(Square.class);
+
+		expect(model.getStatus()).andReturn(GameStatus.STALEMATE).once();
+		boardView.render(null);
+		expectLastCall().once();
+		notificationView.showStalemate();
+		expectLastCall().once();
+		capturedView.update(List.of(), List.of());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, clickedAfterStalemate);
+
+		controller.refreshViews();
+		controller.onSquareClick(clickedAfterStalemate);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, clickedAfterStalemate);
+	}
 }
