@@ -166,6 +166,16 @@ public class GameModel {
 		return null;
 	}
 
+	public Board getBoard() {
+		// TODO Implement getBoard
+		return null;
+	}
+
+	public List<Piece> getCapturedPieces(Color color) {
+		// TODO Implement getCapturedPieces
+		return null;
+	}
+
 	public GameStatus getStatus() {
 		return status;
 	}
