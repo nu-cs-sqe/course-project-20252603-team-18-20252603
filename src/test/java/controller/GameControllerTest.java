@@ -142,6 +142,23 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC7: Empty Square Selected
+	// -------------------------------------------------------------------------
+	@Test
+	void handlePieceSelection_emptySquare_noSelectionMade() {
+		Square square = createMock(Square.class);
+
+		expect(square.getOccupant()).andReturn(null).anyTimes();
+
+		// boardView.highlightSquares and model.getLegalMoves must NOT be called
+		replay(model, boardView, notificationView, promotionView, capturedView, square);
+
+		controller.onSquareClick(square);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, square);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
