@@ -159,6 +159,26 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC8: Opponent Piece Selected
+	// -------------------------------------------------------------------------
+	@Test
+	void handlePieceSelection_opponentPiece_selectionRejected() {
+		Piece opponentPiece = createMock(Piece.class);
+		Square square = createMock(Square.class);
+
+		expect(square.getOccupant()).andReturn(opponentPiece).anyTimes();
+		expect(opponentPiece.getColor()).andReturn(Color.BLACK).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+
+		// boardView.highlightSquares and model.getLegalMoves must NOT be called
+		replay(model, boardView, notificationView, promotionView, capturedView, opponentPiece, square);
+
+		controller.onSquareClick(square);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, opponentPiece, square);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
