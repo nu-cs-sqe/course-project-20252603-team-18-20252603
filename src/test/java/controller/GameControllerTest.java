@@ -58,6 +58,54 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC4: Click With Selection Active — Delegates to handleMoveExecution
+	// -------------------------------------------------------------------------
+	@Test
+	void onSquareClick_selectionActive_delegatesToMoveExecution() {
+		Piece piece = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square target = createMock(Square.class);
+		List<Square> legalMoves = List.of(target);
+
+		expect(from.getOccupant()).andReturn(piece).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).once();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		expect(from.getFile()).andReturn('e').once();
+		expect(target.getFile()).andReturn('e').once();
+		expect(from.getRank()).andReturn(2).once();
+		expect(target.getRank()).andReturn(4).once();
+		model.applyMove(org.easymock.EasyMock.anyObject());
+		expectLastCall().once();
+		boardView.clearHighlights();
+		expectLastCall().once();
+
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		expect(model.getBoard()).andReturn(createMock(Board.class)).once();
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		boardView.render(org.easymock.EasyMock.anyObject());
+		expectLastCall().once();
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+		notificationView.showTurn("BLACK");
+		expectLastCall().once();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, piece, from, target);
+
+		controller.onSquareClick(from);
+		controller.onSquareClick(target);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, piece, from, target);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test

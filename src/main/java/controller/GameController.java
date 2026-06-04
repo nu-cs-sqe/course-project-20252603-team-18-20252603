@@ -41,6 +41,9 @@ public class GameController {
 		if (selectedSquare == null) {
 			handlePieceSelection(square);
 		}
+		else {
+			handleMoveExecution(square);
+		}
 	}
 
 	private void handlePieceSelection(Square square) {
@@ -54,6 +57,18 @@ public class GameController {
 		List<Square> legalMoves = model.getLegalMoves(square);
 		selectedSquare = square;
 		boardView.highlightSquares(legalMoves);
+	}
+
+	private void handleMoveExecution(Square target) {
+		Piece piece = selectedSquare.getOccupant();
+		Move move = Move.create(piece, selectedSquare, target);
+
+		model.applyMove(move);
+
+		selectedSquare = null;
+		boardView.clearHighlights();
+
+		refreshViews();
 	}
 
 	void handlePromotion(Square square) {
@@ -90,7 +105,7 @@ public class GameController {
 
 	void refreshViews() {
 		GameStatus status = model.getStatus();
-		boardView.render(null);
+		boardView.render(model.getBoard());
 		if (status == GameStatus.ONGOING) {
 			boardView.clearCheckIndicator();
 			notificationView.showTurn(model.getCurrentTurn().name());
@@ -105,6 +120,9 @@ public class GameController {
 			notificationView.showStalemate();
 			gameLocked = true;
 		}
-		capturedView.update(List.of(), List.of());
+		capturedView.update(
+				model.getCapturedPieces(Color.WHITE),
+				model.getCapturedPieces(Color.BLACK)
+		);
 	}
 }
