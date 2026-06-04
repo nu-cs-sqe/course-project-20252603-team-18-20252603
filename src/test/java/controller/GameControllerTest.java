@@ -118,6 +118,30 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC6: Valid Piece Selection — Highlights Legal Moves
+	// -------------------------------------------------------------------------
+	@Test
+	void handlePieceSelection_validPiece_highlightsLegalMoves() {
+		Piece piece = createMock(Piece.class);
+		Square square = createMock(Square.class);
+		Square legalDestination = createMock(Square.class);
+		List<Square> legalMoves = List.of(legalDestination);
+
+		expect(square.getOccupant()).andReturn(piece).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getLegalMoves(square)).andReturn(legalMoves);
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, piece, square, legalDestination);
+
+		controller.onSquareClick(square);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, piece, square, legalDestination);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
