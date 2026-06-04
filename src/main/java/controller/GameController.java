@@ -25,7 +25,7 @@ public class GameController {
 	private boolean gameLocked;
 
 	GameController(GameModel model, BoardView boardView, NotificationView notificationView,
-	               PromotionView promotionView, CapturedPiecesView capturedView) {
+					PromotionView promotionView, CapturedPiecesView capturedView) {
 		this.model = model;
 		this.boardView = boardView;
 		this.notificationView = notificationView;
@@ -40,6 +40,10 @@ public class GameController {
 
 		if (selectedSquare == null) {
 			handlePieceSelection(square);
+		}
+		else if (selectedSquare == square) {
+			selectedSquare = null;
+			boardView.clearHighlights();
 		}
 		else {
 			handleMoveExecution(square);
