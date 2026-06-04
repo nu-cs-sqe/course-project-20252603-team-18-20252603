@@ -106,6 +106,18 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC5: Null Square Click
+	// -------------------------------------------------------------------------
+	@Test
+	void onSquareClick_nullSquare_noOp() {
+		replay(model, boardView, notificationView, promotionView, capturedView);
+
+		controller.onSquareClick(null);
+
+		verify(model, boardView, notificationView, promotionView, capturedView);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
