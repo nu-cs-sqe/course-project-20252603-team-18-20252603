@@ -1,11 +1,6 @@
 package controller;
 
-import model.Color;
-import model.GameModel;
-import model.GameStatus;
-import model.Move;
-import model.Piece;
-import model.Square;
+import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import view.BoardView;
@@ -13,6 +8,7 @@ import view.CapturedPiecesView;
 import view.NotificationView;
 import view.PromotionView;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.easymock.EasyMock.*;
@@ -270,7 +266,12 @@ public class GameControllerTest {
 	void refreshViews_ongoingStatus_rendersNormally() {
 		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
 
-		boardView.render(null);
+		Board mockBoard = createMock(Board.class);
+		expect(model.getBoard()).andReturn(mockBoard).anyTimes();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).anyTimes();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).anyTimes();
+
+		boardView.render(mockBoard);
 		expectLastCall().once();
 		boardView.clearCheckIndicator();
 		expectLastCall().once();
@@ -296,7 +297,12 @@ public class GameControllerTest {
 	void refreshViews_checkStatus_showsCheckIndicator() {
 		expect(model.getStatus()).andReturn(GameStatus.CHECK).once();
 
-		boardView.render(null);
+		Board mockBoard = createMock(Board.class);
+		expect(model.getBoard()).andReturn(mockBoard).anyTimes();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).anyTimes();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).anyTimes();
+
+		boardView.render(mockBoard);
 		expectLastCall().once();
 
 		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
@@ -323,7 +329,13 @@ public class GameControllerTest {
 		Square clickedAfterMate = createMock(Square.class);
 
 		expect(model.getStatus()).andReturn(GameStatus.CHECKMATE).once();
-		boardView.render(null);
+
+		Board mockBoard = createMock(Board.class);
+		expect(model.getBoard()).andReturn(mockBoard).anyTimes();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).anyTimes();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).anyTimes();
+
+		boardView.render(mockBoard);
 		expectLastCall().once();
 		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
 		notificationView.showCheckmate("WHITE");
@@ -347,7 +359,13 @@ public class GameControllerTest {
 		Square clickedAfterStalemate = createMock(Square.class);
 
 		expect(model.getStatus()).andReturn(GameStatus.STALEMATE).once();
-		boardView.render(null);
+
+		Board mockBoard = createMock(Board.class);
+		expect(model.getBoard()).andReturn(mockBoard).anyTimes();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).anyTimes();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).anyTimes();
+
+		boardView.render(mockBoard);
 		expectLastCall().once();
 		notificationView.showStalemate();
 		expectLastCall().once();
@@ -368,7 +386,13 @@ public class GameControllerTest {
 	@Test
 	void refreshViews_checkResolved_clearsCheckIndicator() {
 		expect(model.getStatus()).andReturn(GameStatus.CHECK).once();
-		boardView.render(null);
+
+		Board mockBoard = createMock(Board.class);
+		expect(model.getBoard()).andReturn(mockBoard).anyTimes();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).anyTimes();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).anyTimes();
+
+		boardView.render(mockBoard);
 		expectLastCall().once();
 		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
 		notificationView.showCheck("BLACK");
@@ -379,7 +403,7 @@ public class GameControllerTest {
 		expectLastCall().once();
 
 		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
-		boardView.render(null);
+		boardView.render(mockBoard);
 		expectLastCall().once();
 		boardView.clearCheckIndicator();
 		expectLastCall().once();
@@ -403,7 +427,13 @@ public class GameControllerTest {
 	@Test
 	void refreshViews_calledFromInit_rendersStartingState() {
 		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
-		boardView.render(null);
+
+		Board mockBoard = createMock(Board.class);
+		expect(model.getBoard()).andReturn(mockBoard).anyTimes();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).anyTimes();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).anyTimes();
+
+		boardView.render(mockBoard);
 		expectLastCall().once();
 		boardView.clearCheckIndicator();
 		expectLastCall().once();
