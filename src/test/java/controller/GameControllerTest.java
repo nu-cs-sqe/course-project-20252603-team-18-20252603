@@ -179,6 +179,29 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC9: Valid Piece With Zero Legal Moves Selected (Pinned Piece)
+	// -------------------------------------------------------------------------
+	@Test
+	void handlePieceSelection_piecePinned_zeroLegalMoves() {
+		Piece piece = createMock(Piece.class);
+		Square square = createMock(Square.class);
+		List<Square> emptyMoves = Collections.emptyList();
+
+		expect(square.getOccupant()).andReturn(piece).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getLegalMoves(square)).andReturn(emptyMoves);
+		boardView.highlightSquares(emptyMoves);
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, piece, square);
+
+		controller.onSquareClick(square);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, piece, square);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
