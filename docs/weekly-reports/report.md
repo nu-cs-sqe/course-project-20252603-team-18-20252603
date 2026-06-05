@@ -59,3 +59,7 @@ N/A
 12. [done] David Yim: Completed RulesEngine isLegalMove (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
 13. [done] David Yim: Completed RulesEngine isPromotionLegal (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
 14. [done] David Yim: Completed RulesEngine getGameStatus (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+15. [done] Eshan Haq: Update Design Diagram for Player (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/35)
+16. [done] Eshan Haq: Completed RulesEngine isStalemate (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+17. [done] Eshan Haq: Completed RulesEngine isCastlingLegal (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
+18. [done] Eshan Haq: Completed RulesEngine isEnpassantLegal (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
