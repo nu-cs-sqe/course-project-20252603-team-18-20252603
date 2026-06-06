@@ -315,6 +315,37 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC13: Target Is Same Square As Selected Square
+	// -------------------------------------------------------------------------
+	@Test
+	void handleMoveExecution_targetSameAsSelected_deselects() {
+		Piece piece = createMock(Piece.class);
+		Square selected = createMock(Square.class);
+		Square legalDestination = createMock(Square.class);
+		List<Square> legalMoves = List.of(legalDestination);
+
+		expect(selected.getOccupant()).andReturn(piece).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		expect(model.getLegalMoves(selected)).andReturn(legalMoves).once();
+
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		boardView.clearHighlights();
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				piece, selected, legalDestination);
+
+		controller.onSquareClick(selected);
+		controller.onSquareClick(selected);
+
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				piece, selected, legalDestination);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
