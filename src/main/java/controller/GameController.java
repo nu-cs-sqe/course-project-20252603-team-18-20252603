@@ -87,6 +87,9 @@ public class GameController {
 		}
 
 		Move move = Move.create(piece, selectedSquare, target);
+//		if (isCastlingMove(piece, target)) {
+//			move.setCastle(true);
+//		}
 
 		model.applyMove(move);
 
@@ -105,6 +108,14 @@ public class GameController {
 		return (piece.getColor() == Color.WHITE && target.getRank() == 8)
 				|| (piece.getColor() == Color.BLACK && target.getRank() == 1);
 	}
+//
+//	private boolean isCastlingMove(Piece piece, Square target) {
+//		if (piece == null || target == null || piece.getType() != PieceType.KING) {
+//			return false;
+//		}
+//
+//		return Math.abs(target.getFile() - selectedSquare.getFile()) == 2;
+//	}
 
 	void handlePromotion(Square square) {
 		if (square == null || selectedSquare == null) {
