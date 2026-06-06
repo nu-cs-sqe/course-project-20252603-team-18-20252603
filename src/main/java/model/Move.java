@@ -67,9 +67,11 @@ public class Move {
 		this.promotionPiece = promotionPiece;
 	}
 
-	boolean isEnPassant() {
+	public boolean isEnPassant() {
 		return isEnPassant;
 	}
+
+	public void setEnPassant(boolean isEnPassant) { this.isEnPassant = isEnPassant; }
 
 	public boolean isCastle() {
 		return isCastle;

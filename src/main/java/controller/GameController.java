@@ -91,6 +91,10 @@ public class GameController {
 			move.setCastle(true);
 		}
 
+		if (isEnPassantMove(piece, target)) {
+			move.setEnPassant(true);
+		}
+
 		model.applyMove(move);
 
 		selectedSquare = null;
@@ -115,6 +119,17 @@ public class GameController {
 		}
 
 		return Math.abs(target.getFile() - selectedSquare.getFile()) == 2;
+	}
+
+	private boolean isEnPassantMove(Piece piece, Square target) {
+		if (piece == null || target == null || piece.getType() != PieceType.PAWN) {
+			return false;
+		}
+
+		boolean diagonalMove = Math.abs(target.getFile() - selectedSquare.getFile()) == 1;
+		boolean emptyTarget = target.getOccupant() == null;
+
+		return diagonalMove && emptyTarget;
 	}
 
 	void handlePromotion(Square square) {

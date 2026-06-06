@@ -636,6 +636,68 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC19: Move Is En Passant
+	// -------------------------------------------------------------------------
+	@Test
+	void handleMoveExecution_enPassant_capturesAdjacentPawn() {
+		Piece pawn = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square target = createMock(Square.class);
+		Board board = createMock(Board.class);
+		List<Square> legalMoves = List.of(target);
+		org.easymock.Capture<Move> appliedMove = newCapture();
+
+		expect(from.getOccupant()).andReturn(pawn).anyTimes();
+		expect(pawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(pawn.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
+
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(target.getFile()).andReturn('d').anyTimes();
+		expect(from.getRank()).andReturn(5).anyTimes();
+		expect(target.getRank()).andReturn(6).anyTimes();
+		expect(target.getOccupant()).andReturn(null).anyTimes();
+
+		model.applyMove(capture(appliedMove));
+		expectLastCall().once();
+
+		boardView.clearHighlights();
+		expectLastCall().once();
+
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showTurn("BLACK");
+		expectLastCall().once();
+
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, target, board);
+
+		controller.onSquareClick(from);
+		controller.onSquareClick(target);
+
+		assertTrue(appliedMove.getValue().isEnPassant());
+
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, target, board);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
