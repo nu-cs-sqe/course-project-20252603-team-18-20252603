@@ -698,6 +698,41 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC20: Target Is A Friendly Piece
+	// -------------------------------------------------------------------------
+	@Test
+	void handleMoveExecution_targetIsFriendlyPiece_reSelectsOrRejects() {
+		Piece selectedPiece = createMock(Piece.class);
+		Piece friendlyPiece = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square friendlyTarget = createMock(Square.class);
+		Square legalDestination = createMock(Square.class);
+		List<Square> legalMoves = List.of(legalDestination);
+
+		expect(from.getOccupant()).andReturn(selectedPiece).anyTimes();
+		expect(selectedPiece.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(selectedPiece.getType()).andReturn(PieceType.KNIGHT).anyTimes();
+
+		expect(friendlyTarget.getOccupant()).andReturn(friendlyPiece).anyTimes();
+		expect(friendlyPiece.getColor()).andReturn(Color.WHITE).anyTimes();
+
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
+
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				selectedPiece, friendlyPiece, from, friendlyTarget, legalDestination);
+
+		controller.onSquareClick(from);
+		controller.onSquareClick(friendlyTarget);
+
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				selectedPiece, friendlyPiece, from, friendlyTarget, legalDestination);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
