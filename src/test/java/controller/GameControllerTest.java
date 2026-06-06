@@ -404,6 +404,63 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC15: Move Causes Checkmate
+	// -------------------------------------------------------------------------
+	@Test
+	void handleMoveExecution_moveCausesCheckmate_locksGame() {
+		Piece piece = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square target = createMock(Square.class);
+		Square clickedAfterMate = createMock(Square.class);
+		Board board = createMock(Board.class);
+		List<Square> legalMoves = List.of(target);
+
+		expect(from.getOccupant()).andReturn(piece).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(piece.getType()).andReturn(PieceType.KNIGHT).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
+
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(target.getFile()).andReturn('f').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
+		expect(target.getRank()).andReturn(4).anyTimes();
+
+		model.applyMove(isA(Move.class));
+		expectLastCall().once();
+
+		boardView.clearHighlights();
+		expectLastCall().once();
+
+		expect(model.getStatus()).andReturn(GameStatus.CHECKMATE).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showCheckmate("WHITE");
+		expectLastCall().once();
+
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				piece, from, target, clickedAfterMate, board);
+
+		controller.onSquareClick(from);
+		controller.onSquareClick(target);
+		controller.onSquareClick(clickedAfterMate);
+
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				piece, from, target, clickedAfterMate, board);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
