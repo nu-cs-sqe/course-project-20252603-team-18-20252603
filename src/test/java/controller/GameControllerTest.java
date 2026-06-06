@@ -522,6 +522,54 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC17: Move Is A Pawn Promotion
+	// -------------------------------------------------------------------------
+	@Test
+	void handleMoveExecution_pawnPromotion_invokesHandlePromotion() {
+		Piece pawn = createMock(Piece.class);
+		Piece queen = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square target = createMock(Square.class);
+		List<Square> legalMoves = List.of(target);
+
+		expect(from.getOccupant()).andReturn(pawn).anyTimes();
+		expect(pawn.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(pawn.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
+
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		expect(target.getRank()).andReturn(8).anyTimes();
+
+		java.util.concurrent.CompletableFuture<Piece> future =
+				java.util.concurrent.CompletableFuture.completedFuture(queen);
+		expect(promotionView.show("WHITE")).andReturn(future).once();
+
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(target.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(7).anyTimes();
+
+		model.applyMove(isA(Move.class));
+		expectLastCall().once();
+
+		promotionView.hide();
+		expectLastCall().once();
+
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				pawn, queen, from, target);
+
+		controller.onSquareClick(from);
+		controller.onSquareClick(target);
+
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				pawn, queen, from, target);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test

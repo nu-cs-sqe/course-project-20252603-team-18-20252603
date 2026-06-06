@@ -4,6 +4,7 @@ import model.GameModel;
 import model.GameStatus;
 import model.Move;
 import model.Piece;
+import model.PieceType;
 import model.Square;
 import model.Color;
 import view.BoardView;
@@ -80,6 +81,11 @@ public class GameController {
 		}
 
 		Piece piece = selectedSquare.getOccupant();
+		if (isPromotionMove(piece, target)) {
+			handlePromotion(target);
+			return;
+		}
+
 		Move move = Move.create(piece, selectedSquare, target);
 
 		model.applyMove(move);
@@ -89,6 +95,15 @@ public class GameController {
 		boardView.clearHighlights();
 
 		refreshViews();
+	}
+
+	private boolean isPromotionMove(Piece piece, Square target) {
+		if (piece == null || target == null || piece.getType() != PieceType.PAWN) {
+			return false;
+		}
+
+		return (piece.getColor() == Color.WHITE && target.getRank() == 8)
+				|| (piece.getColor() == Color.BLACK && target.getRank() == 1);
 	}
 
 	void handlePromotion(Square square) {
