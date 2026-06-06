@@ -44,6 +44,7 @@ public class GameController {
 		}
 		else if (selectedSquare == square) {
 			selectedSquare = null;
+			selectedLegalMoves = null;
 			boardView.clearHighlights();
 		}
 		else {
@@ -70,12 +71,21 @@ public class GameController {
 	}
 
 	private void handleMoveExecution(Square target) {
+		if (target == null || selectedSquare == null) {
+			return;
+		}
+
+		if (selectedLegalMoves == null || !selectedLegalMoves.contains(target)) {
+			return;
+		}
+
 		Piece piece = selectedSquare.getOccupant();
 		Move move = Move.create(piece, selectedSquare, target);
 
 		model.applyMove(move);
 
 		selectedSquare = null;
+		selectedLegalMoves = null;
 		boardView.clearHighlights();
 
 		refreshViews();

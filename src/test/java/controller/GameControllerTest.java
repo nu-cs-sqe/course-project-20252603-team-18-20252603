@@ -286,6 +286,35 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC12: Target Not In Legal Moves List
+	// -------------------------------------------------------------------------
+	@Test
+	void handleMoveExecution_illegalTarget_moveRejected() {
+		Piece piece = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square legalDestination = createMock(Square.class);
+		Square illegalTarget = createMock(Square.class);
+		List<Square> legalMoves = List.of(legalDestination);
+
+		expect(from.getOccupant()).andReturn(piece).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
+
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				piece, from, legalDestination, illegalTarget);
+
+		controller.onSquareClick(from);
+		controller.onSquareClick(illegalTarget);
+
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				piece, from, legalDestination, illegalTarget);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
