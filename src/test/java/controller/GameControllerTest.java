@@ -461,6 +461,67 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC16: Move Is A Capture
+	// -------------------------------------------------------------------------
+	@Test
+	void handleMoveExecution_captureMove_updatesCapturedPieces() {
+		Piece piece = createMock(Piece.class);
+		Piece capturedPiece = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square target = createMock(Square.class);
+		Board board = createMock(Board.class);
+		List<Square> legalMoves = List.of(target);
+		List<Piece> whiteCapturedPieces = Collections.emptyList();
+		List<Piece> blackCapturedPieces = List.of(capturedPiece);
+
+		expect(from.getOccupant()).andReturn(piece).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(piece.getType()).andReturn(PieceType.KNIGHT).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
+
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(target.getFile()).andReturn('f').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
+		expect(target.getRank()).andReturn(4).anyTimes();
+
+		model.applyMove(isA(Move.class));
+		expectLastCall().once();
+
+		boardView.clearHighlights();
+		expectLastCall().once();
+
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showTurn("BLACK");
+		expectLastCall().once();
+
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(whiteCapturedPieces).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(blackCapturedPieces).once();
+		capturedView.update(whiteCapturedPieces, blackCapturedPieces);
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				piece, capturedPiece, from, target, board);
+
+		controller.onSquareClick(from);
+		controller.onSquareClick(target);
+
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				piece, capturedPiece, from, target, board);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
