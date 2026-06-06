@@ -22,6 +22,7 @@ public class GameController {
 	private final CapturedPiecesView capturedView;
 
 	private Square selectedSquare;
+	private List<Square> selectedLegalMoves;
 	private boolean gameLocked;
 
 	GameController(GameModel model, BoardView boardView, NotificationView notificationView,
@@ -59,7 +60,12 @@ public class GameController {
 		}
 
 		List<Square> legalMoves = model.getLegalMoves(square);
+		if (legalMoves == null) {
+			legalMoves = List.of();
+		}
+
 		selectedSquare = square;
+		selectedLegalMoves = legalMoves;
 		boardView.highlightSquares(legalMoves);
 	}
 

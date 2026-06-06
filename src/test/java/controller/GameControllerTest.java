@@ -232,6 +232,60 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC11: Valid Standard Move Executed
+	// -------------------------------------------------------------------------
+	@Test
+	void handleMoveExecution_validStandardMove_appliesMove() {
+		Piece piece = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square target = createMock(Square.class);
+		Board board = createMock(Board.class);
+		List<Square> legalMoves = List.of(target);
+
+		expect(from.getOccupant()).andReturn(piece).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).once();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		expect(from.getFile()).andReturn('e').once();
+		expect(target.getFile()).andReturn('e').once();
+		expect(from.getRank()).andReturn(2).once();
+		expect(target.getRank()).andReturn(4).once();
+
+		model.applyMove(isA(Move.class));
+		expectLastCall().once();
+
+		boardView.clearHighlights();
+		expectLastCall().once();
+
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showTurn("BLACK");
+		expectLastCall().once();
+
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, piece, from, target, board);
+
+		controller.onSquareClick(from);
+		controller.onSquareClick(target);
+
+		verify(model, boardView, notificationView, promotionView, capturedView, piece, from, target, board);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC21: Valid Promotion — Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
