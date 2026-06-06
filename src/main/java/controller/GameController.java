@@ -127,9 +127,11 @@ public class GameController {
 		}
 
 		boolean diagonalMove = Math.abs(target.getFile() - selectedSquare.getFile()) == 1;
-		boolean emptyTarget = target.getOccupant() == null;
+		if (!diagonalMove) {
+			return false;
+		}
 
-		return diagonalMove && emptyTarget;
+		return target.getOccupant() == null;
 	}
 
 	void handlePromotion(Square square) {
