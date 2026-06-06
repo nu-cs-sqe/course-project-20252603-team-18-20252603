@@ -71,9 +71,11 @@ public class Move {
 		return isEnPassant;
 	}
 
-	boolean isCastle() {
+	public boolean isCastle() {
 		return isCastle;
 	}
+
+	public void setCastle(boolean isCastle) { this.isCastle = isCastle; }
 
 	boolean isCausedCheck() {
 		return causedCheck;

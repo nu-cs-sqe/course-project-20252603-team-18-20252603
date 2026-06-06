@@ -13,6 +13,8 @@ import java.util.List;
 
 import static org.easymock.EasyMock.*;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class GameControllerTest {
 
 	private GameModel model;
@@ -570,6 +572,67 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView,
 				pawn, queen, from, target);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC18: Move Is Castling
+	// -------------------------------------------------------------------------
+	@Test
+	void handleMoveExecution_castlingMove_appliesCastleMove() {
+		Piece king = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square target = createMock(Square.class);
+		Board board = createMock(Board.class);
+		List<Square> legalMoves = List.of(target);
+		org.easymock.Capture<Move> appliedMove = newCapture();
+
+		expect(from.getOccupant()).andReturn(king).anyTimes();
+		expect(king.getColor()).andReturn(Color.WHITE).anyTimes();
+		expect(king.getType()).andReturn(PieceType.KING).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
+
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(target.getFile()).andReturn('g').anyTimes();
+		expect(from.getRank()).andReturn(1).anyTimes();
+		expect(target.getRank()).andReturn(1).anyTimes();
+
+		model.applyMove(capture(appliedMove));
+		expectLastCall().once();
+
+		boardView.clearHighlights();
+		expectLastCall().once();
+
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showTurn("BLACK");
+		expectLastCall().once();
+
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				king, from, target, board);
+
+		controller.onSquareClick(from);
+		controller.onSquareClick(target);
+
+		assertTrue(appliedMove.getValue().isCastle());
+
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				king, from, target, board);
 	}
 
 	// -------------------------------------------------------------------------
