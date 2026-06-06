@@ -68,16 +68,17 @@ public class GameControllerTest {
 		List<Square> legalMoves = List.of(target);
 
 		expect(from.getOccupant()).andReturn(piece).anyTimes();
-		expect(piece.getColor()).andReturn(Color.WHITE).once();
+		expect(piece.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
 		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
 		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
 		boardView.highlightSquares(legalMoves);
 		expectLastCall().once();
 
-		expect(from.getFile()).andReturn('e').once();
-		expect(target.getFile()).andReturn('e').once();
-		expect(from.getRank()).andReturn(2).once();
-		expect(target.getRank()).andReturn(4).once();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(target.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
+		expect(target.getRank()).andReturn(4).anyTimes();
 		model.applyMove(org.easymock.EasyMock.anyObject());
 		expectLastCall().once();
 		boardView.clearHighlights();
@@ -243,16 +244,17 @@ public class GameControllerTest {
 		List<Square> legalMoves = List.of(target);
 
 		expect(from.getOccupant()).andReturn(piece).anyTimes();
-		expect(piece.getColor()).andReturn(Color.WHITE).once();
+		expect(piece.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
 		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
 		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
 		boardView.highlightSquares(legalMoves);
 		expectLastCall().once();
 
-		expect(from.getFile()).andReturn('e').once();
-		expect(target.getFile()).andReturn('e').once();
-		expect(from.getRank()).andReturn(2).once();
-		expect(target.getRank()).andReturn(4).once();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(target.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
+		expect(target.getRank()).andReturn(4).anyTimes();
 
 		model.applyMove(isA(Move.class));
 		expectLastCall().once();
@@ -357,17 +359,18 @@ public class GameControllerTest {
 		List<Square> legalMoves = List.of(target);
 
 		expect(from.getOccupant()).andReturn(piece).anyTimes();
-		expect(piece.getColor()).andReturn(Color.WHITE).once();
+		expect(piece.getType()).andReturn(PieceType.PAWN).anyTimes();
+		expect(piece.getColor()).andReturn(Color.WHITE).anyTimes();
 		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
 		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
 
 		boardView.highlightSquares(legalMoves);
 		expectLastCall().once();
 
-		expect(from.getFile()).andReturn('e').once();
-		expect(target.getFile()).andReturn('e').once();
-		expect(from.getRank()).andReturn(2).once();
-		expect(target.getRank()).andReturn(4).once();
+		expect(from.getFile()).andReturn('e').anyTimes();
+		expect(target.getFile()).andReturn('e').anyTimes();
+		expect(from.getRank()).andReturn(2).anyTimes();
+		expect(target.getRank()).andReturn(4).anyTimes();
 
 		model.applyMove(isA(Move.class));
 		expectLastCall().once();
