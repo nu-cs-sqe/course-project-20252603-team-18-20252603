@@ -776,9 +776,9 @@ public class GameModelTest {
 	void getCapturedPieces_whiteCaptures_addsToWhiteList() {
 		GameModel model = modelWithMocks();
 
-		Piece whitePiece    = EasyMock.createMock(Piece.class);
+		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Piece capturedPiece = EasyMock.createMock(Piece.class);
-		Move  move          = EasyMock.createMock(Move.class);
+		Move move = EasyMock.createMock(Move.class);
 		expectLegalMove(move, whitePiece, Color.WHITE, capturedPiece, GameStatus.ONGOING);
 
 		replayMocks();
@@ -842,5 +842,30 @@ public class GameModelTest {
 
 		verifyMocks();
 		verify(whitePiece, whiteMove, blackPiece, capturedPiece, blackMove);
+	}
+
+	// =========================================================================
+	// TC30: Non-capturing move does not append to either list
+	// =========================================================================
+	@Test
+	void getCapturedPieces_nonCapturingMove_listsUnchanged() {
+		GameModel model = modelWithMocks();
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Move move = EasyMock.createMock(Move.class);
+		expectLegalMove(move, whitePiece, Color.WHITE, null, GameStatus.ONGOING);
+
+		replayMocks();
+		replay(whitePiece, move);
+
+		model.applyMove(move);
+
+		assertTrue(model.getCapturedPieces(Color.WHITE).isEmpty(),
+				"White's captured list must remain empty after a non-capturing move");
+		assertTrue(model.getCapturedPieces(Color.BLACK).isEmpty(),
+				"Black's captured list must remain empty after a non-capturing move");
+
+		verifyMocks();
+		verify(whitePiece, move);
 	}
 }
