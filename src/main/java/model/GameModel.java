@@ -170,6 +170,10 @@ public class GameModel {
 	}
 
 	public List<Piece> getCapturedPieces(Color color) {
+		if (color == null) {
+			throw new IllegalArgumentException("color must not be null");
+		}
+
 		return new ArrayList<Piece>();
 	}
 

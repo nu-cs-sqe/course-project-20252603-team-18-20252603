@@ -724,4 +724,19 @@ public class GameModelTest {
 
 		verifyMocks();
 	}
+
+	// =========================================================================
+	// TC27: Null color throws IllegalArgumentException
+	// =========================================================================
+	@Test
+	void getCapturedPieces_nullColor_throwsException() {
+		GameModel model = modelWithMocks();
+		replayMocks();
+
+		assertThrows(IllegalArgumentException.class,
+				() -> model.getCapturedPieces(null));
+
+		verifyMocks();
+	}
+
 }
