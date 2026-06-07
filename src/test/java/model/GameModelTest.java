@@ -896,4 +896,76 @@ public class GameModelTest {
 		verifyMocks();
 		verify(whitePiece, move);
 	}
+
+	// =========================================================================
+	// TC32: Multiple captures accumulate in chronological order
+	// =========================================================================
+	@Test
+	void getCapturedPieces_multipleCaptures_accumulatesInOrder() {
+		GameModel model = modelWithMocks();
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Piece captured1 = EasyMock.createMock(Piece.class);
+		Piece captured2 = EasyMock.createMock(Piece.class);
+		Move firstMove = EasyMock.createMock(Move.class);
+		Move blackMove = EasyMock.createMock(Move.class);
+		Move secondMove = EasyMock.createMock(Move.class);
+
+		// White captures captured1.
+		expectLegalMove(firstMove, whitePiece, Color.WHITE, captured1, GameStatus.ONGOING);
+
+		expect(whitePiece.getColor()).andReturn(Color.WHITE);
+
+		// Black non-capturing move to flip turn back to WHITE.
+		Piece blackPiece = EasyMock.createMock(Piece.class);
+		expect(blackMove.getPiece()).andReturn(blackPiece);
+		expect(blackPiece.getColor()).andReturn(Color.BLACK);
+		expect(blackMove.getFrom()).andReturn(EasyMock.createMock(Square.class));
+		expect(blackMove.getTo()).andReturn(EasyMock.createMock(Square.class));
+		expect(blackMove.isCastle()).andReturn(false);
+		expect(blackMove.isEnPassant()).andReturn(false);
+		expect(blackMove.getPromotionPiece()).andReturn(null);
+		expect(blackMove.getCapturedPiece()).andReturn(null);
+		expect(mockEngine.isLegalMove(eq(blackMove), anyObject(GameState.class)))
+				.andReturn(true);
+		mockBoard.movePiece(anyObject(Square.class), anyObject(Square.class));
+		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
+				.andReturn(GameStatus.ONGOING);
+
+		// White captures captured2.
+		expect(secondMove.getPiece()).andReturn(whitePiece);
+		expect(secondMove.getFrom()).andReturn(EasyMock.createMock(Square.class));
+		expect(secondMove.getTo()).andReturn(EasyMock.createMock(Square.class));
+		expect(secondMove.isCastle()).andReturn(false);
+		expect(secondMove.isEnPassant()).andReturn(false);
+		expect(secondMove.getPromotionPiece()).andReturn(null);
+		expect(secondMove.getCapturedPiece()).andReturn(captured2);
+		expect(mockEngine.isLegalMove(eq(secondMove), anyObject(GameState.class)))
+				.andReturn(true);
+		mockBoard.movePiece(anyObject(Square.class), anyObject(Square.class));
+		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
+				.andReturn(GameStatus.ONGOING);
+
+		replayMocks();
+		replay(whitePiece, blackPiece, captured1, captured2,
+				firstMove, blackMove, secondMove);
+
+		model.applyMove(firstMove);
+		model.applyMove(blackMove);
+		model.applyMove(secondMove);
+
+		List<Piece> whiteCaptured = model.getCapturedPieces(Color.WHITE);
+		assertEquals(2, whiteCaptured.size(),
+				"White's captured list must contain two pieces");
+		assertSame(captured1, whiteCaptured.get(0),
+				"First captured piece must be first in the list");
+		assertSame(captured2, whiteCaptured.get(1),
+				"Second captured piece must be second in the list");
+		assertTrue(model.getCapturedPieces(Color.BLACK).isEmpty(),
+				"Black's captured list must remain empty");
+
+		verifyMocks();
+		verify(whitePiece, blackPiece, captured1, captured2,
+				firstMove, blackMove, secondMove);
+	}
 }
