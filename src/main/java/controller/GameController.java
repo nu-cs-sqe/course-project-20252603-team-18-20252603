@@ -1,12 +1,6 @@
 package controller;
 
-import model.GameModel;
-import model.GameStatus;
-import model.Move;
-import model.Piece;
-import model.PieceType;
-import model.Square;
-import model.Color;
+import model.*;
 import view.BoardView;
 import view.CapturedPiecesView;
 import view.NotificationView;
@@ -35,7 +29,11 @@ public class GameController {
 		this.capturedView = capturedView;
 	}
 
-	void onSquareClick(Square square) {
+	public void init() {
+		refreshViews();
+	}
+
+	public void onSquareClick(Square square) {
 		if (gameLocked || square == null) {
 			return;
 		}

@@ -36,6 +36,36 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC1: Valid Initialization
+	// -------------------------------------------------------------------------
+	@Test
+	void init_validController_rendersStartingBoard() {
+		Board board = createMock(Board.class);
+
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		expect(model.getBoard()).andReturn(board).once();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		boardView.render(board);
+		expectLastCall().once();
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+		notificationView.showTurn("WHITE");
+		expectLastCall().once();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, board);
+
+		controller.init();
+
+		verify(model, boardView, notificationView, promotionView, capturedView, board);
+	}
+
+	// TC2: Currently unnecessary given implementation of GameController constructor
+
+	// -------------------------------------------------------------------------
 	// TC3: Click With No Selection Active - Delegates to handlePieceSelection
 	// -------------------------------------------------------------------------
 	@Test
