@@ -170,8 +170,7 @@ public class GameModel {
 	}
 
 	public List<Piece> getCapturedPieces(Color color) {
-		// TODO Implement getCapturedPieces
-		return null;
+		return new ArrayList<Piece>();
 	}
 
 	public GameStatus getStatus() {

@@ -32,6 +32,24 @@ public class GameModelTest {
 		expectLastCall().anyTimes();
 	}
 
+	private GameModel modelWithMocks() {
+		mockBoard  = EasyMock.createMock(Board.class);
+		mockEngine = EasyMock.createMock(RulesEngine.class);
+		expectRemainingBoardCalls(mockBoard);
+
+		replay(mockBoard, mockEngine);
+
+		GameModel model = new GameModel(mockBoard, mockEngine);
+
+		reset(mockBoard, mockEngine);
+		return model;
+	}
+
+
+	private void replayMocks() { replay(mockBoard, mockEngine); }
+	private void verifyMocks() { verify(mockBoard, mockEngine); }
+
+
 	// -------------------------------------------------------------------------
 	// TC1: Valid construction returns non-null model with ONGOING status
 	// -------------------------------------------------------------------------
@@ -689,5 +707,21 @@ public class GameModelTest {
 		assertEquals(GameStatus.CHECKMATE, model.getStatus());
 
 		verify(mockBoard, mockEngine, whitePiece, move);
+	}
+
+	// =========================================================================
+	// TC26: Both lists empty at construction
+	// =========================================================================
+	@Test
+	void getCapturedPieces_atConstruction_bothListsEmpty() {
+		GameModel model = modelWithMocks();
+		replayMocks();
+
+		assertTrue(model.getCapturedPieces(Color.WHITE).isEmpty(),
+				"White's captured list must be empty at construction");
+		assertTrue(model.getCapturedPieces(Color.BLACK).isEmpty(),
+				"Black's captured list must be empty at construction");
+
+		verifyMocks();
 	}
 }
