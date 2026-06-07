@@ -26,7 +26,8 @@ public class GameController {
 	private List<Square> selectedLegalMoves;
 	private boolean gameLocked;
 
-	GameController(GameModel model, BoardView boardView, NotificationView notificationView, PromotionView promotionView, CapturedPiecesView capturedView) {
+	GameController(GameModel model, BoardView boardView, NotificationView notificationView, PromotionView promotionView,
+        CapturedPiecesView capturedView) {
 		this.model = model;
 		this.boardView = boardView;
 		this.notificationView = notificationView;
