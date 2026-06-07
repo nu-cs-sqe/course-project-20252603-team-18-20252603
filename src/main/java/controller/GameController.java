@@ -27,7 +27,7 @@ public class GameController {
 	private boolean gameLocked;
 
 	GameController(GameModel model, BoardView boardView, NotificationView notificationView, PromotionView promotionView,
-        CapturedPiecesView capturedView) {
+		CapturedPiecesView capturedView) {
 		this.model = model;
 		this.boardView = boardView;
 		this.notificationView = notificationView;
