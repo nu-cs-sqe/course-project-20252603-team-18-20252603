@@ -63,7 +63,7 @@ public class Move {
 		this.capturedPiece = capturedPiece;
 	}
 
-	void setPromotionPiece(Piece promotionPiece) {
+	public void setPromotionPiece(Piece promotionPiece) {
 		this.promotionPiece = promotionPiece;
 	}
 
@@ -71,13 +71,17 @@ public class Move {
 		return isEnPassant;
 	}
 
-	public void setEnPassant(boolean isEnPassant) { this.isEnPassant = isEnPassant; }
+	public void setEnPassant(boolean isEnPassant) {
+		this.isEnPassant = isEnPassant;
+	}
 
 	public boolean isCastle() {
 		return isCastle;
 	}
 
-	public void setCastle(boolean isCastle) { this.isCastle = isCastle; }
+	public void setCastle(boolean isCastle) {
+		this.isCastle = isCastle;
+	}
 
 	boolean isCausedCheck() {
 		return causedCheck;

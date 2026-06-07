@@ -27,7 +27,7 @@ public class GameController {
 	private boolean gameLocked;
 
 	GameController(GameModel model, BoardView boardView, NotificationView notificationView,
-					PromotionView promotionView, CapturedPiecesView capturedView) {
+	               PromotionView promotionView, CapturedPiecesView capturedView) {
 		this.model = model;
 		this.boardView = boardView;
 		this.notificationView = notificationView;
@@ -42,13 +42,11 @@ public class GameController {
 
 		if (selectedSquare == null) {
 			handlePieceSelection(square);
-		}
-		else if (selectedSquare == square) {
+		} else if (selectedSquare == square) {
 			selectedSquare = null;
 			selectedLegalMoves = null;
 			boardView.clearHighlights();
-		}
-		else {
+		} else {
 			handleMoveExecution(square);
 		}
 	}
@@ -134,8 +132,8 @@ public class GameController {
 		return target.getOccupant() == null;
 	}
 
-	void handlePromotion(Square square) {
-		if (square == null || selectedSquare == null) {
+	void handlePromotion(Square target) {
+		if (target == null || selectedSquare == null) {
 			return;
 		}
 
@@ -145,24 +143,31 @@ public class GameController {
 		}
 
 		String color = model.getCurrentTurn().name();
+
+		gameLocked = true;
+
 		java.util.concurrent.CompletableFuture<Piece> future = promotionView.show(color);
+
 		future.thenAccept(promotionPiece -> {
 			if (promotionPiece == null) {
-				// keep the promotion view open per spec
+				gameLocked = false;
 				return;
 			}
-			Move move = Move.create(piece, selectedSquare, square);
+
+			Move move = Move.create(piece, selectedSquare, target);
+			move.setPromotionPiece(promotionPiece);
+
 			model.applyMove(move);
+
 			promotionView.hide();
-			GameStatus status = model.getStatus();
-			if (status == GameStatus.CHECKMATE) {
-				notificationView.showCheckmate(piece.getColor().name());
-				gameLocked = true;
-			} else if (status == GameStatus.CHECK) {
-				String checkedColor = piece.getColor() == Color.WHITE ? Color.BLACK.name() : Color.WHITE.name();
-				notificationView.showCheck(checkedColor);
-				boardView.showCheckIndicator(square);
-			}
+
+			selectedSquare = null;
+			selectedLegalMoves = null;
+			boardView.clearHighlights();
+
+			gameLocked = false;
+
+			refreshViews();
 		});
 	}
 

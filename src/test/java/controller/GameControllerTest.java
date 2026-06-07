@@ -36,7 +36,7 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
-	// TC3: Click With No Selection Active — Delegates to handlePieceSelection
+	// TC3: Click With No Selection Active - Delegates to handlePieceSelection
 	// -------------------------------------------------------------------------
 	@Test
 	void onSquareClick_noSelectionActive_delegatesToPieceSelection() {
@@ -60,7 +60,7 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
-	// TC4: Click With Selection Active — Delegates to handleMoveExecution
+	// TC4: Click With Selection Active - Delegates to handleMoveExecution
 	// -------------------------------------------------------------------------
 	@Test
 	void onSquareClick_selectionActive_delegatesToMoveExecution() {
@@ -121,7 +121,7 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
-	// TC6: Valid Piece Selection — Highlights Legal Moves
+	// TC6: Valid Piece Selection - Highlights Legal Moves
 	// -------------------------------------------------------------------------
 	@Test
 	void handlePieceSelection_validPiece_highlightsLegalMoves() {
@@ -535,12 +535,13 @@ public class GameControllerTest {
 		Piece queen = createMock(Piece.class);
 		Square from = createMock(Square.class);
 		Square target = createMock(Square.class);
+		Board board = createMock(Board.class);
 		List<Square> legalMoves = List.of(target);
 
 		expect(from.getOccupant()).andReturn(pawn).anyTimes();
 		expect(pawn.getColor()).andReturn(Color.WHITE).anyTimes();
 		expect(pawn.getType()).andReturn(PieceType.PAWN).anyTimes();
-		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).times(2);
 		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
 
 		boardView.highlightSquares(legalMoves);
@@ -562,16 +563,31 @@ public class GameControllerTest {
 		promotionView.hide();
 		expectLastCall().once();
 
+		boardView.clearHighlights();
+		expectLastCall().once();
+
 		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showTurn("BLACK");
+		expectLastCall().once();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
 
 		replay(model, boardView, notificationView, promotionView, capturedView,
-				pawn, queen, from, target);
+				pawn, queen, from, target, board);
 
 		controller.onSquareClick(from);
 		controller.onSquareClick(target);
 
 		verify(model, boardView, notificationView, promotionView, capturedView,
-				pawn, queen, from, target);
+				pawn, queen, from, target, board);
 	}
 
 	// -------------------------------------------------------------------------
@@ -733,7 +749,7 @@ public class GameControllerTest {
 	}
 
 	// -------------------------------------------------------------------------
-	// TC21: Valid Promotion — Queen Selected
+	// TC21: Valid Promotion - Queen Selected
 	// -------------------------------------------------------------------------
 	@Test
 	void handlePromotion_queenSelected_setsPromotionPiece() {
@@ -741,9 +757,10 @@ public class GameControllerTest {
 		Piece queen = createMock(Piece.class);
 		Square from = createMock(Square.class);
 		Square to = createMock(Square.class);
+		Board board = createMock(Board.class);
 		List<Square> legalMoves = List.of(to);
 
-		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).times(2);
 		expect(from.getOccupant()).andReturn(pawn).anyTimes();
 		expect(from.getFile()).andReturn('a').anyTimes();
 		expect(from.getRank()).andReturn(7).anyTimes();
@@ -759,21 +776,39 @@ public class GameControllerTest {
 
 		model.applyMove(isA(Move.class));
 		expectLastCall().once();
-		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
 
 		promotionView.hide();
 		expectLastCall().once();
 
-		replay(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen);
+		boardView.clearHighlights();
+		expectLastCall().once();
+
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showTurn("BLACK");
+		expectLastCall().once();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, to, queen, board);
 
 		controller.onSquareClick(from);
 		controller.handlePromotion(to);
 
-		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen);
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, to, queen, board);
 	}
 
 	// -------------------------------------------------------------------------
-	// TC22: Valid Promotion — Knight Selected
+	// TC22: Valid Promotion - Knight Selected
 	// -------------------------------------------------------------------------
 	@Test
 	void handlePromotion_knightSelected_setsPromotionPiece() {
@@ -781,9 +816,10 @@ public class GameControllerTest {
 		Piece knight = createMock(Piece.class);
 		Square from = createMock(Square.class);
 		Square to = createMock(Square.class);
+		Board board = createMock(Board.class);
 		List<Square> legalMoves = List.of(to);
 
-		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).times(2);
 		expect(from.getOccupant()).andReturn(pawn).anyTimes();
 		expect(from.getFile()).andReturn('b').anyTimes();
 		expect(from.getRank()).andReturn(7).anyTimes();
@@ -799,17 +835,35 @@ public class GameControllerTest {
 
 		model.applyMove(isA(Move.class));
 		expectLastCall().once();
-		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
 
 		promotionView.hide();
 		expectLastCall().once();
 
-		replay(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, knight);
+		boardView.clearHighlights();
+		expectLastCall().once();
+
+		expect(model.getStatus()).andReturn(GameStatus.ONGOING).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+		boardView.clearCheckIndicator();
+		expectLastCall().once();
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showTurn("BLACK");
+		expectLastCall().once();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, to, knight, board);
 
 		controller.onSquareClick(from);
 		controller.handlePromotion(to);
 
-		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, knight);
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, to, knight, board);
 	}
 
 	// -------------------------------------------------------------------------
@@ -822,7 +876,7 @@ public class GameControllerTest {
 		Square to = createMock(Square.class);
 		List<Square> legalMoves = List.of(to);
 
-		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).times(2);
 		expect(from.getOccupant()).andReturn(pawn).anyTimes();
 		expect(from.getFile()).andReturn('c').anyTimes();
 		expect(from.getRank()).andReturn(7).anyTimes();
@@ -854,9 +908,10 @@ public class GameControllerTest {
 		Square from = createMock(Square.class);
 		Square to = createMock(Square.class);
 		Square anotherClick = createMock(Square.class);
+		Board board = createMock(Board.class);
 		List<Square> legalMoves = List.of(to);
 
-		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).times(2);
 		expect(from.getOccupant()).andReturn(pawn).anyTimes();
 		expect(from.getFile()).andReturn('d').anyTimes();
 		expect(from.getRank()).andReturn(7).anyTimes();
@@ -873,20 +928,34 @@ public class GameControllerTest {
 
 		model.applyMove(isA(Move.class));
 		expectLastCall().once();
-		expect(model.getStatus()).andReturn(GameStatus.CHECKMATE).once();
 
 		promotionView.hide();
 		expectLastCall().once();
-		notificationView.showCheckmate("WHITE");
+
+		boardView.clearHighlights();
 		expectLastCall().once();
 
-		replay(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen, anotherClick);
+		expect(model.getStatus()).andReturn(GameStatus.CHECKMATE).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showCheckmate("WHITE");
+		expectLastCall().once();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, to, queen, anotherClick, board);
 
 		controller.onSquareClick(from);
 		controller.handlePromotion(to);
 		controller.onSquareClick(anotherClick);
 
-		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen, anotherClick);
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, to, queen, anotherClick, board);
 	}
 
 	// -------------------------------------------------------------------------
@@ -898,9 +967,10 @@ public class GameControllerTest {
 		Piece queen = createMock(Piece.class);
 		Square from = createMock(Square.class);
 		Square to = createMock(Square.class);
+		Board board = createMock(Board.class);
 		List<Square> legalMoves = List.of(to);
 
-		expect(model.getCurrentTurn()).andReturn(Color.WHITE).anyTimes();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).times(2);
 		expect(from.getOccupant()).andReturn(pawn).anyTimes();
 		expect(from.getFile()).andReturn('e').anyTimes();
 		expect(from.getRank()).andReturn(7).anyTimes();
@@ -917,25 +987,39 @@ public class GameControllerTest {
 
 		model.applyMove(isA(Move.class));
 		expectLastCall().once();
-		expect(model.getStatus()).andReturn(GameStatus.CHECK).once();
 
 		promotionView.hide();
 		expectLastCall().once();
-		notificationView.showCheck("BLACK");
-		expectLastCall().once();
-		boardView.showCheckIndicator(to);
+
+		boardView.clearHighlights();
 		expectLastCall().once();
 
-		replay(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen);
+		expect(model.getStatus()).andReturn(GameStatus.CHECK).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+		expect(model.getCurrentTurn()).andReturn(Color.BLACK).once();
+		notificationView.showCheck("BLACK");
+		expectLastCall().once();
+		boardView.showCheckIndicator(null);
+		expectLastCall().once();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, to, queen, board);
 
 		controller.onSquareClick(from);
 		controller.handlePromotion(to);
 
-		verify(model, boardView, notificationView, promotionView, capturedView, pawn, from, to, queen);
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, to, queen, board);
 	}
 
 	// -------------------------------------------------------------------------
-	// TC26: Refresh After Standard Move — Status ONGOING
+	// TC26: Refresh After Standard Move - Status ONGOING
 	// -------------------------------------------------------------------------
 	@Test
 	void refreshViews_ongoingStatus_rendersNormally() {
