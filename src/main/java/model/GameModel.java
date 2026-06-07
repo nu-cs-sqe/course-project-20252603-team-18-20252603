@@ -162,13 +162,11 @@ public class GameModel {
 	}
 
 	public Color getCurrentTurn() {
-		// TODO Implement getCurrentTurn
-		return null;
+		return currentTurn;
 	}
 
 	public Board getBoard() {
-		// TODO Implement getBoard
-		return null;
+		return board;
 	}
 
 	public List<Piece> getCapturedPieces(Color color) {
