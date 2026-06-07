@@ -181,6 +181,44 @@ On success, `GameModel` performs: `board.movePiece(from, to)`, appends to `moveH
 
 ---
 
+#### `color` (`Color`) — parameter to `getCapturedPieces(Color color)`
+
+Identifies whose captured-piece list to return.
+
+**Convention:** `Color.WHITE` returns the pieces White has captured (Black
+pieces removed from the board); `Color.BLACK` returns the pieces Black has
+captured (White pieces removed from the board).
+
+**Valid values:**
+* `Color.WHITE`
+* `Color.BLACK`
+
+**Invalid values:**
+* `null` → `IllegalArgumentException`
+
+**`capturedByWhite` / `capturedByBlack` — internal `List<Piece>` fields:**
+
+Two separate lists, initialised to empty `ArrayList` instances at
+construction. Populated by `applyMove` when `move.getCapturedPiece()` is
+non-null: if the moving piece's colour is `WHITE`, the captured piece is
+appended to `capturedByWhite`; if `BLACK`, to `capturedByBlack`.
+
+**Constraints:**
+* Both lists must be empty immediately after construction.
+* Each successful `applyMove` with a non-null `capturedPiece` appends exactly one entry to the correct list.
+* A move with `capturedPiece == null` must not append anything to either list.
+* A rejected `applyMove` must not modify either list.
+
+**Boundary values:**
+* 0 captures (either side): both lists empty at construction.
+* 1 White capture: `getCapturedPieces(WHITE)` has 1 entry; `getCapturedPieces(BLACK)` empty.
+* Non-capturing move: neither list grows.
+* Rejected move: neither list changes.
+* Multiple captures: list accumulates in chronological order.
+* `null` colour: `IllegalArgumentException`.
+
+---
+
 ### Boundary Values Summary
 
 #### Player Boundaries
@@ -207,6 +245,14 @@ On success, `GameModel` performs: `board.movePiece(from, to)`, appends to `moveH
 * Initial `status = ONGOING`.
 * Updated to whatever `rulesEngine.getGameStatus` returns after each legal move.
 * Terminal statuses lock `applyMove` permanently.
+
+#### Captured Pieces Boundaries
+
+* Both lists empty at construction.
+* Appended only on successful `applyMove` with non-null `capturedPiece`.
+* Rejected moves leave both lists unchanged.
+* Accumulates in chronological order.
+* `null` colour argument → `IllegalArgumentException`.
 
 ---
 
@@ -375,3 +421,49 @@ On success, `GameModel` performs: `board.movePiece(from, to)`, appends to `moveH
 * **State of the system**: Engine stubbed to return `CHECKMATE` after one legal move. `getStatus()` called twice after the move.
 * **Expected output**: Both calls return `GameStatus.CHECKMATE`, confirming the value is stored and not recomputed.
 * **Implemented at**: `getStatus_afterTerminalMove_remainsTerminal`
+
+---
+
+### Method under test: `GameModel.getCapturedPieces(Color color)`
+
+#### TC26: Both Lists Empty At Construction
+
+* **State of the system**: `GameModel` constructed with mocked collaborators. No moves applied.
+* **Expected output**: `getCapturedPieces(Color.WHITE)` returns an empty list. `getCapturedPieces(Color.BLACK)` returns an empty list.
+* **Implemented at**: `getCapturedPieces_atConstruction_bothListsEmpty`
+
+#### TC27: Null Color Throws IllegalArgumentException
+
+* **State of the system**: `GameModel` constructed with mocked collaborators.
+* **Expected output**: `getCapturedPieces(null)` throws `IllegalArgumentException`. No call to any collaborator.
+* **Implemented at**: `getCapturedPieces_nullColor_throwsException`
+
+#### TC28: White Capture Appends To White's List Only
+
+* **State of the system**: A legal White move is applied. The mocked `Move` returns a non-null `Piece` from `getCapturedPiece()`. The mocked engine accepts the move.
+* **Expected output**: `getCapturedPieces(Color.WHITE)` contains exactly that one captured piece. `getCapturedPieces(Color.BLACK)` remains empty.
+* **Implemented at**: `getCapturedPieces_whiteCaptures_addsToWhiteList`
+
+#### TC29: Black Capture Appends To Black's List Only
+
+* **State of the system**: A legal Black move is applied (turn flipped to `BLACK` via a prior White move). The mocked `Move` returns a non-null `Piece` from `getCapturedPiece()`.
+* **Expected output**: `getCapturedPieces(Color.BLACK)` contains exactly that one captured piece. `getCapturedPieces(Color.WHITE)` is unchanged.
+* **Implemented at**: `getCapturedPieces_blackCaptures_addsToBlackList`
+
+#### TC30: Non-Capturing Move Does Not Append To Either List
+
+* **State of the system**: A legal White move is applied. The mocked `Move` returns `null` from `getCapturedPiece()`.
+* **Expected output**: Both `getCapturedPieces(Color.WHITE)` and `getCapturedPieces(Color.BLACK)` remain empty after the move.
+* **Implemented at**: `getCapturedPieces_nonCapturingMove_listsUnchanged`
+
+#### TC31: Rejected Move Does Not Modify Either List
+
+* **State of the system**: A White move is submitted but the mocked engine returns `false` for `isLegalMove`. `applyMove` throws `IllegalArgumentException`.
+* **Expected output**: Both lists remain empty after the rejection.
+* **Implemented at**: `getCapturedPieces_rejectedMove_listsUnchanged`
+
+#### TC32: Multiple Captures Accumulate In Chronological Order
+
+* **State of the system**: Two separate legal White capturing moves are applied (with a Black non-capturing move in between to alternate turns). Each White move returns a distinct `Piece` from `getCapturedPiece()`.
+* **Expected output**: `getCapturedPieces(Color.WHITE)` contains both pieces in the order they were captured. `getCapturedPieces(Color.BLACK)` remains empty throughout.
+* **Implemented at**: `getCapturedPieces_multipleCaptures_accumulatesInOrder`
