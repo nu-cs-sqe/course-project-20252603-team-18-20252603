@@ -868,4 +868,32 @@ public class GameModelTest {
 		verifyMocks();
 		verify(whitePiece, move);
 	}
+
+	// =========================================================================
+	// TC31: Rejected move does not modify either list
+	// =========================================================================
+	@Test
+	void getCapturedPieces_rejectedMove_listsUnchanged() {
+		GameModel model = modelWithMocks();
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Move move = EasyMock.createMock(Move.class);
+		expect(move.getPiece()).andReturn(whitePiece);
+		expect(whitePiece.getColor()).andReturn(Color.WHITE);
+		expect(mockEngine.isLegalMove(eq(move), anyObject(GameState.class)))
+				.andReturn(false);
+
+		replayMocks();
+		replay(whitePiece, move);
+
+		assertThrows(IllegalArgumentException.class, () -> model.applyMove(move));
+
+		assertTrue(model.getCapturedPieces(Color.WHITE).isEmpty(),
+				"White's captured list must not be modified by a rejected move");
+		assertTrue(model.getCapturedPieces(Color.BLACK).isEmpty(),
+				"Black's captured list must not be modified by a rejected move");
+
+		verifyMocks();
+		verify(whitePiece, move);
+	}
 }
