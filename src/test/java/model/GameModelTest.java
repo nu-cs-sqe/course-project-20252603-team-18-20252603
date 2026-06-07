@@ -797,4 +797,50 @@ public class GameModelTest {
 		verifyMocks();
 		verify(whitePiece, capturedPiece, move);
 	}
+
+	// =========================================================================
+	// TC29: Black capture appends to Black's list only
+	// =========================================================================
+	@Test
+	void getCapturedPieces_blackCaptures_addsToBlackList() {
+		GameModel model = modelWithMocks();
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Move whiteMove = EasyMock.createMock(Move.class);
+		expectLegalMove(whiteMove, whitePiece, Color.WHITE, null, GameStatus.ONGOING);
+
+		Piece blackPiece = EasyMock.createMock(Piece.class);
+		Piece capturedPiece = EasyMock.createMock(Piece.class);
+		Move blackMove = EasyMock.createMock(Move.class);
+		expect(blackMove.getPiece()).andReturn(blackPiece);
+		expect(blackPiece.getColor()).andReturn(Color.BLACK);
+		expect(blackMove.getFrom()).andReturn(EasyMock.createMock(Square.class));
+		expect(blackMove.getTo()).andReturn(EasyMock.createMock(Square.class));
+		expect(blackMove.isCastle()).andReturn(false);
+		expect(blackMove.isEnPassant()).andReturn(false);
+		expect(blackMove.getPromotionPiece()).andReturn(null);
+		expect(blackMove.getCapturedPiece()).andReturn(capturedPiece);
+		expect(mockEngine.isLegalMove(eq(blackMove), anyObject(GameState.class)))
+				.andReturn(true);
+		mockBoard.movePiece(anyObject(Square.class), anyObject(Square.class));
+		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
+				.andReturn(GameStatus.ONGOING);
+
+		replayMocks();
+		replay(whitePiece, whiteMove, blackPiece, capturedPiece, blackMove);
+
+		model.applyMove(whiteMove);
+		model.applyMove(blackMove);
+
+		List<Piece> blackCaptured = model.getCapturedPieces(Color.BLACK);
+		assertEquals(1, blackCaptured.size(),
+				"Black's captured list must contain exactly one piece");
+		assertSame(capturedPiece, blackCaptured.get(0),
+				"The entry must be the piece returned by move.getCapturedPiece()");
+		assertTrue(model.getCapturedPieces(Color.WHITE).isEmpty(),
+				"White's captured list must be unaffected");
+
+		verifyMocks();
+		verify(whitePiece, whiteMove, blackPiece, capturedPiece, blackMove);
+	}
 }
