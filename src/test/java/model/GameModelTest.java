@@ -594,7 +594,45 @@ public class GameModelTest {
 	}
 
 	// -------------------------------------------------------------------------
-	// TC22: Move after CHECKMATE is rejected with IllegalStateException
+	// TC22: Promotion move places promotion piece
+	// -------------------------------------------------------------------------
+	@Test
+	void applyMove_promotionMove_placesPromotionPiece() {
+		GameModel model = modelWithMocks();
+
+		Square from = EasyMock.createMock(Square.class);
+		Square to = EasyMock.createMock(Square.class);
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Piece promotionPiece = EasyMock.createMock(Piece.class);
+		Move move = EasyMock.createMock(Move.class);
+
+		expect(move.getPiece()).andReturn(whitePiece);
+		expect(whitePiece.getColor()).andReturn(Color.WHITE);
+		expect(move.getFrom()).andReturn(from).anyTimes();
+		expect(move.getTo()).andReturn(to).anyTimes();
+		expect(move.getCapturedPiece()).andReturn(null).anyTimes();
+		expect(move.getPromotionPiece()).andReturn(promotionPiece).anyTimes();
+		expect(move.isEnPassant()).andReturn(false);
+		expect(move.isCastle()).andReturn(false);
+
+		expect(mockEngine.isLegalMove(eq(move), anyObject(GameState.class)))
+				.andReturn(true);
+		mockBoard.movePiece(from, to);
+		mockBoard.placePiece(promotionPiece, to);
+		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
+				.andReturn(GameStatus.ONGOING);
+
+		replayMocks();
+		replay(from, to, whitePiece, promotionPiece, move);
+
+		model.applyMove(move);
+
+		verifyMocks();
+		verify(from, to, whitePiece, promotionPiece, move);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC27: Move after CHECKMATE is rejected with IllegalStateException
 	// -------------------------------------------------------------------------
 	@Test
 	void applyMove_afterCheckmate_throwsIllegalStateException() {
@@ -639,7 +677,7 @@ public class GameModelTest {
 	}
 
 	// -------------------------------------------------------------------------
-	// TC23: Move after STALEMATE is rejected with IllegalStateException
+	// TC28: Move after STALEMATE is rejected with IllegalStateException
 	// -------------------------------------------------------------------------
 	@Test
 	void applyMove_afterStalemate_throwsIllegalStateException() {
@@ -684,7 +722,7 @@ public class GameModelTest {
 	}
 
 	// -------------------------------------------------------------------------
-	// TC24: getStatus returns ONGOING at construction
+	// TC29: getStatus returns ONGOING at construction
 	// -------------------------------------------------------------------------
 	@Test
 	void getStatus_afterConstruction_returnsOngoing() {
@@ -702,7 +740,7 @@ public class GameModelTest {
 	}
 
 	// -------------------------------------------------------------------------
-	// TC25: getStatus returns whatever the engine last set it to
+	// TC30: getStatus returns whatever the engine last set it to
 	// -------------------------------------------------------------------------
 	@Test
 	void getStatus_afterTerminalMove_remainsTerminal() {
@@ -740,7 +778,7 @@ public class GameModelTest {
 	}
 
 	// =========================================================================
-	// TC26: Both lists empty at construction
+	// TC31: Both lists empty at construction
 	// =========================================================================
 	@Test
 	void getCapturedPieces_atConstruction_bothListsEmpty() {
@@ -756,7 +794,7 @@ public class GameModelTest {
 	}
 
 	// =========================================================================
-	// TC27: Null color throws IllegalArgumentException
+	// TC32: Null color throws IllegalArgumentException
 	// =========================================================================
 	@Test
 	void getCapturedPieces_nullColor_throwsException() {
@@ -770,7 +808,7 @@ public class GameModelTest {
 	}
 
 	// =========================================================================
-	// TC28: White capture appends to White's list only
+	// TC33: White capture appends to White's list only
 	// =========================================================================
 	@Test
 	void getCapturedPieces_whiteCaptures_addsToWhiteList() {
@@ -799,7 +837,7 @@ public class GameModelTest {
 	}
 
 	// =========================================================================
-	// TC29: Black capture appends to Black's list only
+	// TC34: Black capture appends to Black's list only
 	// =========================================================================
 	@Test
 	void getCapturedPieces_blackCaptures_addsToBlackList() {
@@ -845,7 +883,7 @@ public class GameModelTest {
 	}
 
 	// =========================================================================
-	// TC30: Non-capturing move does not append to either list
+	// TC35: Non-capturing move does not append to either list
 	// =========================================================================
 	@Test
 	void getCapturedPieces_nonCapturingMove_listsUnchanged() {
@@ -870,7 +908,7 @@ public class GameModelTest {
 	}
 
 	// =========================================================================
-	// TC31: Rejected move does not modify either list
+	// TC36: Rejected move does not modify either list
 	// =========================================================================
 	@Test
 	void getCapturedPieces_rejectedMove_listsUnchanged() {
@@ -898,7 +936,7 @@ public class GameModelTest {
 	}
 
 	// =========================================================================
-	// TC32: Multiple captures accumulate in chronological order
+	// TC37: Multiple captures accumulate in chronological order
 	// =========================================================================
 	@Test
 	void getCapturedPieces_multipleCaptures_accumulatesInOrder() {
