@@ -394,13 +394,43 @@ appended to `capturedByWhite`; if `BLACK`, to `capturedByBlack`.
 * **Expected output**: `model.getStatus()` returns `GameStatus.CHECK` after the move.
 * **Implemented at**: `applyMove_legalMove_updatesStatusFromEngine`
 
-#### TC22: Move After CHECKMATE Is Rejected
+#### TC22: Promotion Move Places Promotion Piece
+
+* **State of the system**: `currentTurn = WHITE`. A legal move is applied where `move.getPromotionPiece()` returns a non-null promotion piece.
+* **Expected output**: `board.movePiece(from, to)` is called, then `board.placePiece(promotionPiece, to)` is called.
+* **Implemented at**: `applyMove_promotionMove_placesPromotionPiece`
+
+#### TC23: White En Passant Removes Captured Pawn
+
+* **State of the system**: `currentTurn = WHITE`. A legal move is applied where `move.isEnPassant()` returns `true`, and the destination square is on rank `6`.
+* **Expected output**: `board.getSquare(move.getTo().getFile(), move.getTo().getRank() - 1)` is called, and that square's occupant is set to `null`.
+* **Implemented at**: `applyMove_whiteEnPassant_removesCapturedPawn`
+
+#### TC24: Black En Passant Removes Captured Pawn
+
+* **State of the system**: `currentTurn = BLACK`. A prior legal White move has flipped the turn. A legal Black move is applied where `move.isEnPassant()` returns `true`, and the destination square is on rank `3`.
+* **Expected output**: `board.getSquare(move.getTo().getFile(), move.getTo().getRank() + 1)` is called, and that square's occupant is set to `null`.
+* **Implemented at**: `applyMove_blackEnPassant_removesCapturedPawn`
+
+#### TC25: White Kingside Castle Moves Rook
+
+* **State of the system**: `currentTurn = WHITE`. A legal castling move is applied where `move.isCastle()` returns `true` and `move.getTo().getFile() == 'g'`.
+* **Expected output**: After the King move, `board.movePiece()` is called to move the rook from `h1` to `f1`.
+* **Implemented at**: `applyMove_whiteKingsideCastle_movesRook`
+
+#### TC26: Black Queenside Castle Moves Rook
+
+* **State of the system**: `currentTurn = BLACK`. A prior legal White move has flipped the turn. A legal castling move is applied where `move.isCastle()` returns `true` and `move.getTo().getFile() == 'c'`.
+* **Expected output**: After the King move, `board.movePiece()` is called to move the rook from `a8` to `d8`.
+* **Implemented at**: `applyMove_blackQueensideCastle_movesRook`
+
+#### TC27: Move After CHECKMATE Is Rejected
 
 * **State of the system**: Model driven to `CHECKMATE` status via one legal move with engine stub. A subsequent move is submitted.
 * **Expected output**: Throws `IllegalStateException`. Engine and board are not consulted for the rejected move.
 * **Implemented at**: `applyMove_afterCheckmate_throwsIllegalStateException`
 
-#### TC23: Move After STALEMATE Is Rejected
+#### TC28: Move After STALEMATE Is Rejected
 
 * **State of the system**: Model driven to `STALEMATE` status via one legal move with engine stub. A subsequent move is submitted.
 * **Expected output**: Throws `IllegalStateException`. Engine and board are not consulted for the rejected move.
@@ -410,13 +440,13 @@ appended to `capturedByWhite`; if `BLACK`, to `capturedByBlack`.
 
 ### Method under test: `GameModel.getStatus()`
 
-#### TC24: Returns ONGOING At Construction
+#### TC29: Returns ONGOING At Construction
 
 * **State of the system**: `GameModel` constructed with mocked collaborators. No moves applied.
 * **Expected output**: `getStatus()` returns `GameStatus.ONGOING` with no calls to any collaborator.
 * **Implemented at**: `getStatus_afterConstruction_returnsOngoing`
 
-#### TC25: Returns And Retains Terminal Status
+#### TC30: Returns And Retains Terminal Status
 
 * **State of the system**: Engine stubbed to return `CHECKMATE` after one legal move. `getStatus()` called twice after the move.
 * **Expected output**: Both calls return `GameStatus.CHECKMATE`, confirming the value is stored and not recomputed.
@@ -426,43 +456,43 @@ appended to `capturedByWhite`; if `BLACK`, to `capturedByBlack`.
 
 ### Method under test: `GameModel.getCapturedPieces(Color color)`
 
-#### TC26: Both Lists Empty At Construction
+#### TC31: Both Lists Empty At Construction
 
 * **State of the system**: `GameModel` constructed with mocked collaborators. No moves applied.
 * **Expected output**: `getCapturedPieces(Color.WHITE)` returns an empty list. `getCapturedPieces(Color.BLACK)` returns an empty list.
 * **Implemented at**: `getCapturedPieces_atConstruction_bothListsEmpty`
 
-#### TC27: Null Color Throws IllegalArgumentException
+#### TC32: Null Color Throws IllegalArgumentException
 
 * **State of the system**: `GameModel` constructed with mocked collaborators.
 * **Expected output**: `getCapturedPieces(null)` throws `IllegalArgumentException`. No call to any collaborator.
 * **Implemented at**: `getCapturedPieces_nullColor_throwsException`
 
-#### TC28: White Capture Appends To White's List Only
+#### TC33: White Capture Appends To White's List Only
 
 * **State of the system**: A legal White move is applied. The mocked `Move` returns a non-null `Piece` from `getCapturedPiece()`. The mocked engine accepts the move.
 * **Expected output**: `getCapturedPieces(Color.WHITE)` contains exactly that one captured piece. `getCapturedPieces(Color.BLACK)` remains empty.
 * **Implemented at**: `getCapturedPieces_whiteCaptures_addsToWhiteList`
 
-#### TC29: Black Capture Appends To Black's List Only
+#### TC34: Black Capture Appends To Black's List Only
 
 * **State of the system**: A legal Black move is applied (turn flipped to `BLACK` via a prior White move). The mocked `Move` returns a non-null `Piece` from `getCapturedPiece()`.
 * **Expected output**: `getCapturedPieces(Color.BLACK)` contains exactly that one captured piece. `getCapturedPieces(Color.WHITE)` is unchanged.
 * **Implemented at**: `getCapturedPieces_blackCaptures_addsToBlackList`
 
-#### TC30: Non-Capturing Move Does Not Append To Either List
+#### TC35: Non-Capturing Move Does Not Append To Either List
 
 * **State of the system**: A legal White move is applied. The mocked `Move` returns `null` from `getCapturedPiece()`.
 * **Expected output**: Both `getCapturedPieces(Color.WHITE)` and `getCapturedPieces(Color.BLACK)` remain empty after the move.
 * **Implemented at**: `getCapturedPieces_nonCapturingMove_listsUnchanged`
 
-#### TC31: Rejected Move Does Not Modify Either List
+#### TC36: Rejected Move Does Not Modify Either List
 
 * **State of the system**: A White move is submitted but the mocked engine returns `false` for `isLegalMove`. `applyMove` throws `IllegalArgumentException`.
 * **Expected output**: Both lists remain empty after the rejection.
 * **Implemented at**: `getCapturedPieces_rejectedMove_listsUnchanged`
 
-#### TC32: Multiple Captures Accumulate In Chronological Order
+#### TC37: Multiple Captures Accumulate In Chronological Order
 
 * **State of the system**: Two separate legal White capturing moves are applied (with a Black non-capturing move in between to alternate turns). Each White move returns a distinct `Piece` from `getCapturedPiece()`.
 * **Expected output**: `getCapturedPieces(Color.WHITE)` contains both pieces in the order they were captured. `getCapturedPieces(Color.BLACK)` remains empty throughout.
