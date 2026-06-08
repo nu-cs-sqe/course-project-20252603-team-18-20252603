@@ -741,6 +741,49 @@ public class GameModelTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC25: White kingside castle moves rook
+	// -------------------------------------------------------------------------
+	@Test
+	void applyMove_whiteKingsideCastle_movesRook() {
+		GameModel model = modelWithMocks();
+
+		Square kingFrom = EasyMock.createMock(Square.class);
+		Square kingTo = EasyMock.createMock(Square.class);
+		Square rookFrom = EasyMock.createMock(Square.class);
+		Square rookTo = EasyMock.createMock(Square.class);
+		Piece whiteKing = EasyMock.createMock(Piece.class);
+		Move move = EasyMock.createMock(Move.class);
+
+		expect(move.getPiece()).andReturn(whiteKing);
+		expect(whiteKing.getColor()).andReturn(Color.WHITE);
+		expect(move.getFrom()).andReturn(kingFrom).anyTimes();
+		expect(move.getTo()).andReturn(kingTo).anyTimes();
+		expect(move.getCapturedPiece()).andReturn(null).anyTimes();
+		expect(move.getPromotionPiece()).andReturn(null);
+		expect(move.isEnPassant()).andReturn(false);
+		expect(move.isCastle()).andReturn(true);
+
+		expect(kingTo.getFile()).andReturn('g').anyTimes();
+
+		expect(mockEngine.isLegalMove(eq(move), anyObject(GameState.class)))
+				.andReturn(true);
+		mockBoard.movePiece(kingFrom, kingTo);
+		expect(mockBoard.getSquare('h', 1)).andReturn(rookFrom);
+		expect(mockBoard.getSquare('f', 1)).andReturn(rookTo);
+		mockBoard.movePiece(rookFrom, rookTo);
+		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
+				.andReturn(GameStatus.ONGOING);
+
+		replayMocks();
+		replay(kingFrom, kingTo, rookFrom, rookTo, whiteKing, move);
+
+		model.applyMove(move);
+
+		verifyMocks();
+		verify(kingFrom, kingTo, rookFrom, rookTo, whiteKing, move);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC27: Move after CHECKMATE is rejected with IllegalStateException
 	// -------------------------------------------------------------------------
 	@Test
