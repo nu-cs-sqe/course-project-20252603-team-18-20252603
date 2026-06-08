@@ -13,6 +13,8 @@ public class GameModel {
 	private final List<Move> moveHistory;
 	private Color currentTurn;
 	private GameStatus status;
+	private final List<Piece> capturedByWhite;
+	private final List<Piece> capturedByBlack;
 
 	GameModel(Board board, RulesEngine rulesEngine) {
 		this.board = board;
@@ -20,6 +22,8 @@ public class GameModel {
 		this.moveHistory = new ArrayList<>();
 		this.currentTurn = Color.WHITE;
 		this.status = GameStatus.ONGOING;
+		this.capturedByWhite = new ArrayList<>();
+		this.capturedByBlack = new ArrayList<>();
 		placeStartingPieces();
 	}
 
@@ -112,6 +116,15 @@ public class GameModel {
 
 		board.movePiece(move.getFrom(), move.getTo());
 
+		Piece captured = move.getCapturedPiece();
+		if (captured != null) {
+			if (currentTurn == Color.WHITE) {
+				capturedByWhite.add(captured);
+			} else {
+				capturedByBlack.add(captured);
+			}
+		}
+
 		if (move.getPromotionPiece() != null) {
 			Square to = move.getTo();
 			Piece promotionPiece = move.getPromotionPiece();
@@ -162,18 +175,23 @@ public class GameModel {
 	}
 
 	public Color getCurrentTurn() {
-		// TODO Implement getCurrentTurn
-		return null;
+		return currentTurn;
 	}
 
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP",
+			justification = "GameModel intentionally exposes board as part of the model API."
+	)
 	public Board getBoard() {
-		// TODO Implement getBoard
-		return null;
+		return board;
 	}
 
 	public List<Piece> getCapturedPieces(Color color) {
-		// TODO Implement getCapturedPieces
-		return null;
+		if (color == null) {
+			throw new IllegalArgumentException("color must not be null");
+		}
+
+		return color == Color.WHITE ? capturedByWhite : capturedByBlack;
 	}
 
 	public GameStatus getStatus() {
