@@ -32,7 +32,7 @@ public class Board {
 		return file - FIRSTFILE;
 	}
 
-	Square getSquare(char file, int rank) {
+	public Square getSquare(char file, int rank) {
 		if (file < FIRSTFILE || file > LASTFILE) {
 			throw new IllegalArgumentException("File in Board must be between 'a' and 'h'.");
 		}

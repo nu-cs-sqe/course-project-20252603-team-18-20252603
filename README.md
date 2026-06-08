@@ -11,6 +11,12 @@
 - JDK 11
 - JUnit 5.10
 - Gradle 8.10
+- Java Swing (GUI)
+
+## Run
+```shell
+./gradlew run
+```
 
 ## Acknowledgements
 REFERENCES, SOURCE OF HELP ETC
