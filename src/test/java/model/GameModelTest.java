@@ -54,8 +54,7 @@ public class GameModelTest {
 	 * Piece colour must match currentTurn at the time of the call.
 	 * Caller must replay and verify piece and move themselves.
 	 */
-	private void expectLegalMove(Move move, Piece piece, Color color,
-	                             Piece capturedPiece, GameStatus resultStatus) {
+	private void expectLegalMove(Move move, Piece piece, Color color, Piece capturedPiece, GameStatus resultStatus) {
 		expect(move.getPiece()).andReturn(piece);
 		expect(piece.getColor()).andReturn(color);
 		expect(move.getFrom()).andReturn(EasyMock.createMock(Square.class));

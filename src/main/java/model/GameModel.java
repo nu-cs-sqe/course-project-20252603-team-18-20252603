@@ -178,6 +178,10 @@ public class GameModel {
 		return currentTurn;
 	}
 
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP",
+			justification = "GameModel intentionally exposes board as part of the model API."
+	)
 	public Board getBoard() {
 		return board;
 	}
