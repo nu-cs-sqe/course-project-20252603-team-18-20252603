@@ -9,6 +9,9 @@
     * Valid range: `[1..8]`
 * `occupant` (Piece): Represents the chess piece currently on the square.
     * Valid values: A valid `Piece` object or `null` (empty).
+* `other` (Object): Represents the object compared with a `Square` by `equals`.
+    * Equivalent value: A different `Square` with the same `file` and `rank`.
+    * Non-equivalent values: A `Square` with a different `file` or `rank`, `null`, or a non-`Square` object.
 
 **Boundary Values Identified:**
 * `file` Boundaries:
@@ -22,6 +25,10 @@
 * `occupant` Boundaries:
     * Valid state: Instantiated `Piece` object
     * Empty state: `null`
+* Equality Boundaries:
+    * Equivalent coordinates: Same `file` and same `rank`.
+    * Adjacent rank: Same `file`, but rank differs by `1`.
+    * Adjacent file: Same `rank`, but file differs by `1`.
 
 ---
 
@@ -82,3 +89,16 @@
   - **State of the system**: A `Square` ('e', 4) exists. `setOccupant` has been called with a valid mock `Piece`.
   - **Expected output**: Returns the exact same `Piece` instance that was set (referential equality).
   - **Implemented at** getOccupant_occupiedSquare_returnsPiece
+
+
+
+### Methods under test: `equals(Object other)` and `hashCode()`
+- **TC9: Different Square Instances With Equal Coordinates** (V)
+  - **State of the system**: Two separate `Square` instances are created with `file = 'e'` and `rank = 4`.
+  - **Expected output**: `equals` returns `true`, and both squares return the same hash code.
+  - **Implemented at** equals_sameCoordinates_returnsTrue
+
+- **TC10: Same File With Adjacent Rank** (V)
+  - **State of the system**: One `Square` is ('e', 4), and the other is ('e', 5).
+  - **Expected output**: `equals` returns `false`.
+  - **Implemented at** equals_differentCoordinates_returnsFalse
