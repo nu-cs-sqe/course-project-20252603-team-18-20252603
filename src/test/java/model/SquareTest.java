@@ -101,5 +101,9 @@ class SquareTest {
 		assertEquals(first.hashCode(), second.hashCode());
 	}
 
-
+	@Test
+	void equals_differentCoordinates_returnsFalse() {
+		assertNotEquals(Square.create('e', 4), Square.create('e', 5));
+		assertNotEquals(Square.create('e', 4), Square.create('d', 4));
+	}
 }
