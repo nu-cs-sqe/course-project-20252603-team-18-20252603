@@ -1,5 +1,7 @@
 package view;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -17,6 +19,10 @@ public class NotificationView {
 		label.setBackground(new Color(245, 245, 245));
 	}
 
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP",
+			justification = "The application layout must use the live Swing notification component."
+	)
 	public JLabel getComponent() {
 		return label;
 	}

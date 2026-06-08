@@ -1,5 +1,6 @@
 package view;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import model.Bishop;
 import model.Color;
 import model.Knight;
@@ -14,12 +15,15 @@ import java.util.concurrent.CompletableFuture;
 
 public class PromotionView {
 	private final Component parent;
-	private CompletableFuture<Piece> currentSelection;
 
 	public PromotionView() {
 		this(null);
 	}
 
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP2",
+			justification = "The dialog intentionally retains its owning Swing component."
+	)
 	public PromotionView(Component parent) {
 		this.parent = parent;
 	}
@@ -32,7 +36,7 @@ public class PromotionView {
 	 * with a non-null, valid promotion Piece (Queen, Rook, Bishop, or Knight).
 	 */
 	public CompletableFuture<Piece> show(String color) {
-		currentSelection = new CompletableFuture<>();
+		CompletableFuture<Piece> selection = new CompletableFuture<>();
 		Runnable showDialog = () -> {
 			Color pieceColor = Color.valueOf(color.toUpperCase());
 			String[] options = {"Queen", "Rook", "Bishop", "Knight"};
@@ -49,7 +53,7 @@ public class PromotionView {
 			if (choice < 0) {
 				choice = 0;
 			}
-			currentSelection.complete(createPiece(choice, pieceColor));
+			selection.complete(createPiece(choice, pieceColor));
 		};
 
 		if (SwingUtilities.isEventDispatchThread()) {
@@ -57,11 +61,11 @@ public class PromotionView {
 		} else {
 			SwingUtilities.invokeLater(showDialog);
 		}
-		return currentSelection;
+		return selection;
 	}
 
 	public void hide() {
-		currentSelection = null;
+		// JOptionPane closes automatically after the player selects an option.
 	}
 
 	private Piece createPiece(int choice, Color color) {

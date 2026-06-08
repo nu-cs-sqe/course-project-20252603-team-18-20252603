@@ -1,5 +1,6 @@
 package view;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import model.Board;
 import model.Color;
 import model.Piece;
@@ -34,6 +35,10 @@ public class BoardView {
 		createSquares();
 	}
 
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP",
+			justification = "The application layout must use the live Swing board component."
+	)
 	public JPanel getComponent() {
 		return panel;
 	}
@@ -42,6 +47,10 @@ public class BoardView {
 		squareClickHandler = handler;
 	}
 
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP2",
+			justification = "The view retains the live board so button clicks can resolve model squares."
+	)
 	public void render(Board board) {
 		if (board == null) {
 			throw new IllegalArgumentException("Board must not be null");
@@ -79,7 +88,10 @@ public class BoardView {
 	}
 
 	public void showCheckIndicator(Square square) {
-		if (square == null && board != null) {
+		if (square == null) {
+			if (board == null) {
+				return;
+			}
 			for (int rank = 1; rank <= 8; rank++) {
 				for (char file = 'a'; file <= 'h'; file++) {
 					Square candidate = board.getSquare(file, rank);

@@ -1,5 +1,6 @@
 package view;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import model.Piece;
 
 import javax.swing.BorderFactory;
@@ -28,6 +29,10 @@ public class CapturedPiecesView {
 		panel.add(blackPieces);
 	}
 
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP",
+			justification = "The application layout must use the live Swing captured-pieces component."
+	)
 	public JPanel getComponent() {
 		return panel;
 	}
