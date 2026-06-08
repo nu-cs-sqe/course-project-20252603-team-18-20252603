@@ -632,6 +632,49 @@ public class GameModelTest {
 	}
 
 	// -------------------------------------------------------------------------
+	// TC23: White en passant removes captured pawn
+	// -------------------------------------------------------------------------
+	@Test
+	void applyMove_whiteEnPassant_removesCapturedPawn() {
+		GameModel model = modelWithMocks();
+
+		Square from = EasyMock.createMock(Square.class);
+		Square to = EasyMock.createMock(Square.class);
+		Square captureSquare = EasyMock.createMock(Square.class);
+		Piece whitePawn = EasyMock.createMock(Piece.class);
+		Move move = EasyMock.createMock(Move.class);
+
+		expect(move.getPiece()).andReturn(whitePawn);
+		expect(whitePawn.getColor()).andReturn(Color.WHITE);
+		expect(move.getFrom()).andReturn(from).anyTimes();
+		expect(move.getTo()).andReturn(to).anyTimes();
+		expect(move.getCapturedPiece()).andReturn(null).anyTimes();
+		expect(move.getPromotionPiece()).andReturn(null);
+		expect(move.isEnPassant()).andReturn(true);
+		expect(move.isCastle()).andReturn(false);
+
+		expect(to.getRank()).andReturn(6).anyTimes();
+		expect(to.getFile()).andReturn('d').anyTimes();
+
+		expect(mockEngine.isLegalMove(eq(move), anyObject(GameState.class)))
+				.andReturn(true);
+		mockBoard.movePiece(from, to);
+		expect(mockBoard.getSquare('d', 5)).andReturn(captureSquare);
+		captureSquare.setOccupant(null);
+		expectLastCall().once();
+		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
+				.andReturn(GameStatus.ONGOING);
+
+		replayMocks();
+		replay(from, to, captureSquare, whitePawn, move);
+
+		model.applyMove(move);
+
+		verifyMocks();
+		verify(from, to, captureSquare, whitePawn, move);
+	}
+
+	// -------------------------------------------------------------------------
 	// TC27: Move after CHECKMATE is rejected with IllegalStateException
 	// -------------------------------------------------------------------------
 	@Test
