@@ -128,6 +128,7 @@ public class GameModel {
 		if (move.getPromotionPiece() != null) {
 			Square to = move.getTo();
 			Piece promotionPiece = move.getPromotionPiece();
+			board.removePiece(to);
 			board.placePiece(promotionPiece, to);
 		}
 
