@@ -674,4 +674,21 @@ public class KingIntegrationTest {
 
 		assertFalse(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-CS-07: Rook has previously moved — castling disallowed.
+	 */
+	@Test
+	void castling_rookHasMoved_isIllegal() {
+		King king = new King(Color.WHITE);
+		Rook rook = new Rook(Color.WHITE);
+		rook.markMoved();
+		place(king, 'e', 1);
+		place(rook, 'h', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move castleMove = buildMoveWithoutApplying(king, 'e', 1, 'g', 1);
+
+		assertFalse(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.WHITE)));
+	}
 }
