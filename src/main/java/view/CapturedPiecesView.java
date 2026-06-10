@@ -1,6 +1,7 @@
 package view;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import i18n.Localization;
 import model.Piece;
 
 import javax.swing.BorderFactory;
@@ -15,13 +16,25 @@ public class CapturedPiecesView {
 	private final JPanel panel;
 	private final JLabel whitePieces;
 	private final JLabel blackPieces;
+	private final Localization localization;
 
 	public CapturedPiecesView() {
+		this(new Localization());
+	}
+
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP2",
+			justification = "The view shares localization state so language changes are reflected immediately."
+	)
+	public CapturedPiecesView(Localization localization) {
+		this.localization = localization;
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		panel.setBorder(BorderFactory.createTitledBorder("Captured pieces"));
-		whitePieces = new JLabel("White: none");
-		blackPieces = new JLabel("Black: none");
+		panel.setBorder(BorderFactory.createTitledBorder(localization.text("captured.title")));
+		whitePieces = new JLabel(localization.format("captured.color", localization.text("color.white"),
+				localization.text("captured.none")));
+		blackPieces = new JLabel(localization.format("captured.color", localization.text("color.black"),
+				localization.text("captured.none")));
 		Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 22);
 		whitePieces.setFont(font);
 		blackPieces.setFont(font);
@@ -38,16 +51,17 @@ public class CapturedPiecesView {
 	}
 
 	public void update(List<Piece> white, List<Piece> black) {
-		whitePieces.setText("White: " + pieceList(white));
-		blackPieces.setText("Black: " + pieceList(black));
+		panel.setBorder(BorderFactory.createTitledBorder(localization.text("captured.title")));
+		whitePieces.setText(localization.format("captured.color", localization.text("color.white"), pieceList(white)));
+		blackPieces.setText(localization.format("captured.color", localization.text("color.black"), pieceList(black)));
 	}
 
 	private String pieceList(List<Piece> pieces) {
 		if (pieces == null || pieces.isEmpty()) {
-			return "none";
+			return localization.text("captured.none");
 		}
 		return pieces.stream()
-				.map(piece -> piece.getType().name().toLowerCase())
+				.map(piece -> localization.text("piece." + piece.getType().name().toLowerCase()))
 				.collect(Collectors.joining(", "));
 	}
 }

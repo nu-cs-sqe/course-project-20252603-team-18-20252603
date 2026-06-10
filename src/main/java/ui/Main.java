@@ -1,6 +1,7 @@
 package ui;
 
 import controller.GameController;
+import i18n.Localization;
 import model.Color;
 import model.GameModel;
 import model.Player;
@@ -10,6 +11,7 @@ import view.NotificationView;
 import view.PromotionView;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -27,13 +29,14 @@ public final class Main {
 	private static void createAndShow() {
 		UIManager.put("Button.select", new java.awt.Color(246, 246, 105));
 
-		JFrame frame = new JFrame("Chess");
+		Localization localization = new Localization();
+		JFrame frame = new JFrame(localization.text("game.title"));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		BoardView boardView = new BoardView();
-		NotificationView notificationView = new NotificationView();
-		CapturedPiecesView capturedPiecesView = new CapturedPiecesView();
-		PromotionView promotionView = new PromotionView(frame);
+		NotificationView notificationView = new NotificationView(localization);
+		CapturedPiecesView capturedPiecesView = new CapturedPiecesView(localization);
+		PromotionView promotionView = new PromotionView(frame, localization);
 
 		GameModel model = GameModel.newGame(
 				new Player(Color.WHITE, true),
@@ -48,9 +51,22 @@ public final class Main {
 		);
 		boardView.setSquareClickHandler(controller::onSquareClick);
 
+		JButton languageButton = new JButton(localization.text("language.switch"));
+		languageButton.addActionListener(event -> {
+			localization.toggleLocale();
+			frame.setTitle(localization.text("game.title"));
+			languageButton.setText(localization.text("language.switch"));
+			controller.refreshViews();
+			frame.pack();
+		});
+
+		JPanel header = new JPanel(new BorderLayout(12, 0));
+		header.add(notificationView.getComponent(), BorderLayout.CENTER);
+		header.add(languageButton, BorderLayout.EAST);
+
 		JPanel content = new JPanel(new BorderLayout(12, 12));
 		content.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
-		content.add(notificationView.getComponent(), BorderLayout.NORTH);
+		content.add(header, BorderLayout.NORTH);
 		content.add(boardView.getComponent(), BorderLayout.CENTER);
 		content.add(capturedPiecesView.getComponent(), BorderLayout.SOUTH);
 

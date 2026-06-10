@@ -174,7 +174,7 @@ public class GameController {
 		});
 	}
 
-	void refreshViews() {
+	public void refreshViews() {
 		GameStatus status = model.getStatus();
 		boardView.render(model.getBoard());
 		if (status == GameStatus.ONGOING) {
