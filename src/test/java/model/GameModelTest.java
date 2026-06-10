@@ -1306,4 +1306,17 @@ public class GameModelTest {
 		verifyMocks();
 		verify(whitePiece, whiteMove);
 	}
+
+	// =========================================================================
+	// TC40: Winner is null before resignation
+	// =========================================================================
+	@Test
+	void getWinner_atConstruction_returnsNull() {
+		GameModel model = modelWithMocks();
+		replayMocks();
+
+		assertNull(model.getWinner());
+
+		verifyMocks();
+	}
 }
