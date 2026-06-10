@@ -1,6 +1,7 @@
 package view;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import i18n.Localization;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -10,9 +11,19 @@ import java.awt.Font;
 
 public class NotificationView {
 	private final JLabel label;
+	private final Localization localization;
 
 	public NotificationView() {
-		label = new JLabel("Chess", SwingConstants.CENTER);
+		this(new Localization());
+	}
+
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP2",
+			justification = "The view shares localization state so language changes are reflected immediately."
+	)
+	public NotificationView(Localization localization) {
+		this.localization = localization;
+		label = new JLabel(localization.text("game.title"), SwingConstants.CENTER);
 		label.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 22));
 		label.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
 		label.setOpaque(true);
@@ -28,19 +39,19 @@ public class NotificationView {
 	}
 
 	public void showTurn(String color) {
-		setMessage(displayColor(color) + " to move", new Color(245, 245, 245));
+		setMessage(localization.format("notification.turn", displayColor(color)), new Color(245, 245, 245));
 	}
 
 	public void showCheck(String color) {
-		setMessage(displayColor(color) + " is in check", new Color(255, 224, 178));
+		setMessage(localization.format("notification.check", displayColor(color)), new Color(255, 224, 178));
 	}
 
 	public void showCheckmate(String winner) {
-		setMessage("Checkmate - " + displayColor(winner) + " wins", new Color(255, 205, 210));
+		setMessage(localization.format("notification.checkmate", displayColor(winner)), new Color(255, 205, 210));
 	}
 
 	public void showStalemate() {
-		setMessage("Stalemate - draw", new Color(225, 225, 225));
+		setMessage(localization.text("notification.stalemate"), new Color(225, 225, 225));
 	}
 
 	private void setMessage(String message, Color background) {
@@ -52,6 +63,6 @@ public class NotificationView {
 		if (color == null || color.isEmpty()) {
 			return "";
 		}
-		return color.substring(0, 1).toUpperCase() + color.substring(1).toLowerCase();
+		return localization.text("color." + color.toLowerCase());
 	}
 }
