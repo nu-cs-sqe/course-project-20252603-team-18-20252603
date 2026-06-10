@@ -31,6 +31,38 @@ class PawnIntegrationTest {
 		return GameState.create(board, turn, null);
 	}
 
+	/** Build a GameState with the given turn and a recorded last move. */
+	private GameState stateFor(Color turn, Move lastMove) {
+		return GameState.create(board, turn, lastMove);
+	}
+
+	/**
+	 * Build a Move that records a pawn traveling from {@code fromFile/fromRank}
+	 * to {@code toFile/toRank} without permanently altering the board.
+	 *
+	 * <p>Move.create() requires the piece to be the occupant of the from-square
+	 * at the moment of creation.  This helper temporarily swaps occupants, builds
+	 * the Move, then restores the board to its original state.
+	 */
+	private Move buildMoveWithoutApplying(Piece piece,
+	                                      char fromFile, int fromRank,
+	                                      char toFile,   int toRank) {
+		Square fromSquare = board.getSquare(fromFile, fromRank);
+		Square toSquare   = board.getSquare(toFile,   toRank);
+
+		Piece originalFrom = fromSquare.getOccupant();
+		Piece originalTo   = toSquare.getOccupant();
+
+		fromSquare.setOccupant(piece);
+		toSquare.setOccupant(null);
+		Move move = Move.create(piece, fromSquare, toSquare);
+
+		fromSquare.setOccupant(originalFrom);
+		toSquare.setOccupant(originalTo);
+
+		return move;
+	}
+
 	// =========================================================================
 	// NORMAL PAWN MOVES
 	// =========================================================================
@@ -212,5 +244,63 @@ class PawnIntegrationTest {
 		Move move = Move.create(whitePawn, board.getSquare('e', 4), board.getSquare('e', 5));
 
 		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
+
+	// =========================================================================
+	// EN PASSANT
+	// =========================================================================
+
+	/**
+	 * IT-EP-01: Happy path — white captures black en passant.
+	 *
+	 * Setup: black pawn just double-stepped from d7 to d5; white pawn is on e5.
+	 * White plays exd6 en passant.
+	 *
+	 * <p>Assertions after simulating applyMove's board mutations:
+	 * <ul>
+	 *   <li>White pawn occupies d6 (the landing square).</li>
+	 *   <li>e5 is empty (white pawn departed).</li>
+	 *   <li>d5 is empty (captured black pawn removed by the en passant branch).</li>
+	 * </ul>
+	 *
+	 * <p>Key integration path: GameState.lastMove → isEnpassantLegal reads
+	 * previousMove.getPiece() with reference equality (line 508 of RulesEngine),
+	 * so the exact same Pawn object must be both on the board at d5 and stored
+	 * in the last-move record.  buildMoveWithoutApplying() ensures this.
+	 */
+	@Test
+	void enPassant_whiteCapturesBlack_boardStateCorrectAfterMove() {
+		Pawn blackPawn = new Pawn(Color.BLACK);
+		blackPawn.markMoved();
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		whitePawn.markMoved();
+
+		place(whitePawn, 'e', 5);
+		place(blackPawn, 'd', 5);
+		place(new King(Color.WHITE), 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move blackDoubleStep = buildMoveWithoutApplying(blackPawn, 'd', 7, 'd', 5);
+
+		GameState state = stateFor(Color.WHITE, blackDoubleStep);
+
+		Square fromSquare = board.getSquare('e', 5);
+		Square toSquare   = board.getSquare('d', 6);
+		Move enPassantMove = Move.create(whitePawn, fromSquare, toSquare);
+		enPassantMove.setEnPassant(true);
+
+		assertTrue(rulesEngine.isEnpassantLegal(enPassantMove, state),
+				"En passant should be legal in this position");
+
+		// Simulate the board mutations that GameModel.applyMove performs
+		board.movePiece(fromSquare, toSquare);
+		board.getSquare('d', 5).setOccupant(null);
+
+		assertNull(board.getSquare('e', 5).getOccupant(),
+				"e5 must be empty after white pawn departs");
+		assertNull(board.getSquare('d', 5).getOccupant(),
+				"d5 must be empty — captured black pawn must be removed");
+		assertSame(whitePawn, board.getSquare('d', 6).getOccupant(),
+				"White pawn must occupy d6 after en passant");
 	}
 }
