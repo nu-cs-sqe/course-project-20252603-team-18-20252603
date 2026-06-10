@@ -390,4 +390,26 @@ public class KingIntegrationTest {
 		assertTrue(rulesEngine.isInCheck(state, Color.WHITE));
 		assertTrue(rulesEngine.isCheckmate(state, Color.WHITE));
 	}
+
+	/**
+	 * IT-CM-02: King in check but can escape — not checkmate.
+	 *
+	 * White king on e1 is attacked by black queen on e8 (clear file), but d1
+	 * is empty and not covered.
+	 *
+	 * Boundary: at least one legal move exists → isCheckmate returns false.
+	 */
+	@Test
+	void isCheckmate_kingCanEscapeToD1_returnsFalse() {
+		King whiteKing = new King(Color.WHITE);
+		whiteKing.markMoved();
+		place(whiteKing, 'e', 1);
+		place(new Queen(Color.BLACK), 'e', 8);
+		place(new King(Color.BLACK), 'h', 6);
+
+		GameState state = stateFor(Color.WHITE);
+
+		assertTrue(rulesEngine.isInCheck(state, Color.WHITE));
+		assertFalse(rulesEngine.isCheckmate(state, Color.WHITE));
+	}
 }
