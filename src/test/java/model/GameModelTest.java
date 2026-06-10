@@ -1280,4 +1280,30 @@ public class GameModelTest {
 
 		verifyMocks();
 	}
+
+	// =========================================================================
+	// TC39: Black resigns after White move
+	// =========================================================================
+	@Test
+	void resign_blackToMove_setsStatusResignedAndWinnerWhite() {
+		GameModel model = modelWithMocks();
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Move whiteMove = EasyMock.createMock(Move.class);
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
+		expectLegalMove(whiteMove, whitePiece, Color.WHITE, null, GameStatus.ONGOING);
+
+		replayMocks();
+		replay(whitePiece, whiteMove);
+
+		model.applyMove(whiteMove);
+		model.resign();
+
+		assertEquals(GameStatus.RESIGNED, model.getStatus());
+		assertEquals(Color.WHITE, model.getWinner());
+
+		verifyMocks();
+		verify(whitePiece, whiteMove);
+	}
 }
