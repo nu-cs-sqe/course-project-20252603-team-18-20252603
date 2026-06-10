@@ -203,6 +203,11 @@ public class GameModel {
 	}
 
 	public void resign() {
+		if (status == GameStatus.CHECKMATE || status == GameStatus.STALEMATE
+				|| status == GameStatus.RESIGNED) {
+			throw new IllegalStateException("Game is already over");
+		}
+
 		winner = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
 		status = GameStatus.RESIGNED;
 	}

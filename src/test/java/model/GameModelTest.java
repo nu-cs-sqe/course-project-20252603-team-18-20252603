@@ -1319,4 +1319,28 @@ public class GameModelTest {
 
 		verifyMocks();
 	}
+
+	// =========================================================================
+	// TC41: Resign after CHECKMATE is rejected
+	// =========================================================================
+	@Test
+	void resign_afterCheckmate_throwsIllegalStateException() {
+		GameModel model = modelWithMocks();
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Move move = EasyMock.createMock(Move.class);
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
+		expectLegalMove(move, whitePiece, Color.WHITE, null, GameStatus.CHECKMATE);
+
+		replayMocks();
+		replay(whitePiece, move);
+
+		model.applyMove(move);
+
+		assertThrows(IllegalStateException.class, model::resign);
+
+		verifyMocks();
+		verify(whitePiece, move);
+	}
 }
