@@ -74,4 +74,26 @@ class PawnIntegrationTest {
 
 		assertTrue(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-PM-03: Double-step blocked by hasMoved flag.
+	 *
+	 * A white pawn on e3 with hasMoved == true attempts to advance two squares
+	 * to e5.  RulesEngine must reject this even when both squares are empty.
+	 *
+	 * <p>Boundary: hasMoved gates the double-step path inside
+	 * isNormalPawnMoveLegal.
+	 */
+	@Test
+	void whitePawnDoubleStep_afterHavingMoved_isIllegal() {
+		Pawn pawn = new Pawn(Color.WHITE);
+		pawn.markMoved();
+		place(pawn, 'e', 3);
+		place(new King(Color.WHITE), 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move move = Move.create(pawn, board.getSquare('e', 3), board.getSquare('e', 5));
+
+		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
 }
