@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class KingIntegrationTest {
 
@@ -172,5 +171,30 @@ public class KingIntegrationTest {
 		Move move = buildMoveWithoutApplying(king, 'e', 1, 'f', 1);
 
 		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
+
+	/**
+	 * IT-KM-06: King at board corner — legal moves stay within bounds.
+	 *
+	 * White king on a1 (hasMoved == true); only a2, b1, b2 are valid adjacent
+	 * squares.  No out-of-bounds square should appear.
+	 */
+	@Test
+	void whiteKing_atCornerA1_legalMovesStayInBounds() {
+		King king = new King(Color.WHITE);
+		king.markMoved();
+		place(king, 'a', 1);
+		place(new King(Color.BLACK), 'h', 8);
+
+		List<Square> legalMoves = rulesEngine.getLegalMoves(stateFor(Color.WHITE), board.getSquare('a', 1));
+
+		assertEquals(3, legalMoves.size());
+		assertTrue(legalMoves.stream().anyMatch(s -> s.getFile() == 'a' && s.getRank() == 2));
+		assertTrue(legalMoves.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 1));
+		assertTrue(legalMoves.stream().anyMatch(s -> s.getFile() == 'b' && s.getRank() == 2));
+		for (Square s : legalMoves) {
+			assertTrue(s.getFile() >= 'a' && s.getFile() <= 'h');
+			assertTrue(s.getRank() >= 1 && s.getRank() <= 8);
+		}
 	}
 }
