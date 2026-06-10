@@ -53,6 +53,14 @@ public class RulesEngine {
 
 		Square to = move.getTo();
 
+		if (sourcePiece.getType() == PieceType.KING) {
+			int fileDiff = Math.abs(to.getFile() - from.getFile());
+			int rankDiff = Math.abs(to.getRank() - from.getRank());
+			if (fileDiff > 1 || rankDiff > 1) {
+				return false;
+			}
+		}
+
 		Square toBoardSquare = board.getSquare(
 				to.getFile(),
 				to.getRank()
