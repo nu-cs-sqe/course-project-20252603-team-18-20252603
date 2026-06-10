@@ -278,4 +278,23 @@ public class KingIntegrationTest {
 
 		assertTrue(rulesEngine.isInCheck(stateFor(Color.WHITE), Color.WHITE));
 	}
+
+	/**
+	 * IT-CH-03: Sliding attack blocked — king not in check.
+	 *
+	 * White king on e1, white rook on e4, black rook on e8.  The white rook
+	 * on e4 breaks the black rook's line of attack.
+	 *
+	 * Boundary: isPathBlocked returns true for the segment e8→e4 (passes
+	 * through e4 where the white rook sits).
+	 */
+	@Test
+	void isInCheck_slidingAttackBlocked_returnsFalse() {
+		place(new King(Color.WHITE), 'e', 1);
+		place(new Rook(Color.WHITE), 'e', 4);
+		place(new Rook(Color.BLACK), 'e', 8);
+		place(new King(Color.BLACK), 'a', 8);
+
+		assertFalse(rulesEngine.isInCheck(stateFor(Color.WHITE), Color.WHITE));
+	}
 }
