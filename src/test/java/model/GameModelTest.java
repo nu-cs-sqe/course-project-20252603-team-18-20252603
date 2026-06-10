@@ -1343,4 +1343,19 @@ public class GameModelTest {
 		verifyMocks();
 		verify(whitePiece, move);
 	}
+
+	// =========================================================================
+	// TC42: Move after resignation is rejected
+	// =========================================================================
+	@Test
+	void applyMove_afterResignation_throwsIllegalStateException() {
+		GameModel model = modelWithMocks();
+		replayMocks();
+
+		model.resign();
+
+		assertThrows(IllegalStateException.class, () -> model.applyMove(null));
+
+		verifyMocks();
+	}
 }

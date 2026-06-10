@@ -103,7 +103,8 @@ public class GameModel {
 	}
 
 	public void applyMove(Move move) {
-		if (status == GameStatus.CHECKMATE || status == GameStatus.STALEMATE) {
+		if (status == GameStatus.CHECKMATE || status == GameStatus.STALEMATE
+				|| status == GameStatus.RESIGNED) {
 			throw new IllegalStateException("Game is already over");
 		}
 		if (move == null) {
