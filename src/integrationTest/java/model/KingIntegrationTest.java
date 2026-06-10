@@ -762,4 +762,29 @@ public class KingIntegrationTest {
 
 		assertFalse(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-CS-12: King generates castling candidate despite blocked path.
+	 *
+	 * King.getLegalMoveDestinationSquares includes g1 even when a bishop is on
+	 * f1. RulesEngine.getLegalMoves must filter it out via isCastlingLegal.
+	 */
+	@Test
+	void castling_kingsideBlocked_kingStillGeneratesCandidate_butEngineFilters() {
+		King king = new King(Color.WHITE);
+		place(king, 'e', 1);
+		place(new Bishop(Color.WHITE), 'f', 1);
+		place(new Rook(Color.WHITE), 'h', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		// King's raw candidates include g1 (no path check at piece level)
+		List<Square> rawCandidates = king.getLegalMoveDestinationSquares(board.getSquare('e', 1));
+		assertTrue(rawCandidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 1),
+				"King.getLegalMoveDestinationSquares should still include g1 — path check is the engine's responsibility");
+
+		// Engine-filtered legal moves must NOT include g1
+		List<Square> legalMoves = rulesEngine.getLegalMoves(stateFor(Color.WHITE), board.getSquare('e', 1));
+		assertFalse(legalMoves.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 1),
+				"RulesEngine.getLegalMoves must exclude g1 when the castling path is blocked");
+	}
 }
