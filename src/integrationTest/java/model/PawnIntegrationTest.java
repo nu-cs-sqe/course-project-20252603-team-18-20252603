@@ -142,4 +142,30 @@ class PawnIntegrationTest {
 				"Pawn must not be able to double-step after already moving via applyMove"
 		);
 	}
+
+	// =========================================================================
+	// PAWN CAPTURES
+	// =========================================================================
+
+	/**
+	 * IT-PC-01: Diagonal capture — opponent present.
+	 *
+	 * A white pawn on e4 capturing a black pawn on f5 diagonally must be legal.
+	 *
+	 * <p>Collaborators: RulesEngine.isNormalPawnMoveLegal diagonal branch reads
+	 * toBoardSquare.isEmpty() and getOccupant().getColor() from the live Board.
+	 */
+	@Test
+	void whitePawnDiagonalCapture_opponentPresent_isLegal() {
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		whitePawn.markMoved();
+		place(whitePawn, 'e', 4);
+		place(new Pawn(Color.BLACK), 'f', 5);
+		place(new King(Color.WHITE), 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move move = Move.create(whitePawn, board.getSquare('e', 4), board.getSquare('f', 5));
+
+		assertTrue(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
 }
