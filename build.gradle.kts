@@ -3,10 +3,15 @@ import org.gradle.api.plugins.quality.CheckstyleExtension
 
 plugins {
     id("java")
+    application
     id("checkstyle")
     id("com.github.spotbugs") version "6.0.25"
     id("info.solidsoft.pitest") version "1.15.0"
     jacoco
+}
+
+application {
+    mainClass.set("ui.Main")
 }
 
 group = "nu.csse.sqe"
@@ -31,6 +36,11 @@ java {
 
 tasks.compileJava {
     options.release = 11
+    options.encoding = "UTF-8"
+}
+
+tasks.compileTestJava {
+    options.encoding = "UTF-8"
 }
 
 tasks.test {

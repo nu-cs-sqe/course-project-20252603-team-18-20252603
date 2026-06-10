@@ -91,4 +91,19 @@ class SquareTest {
 
 		assertSame(mockPiece, square.getOccupant(), "getOccupant should return the exact Piece instance that was set.");
 	}
+
+	@Test
+	void equals_sameCoordinates_returnsTrue() {
+		Square first = Square.create('e', 4);
+		Square second = Square.create('e', 4);
+
+		assertEquals(first, second);
+		assertEquals(first.hashCode(), second.hashCode());
+	}
+
+	@Test
+	void equals_differentCoordinates_returnsFalse() {
+		assertNotEquals(Square.create('e', 4), Square.create('e', 5));
+		assertNotEquals(Square.create('e', 4), Square.create('d', 4));
+	}
 }

@@ -617,6 +617,7 @@ public class GameModelTest {
 		expect(mockEngine.isLegalMove(eq(move), anyObject(GameState.class)))
 				.andReturn(true);
 		mockBoard.movePiece(from, to);
+		mockBoard.removePiece(to);
 		mockBoard.placePiece(promotionPiece, to);
 		expect(mockEngine.getGameStatus(anyObject(GameState.class)))
 				.andReturn(GameStatus.ONGOING);

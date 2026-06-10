@@ -1,5 +1,6 @@
 package controller;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import model.*;
 import view.BoardView;
 import view.CapturedPiecesView;
@@ -20,7 +21,11 @@ public class GameController {
 	private List<Square> selectedLegalMoves;
 	private boolean gameLocked;
 
-	GameController(GameModel model, BoardView boardView, NotificationView notificationView, PromotionView promotionView,
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP2",
+			justification = "The controller intentionally retains its MVC collaborators for the game lifetime."
+	)
+	public GameController(GameModel model, BoardView boardView, NotificationView notificationView, PromotionView promotionView,
 		CapturedPiecesView capturedView) {
 		this.model = model;
 		this.boardView = boardView;
