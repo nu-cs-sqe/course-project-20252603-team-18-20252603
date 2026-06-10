@@ -460,4 +460,67 @@ public class KingIntegrationTest {
 		assertTrue(rulesEngine.isInCheck(state, Color.WHITE));
 		assertFalse(rulesEngine.isCheckmate(state, Color.WHITE));
 	}
+
+	/**
+	 * IT-CM-05: GameModel locks the game and throws on further move after checkmate.
+	 *
+	 * White king on a2 steps to a1 (filler move), then black queen slides from
+	 * b4 to a3, delivering checkmate.  The king on a1 cannot escape: b1 is
+	 * covered by the black queen on c2 (same rank), b2 is covered by Qa3
+	 * (diagonal) and the black king on c3 (adjacent).  No white piece can block
+	 * or capture.
+	 *
+	 * After the mating move, GameModel.getStatus must return CHECKMATE and a
+	 * subsequent applyMove must throw IllegalStateException.
+	 *
+	 * Collaborators: GameModel.applyMove → RulesEngine.getGameStatus →
+	 * isCheckmate; GameModel.applyMove early-exit guard on CHECKMATE status.
+	 */
+	@Test
+	void checkmate_gameLocksAndThrowsOnFurtherMove() {
+		Board board = new Board();
+		GameModel model = new GameModel(board, new RulesEngine());
+
+		for (char f = 'a'; f <= 'h'; f++) {
+			for (int r = 1; r <= 8; r++) {
+				board.getSquare(f, r).setOccupant(null);
+			}
+		}
+
+		// White: king a2, rook h8.
+		// Black: king c3, queen c2, queen b4.
+		// Plan: white Ka2→a1 (filler), then black Qb4→a3#.
+		// After Ka1: b1 covered by Qc2 (rank), b2 covered by Qc2+Kc3, a3 queen checks on a-file.
+		King whiteKing = new King(Color.WHITE);
+		whiteKing.markMoved();
+		King blackKing = new King(Color.BLACK);
+		blackKing.markMoved();
+		Queen blackQueenA = new Queen(Color.BLACK);
+		blackQueenA.markMoved();
+		Queen blackQueenB = new Queen(Color.BLACK);
+		blackQueenB.markMoved();
+
+		board.getSquare('a', 2).setOccupant(whiteKing);
+		board.getSquare('c', 3).setOccupant(blackKing);
+		board.getSquare('c', 2).setOccupant(blackQueenA);
+		board.getSquare('b', 4).setOccupant(blackQueenB);
+
+		// White filler: Ka2→a1.
+		Move filler = Move.create(whiteKing,
+				board.getSquare('a', 2), board.getSquare('a', 1));
+		model.applyMove(filler);
+
+		// Black: Qb4→a3# — checks on a-file, covers b2.
+		// King on a1: b1 covered by Qc2 (same rank); b2 covered by Qa3 (diagonal) + Kc3 (adjacent).
+		Move matingMove = Move.create(blackQueenB,
+				board.getSquare('b', 4), board.getSquare('a', 3));
+		model.applyMove(matingMove);
+
+		assertEquals(GameStatus.CHECKMATE, model.getStatus(),
+				"Status must be CHECKMATE after the mating move");
+
+		assertThrows(IllegalStateException.class, () ->
+				model.applyMove(Move.create(blackQueenA,
+						board.getSquare('c', 2), board.getSquare('c', 1))));
+	}
 }

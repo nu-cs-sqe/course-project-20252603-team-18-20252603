@@ -126,11 +126,14 @@
     - **Implemented at**: `isCheckmate_attackerCanBeCaptured_returnsFalse`
 
 - **IT-CM-05: `GameModel.getStatus` returns `CHECKMATE` and game locks**
-    - **State of the system**: A checkmate position is set up via board
-      placement, then `getGameStatus` is called through `GameModel`.
+    - **State of the system**: White king on `a2` (`hasMoved == true`), black
+      king on `c3`, black queen on `c2`, black queen on `b4`. White plays
+      `Ka2→a1` (filler). Black plays `Qb4→a3#`: the king on `a1` cannot
+      escape (`b1` covered by `Qc2`; `b2` covered by `Qa3` and `Kc3`). No
+      white piece can block or capture.
     - **Expected output**: `GameModel.getStatus()` returns
-      `GameStatus.CHECKMATE`. A subsequent call to `applyMove` throws
-      `IllegalStateException`.
+      `GameStatus.CHECKMATE` after the mating move. A subsequent call to
+      `applyMove` throws `IllegalStateException`.
     - **Implemented at**: `checkmate_gameLocksAndThrowsOnFurtherMove`
 
 ---
