@@ -523,4 +523,40 @@ public class KingIntegrationTest {
 				model.applyMove(Move.create(blackQueenA,
 						board.getSquare('c', 2), board.getSquare('c', 1))));
 	}
+
+	// =========================================================================
+	// CASTLING
+	// =========================================================================
+
+	/**
+	 * IT-CS-01: Valid white kingside castling.
+	 *
+	 * White king e1 (hasMoved == false), white rook h1 (hasMoved == false),
+	 * f1 and g1 empty, none of e1/f1/g1 attacked.
+	 *
+	 * After simulating applyMove mutations: king on g1, rook on f1.
+	 */
+	@Test
+	void castling_whiteKingside_isLegalAndBoardCorrect() {
+		King king = new King(Color.WHITE);
+		Rook rook = new Rook(Color.WHITE);
+		place(king, 'e', 1);
+		place(rook, 'h', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move castleMove = buildMoveWithoutApplying(king, 'e', 1, 'g', 1);
+		castleMove.setCastle(true);
+
+		GameState state = stateFor(Color.WHITE);
+
+		assertTrue(rulesEngine.isCastlingLegal(castleMove, state));
+
+		board.movePiece(board.getSquare('e', 1), board.getSquare('g', 1));
+		board.movePiece(board.getSquare('h', 1), board.getSquare('f', 1));
+
+		assertSame(king, board.getSquare('g', 1).getOccupant(), "King must be on g1");
+		assertSame(rook, board.getSquare('f', 1).getOccupant(), "Rook must be on f1");
+		assertNull(board.getSquare('e', 1).getOccupant(), "e1 must be empty");
+		assertNull(board.getSquare('h', 1).getOccupant(), "h1 must be empty");
+	}
 }
