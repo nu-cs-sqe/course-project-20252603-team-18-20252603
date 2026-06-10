@@ -168,4 +168,26 @@ class PawnIntegrationTest {
 
 		assertTrue(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-PC-02: Diagonal move — destination empty, no en passant.
+	 *
+	 * A white pawn on e4 must not move diagonally to f5 when f5 is empty and
+	 * no en passant target exists.
+	 *
+	 * <p>Boundary: the diagonal path requires an opponent piece on the target
+	 * square; an empty diagonal is not a valid pawn destination.
+	 */
+	@Test
+	void whitePawnDiagonalMove_squareEmpty_isIllegal() {
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		whitePawn.markMoved();
+		place(whitePawn, 'e', 4);
+		place(new King(Color.WHITE), 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move move = Move.create(whitePawn, board.getSquare('e', 4), board.getSquare('f', 5));
+
+		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
 }
