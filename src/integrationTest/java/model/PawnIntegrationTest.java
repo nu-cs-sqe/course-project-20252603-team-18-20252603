@@ -190,4 +190,27 @@ class PawnIntegrationTest {
 
 		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-PC-03: Forward move into occupied square — blocked.
+	 *
+	 * A white pawn on e4 must not advance to e5 when e5 is occupied by a black
+	 * pawn.  Pawns cannot capture straight ahead.
+	 *
+	 * <p>Boundary: isNormalPawnMoveLegal straight-one-forward branch returns
+	 * toBoardSquare.isEmpty(), which is false here.
+	 */
+	@Test
+	void whitePawnForwardMove_squareOccupied_isIllegal() {
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		whitePawn.markMoved();
+		place(whitePawn, 'e', 4);
+		place(new Pawn(Color.BLACK), 'e', 5);
+		place(new King(Color.WHITE), 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move move = Move.create(whitePawn, board.getSquare('e', 4), board.getSquare('e', 5));
+
+		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
 }
