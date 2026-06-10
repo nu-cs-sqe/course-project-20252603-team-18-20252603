@@ -13,6 +13,7 @@ public class GameModel {
 	private final List<Move> moveHistory;
 	private Color currentTurn;
 	private GameStatus status;
+	private Color winner;
 	private final List<Piece> capturedByWhite;
 	private final List<Piece> capturedByBlack;
 
@@ -22,6 +23,7 @@ public class GameModel {
 		this.moveHistory = new ArrayList<>();
 		this.currentTurn = Color.WHITE;
 		this.status = GameStatus.ONGOING;
+		this.winner = null;
 		this.capturedByWhite = new ArrayList<>();
 		this.capturedByBlack = new ArrayList<>();
 		placeStartingPieces();
@@ -198,5 +200,14 @@ public class GameModel {
 
 	public GameStatus getStatus() {
 		return status;
+	}
+
+	public void resign() {
+		winner = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
+		status = GameStatus.RESIGNED;
+	}
+
+	public Color getWinner() {
+		return winner;
 	}
 }

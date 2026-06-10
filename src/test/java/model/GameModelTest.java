@@ -1264,4 +1264,20 @@ public class GameModelTest {
 		verify(whitePiece, blackPiece, captured1, captured2,
 				firstMove, blackMove, secondMove);
 	}
+
+	// =========================================================================
+	// TC38: White resigns at start
+	// =========================================================================
+	@Test
+	void resign_whiteToMove_setsStatusResignedAndWinnerBlack() {
+		GameModel model = modelWithMocks();
+		replayMocks();
+
+		model.resign();
+
+		assertEquals(GameStatus.RESIGNED, model.getStatus());
+		assertEquals(Color.BLACK, model.getWinner());
+
+		verifyMocks();
+	}
 }
