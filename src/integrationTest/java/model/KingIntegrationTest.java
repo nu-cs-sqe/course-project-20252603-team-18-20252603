@@ -787,4 +787,24 @@ public class KingIntegrationTest {
 		assertFalse(legalMoves.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 1),
 				"RulesEngine.getLegalMoves must exclude g1 when the castling path is blocked");
 	}
+
+	/**
+	 * IT-CS-13: King generates castling candidate when rook is absent.
+	 *
+	 * Same design gap as IT-CS-12, but now the rook is simply missing from h1.
+	 */
+	@Test
+	void castling_rookAbsent_kingStillGeneratesCandidate_butEngineFilters() {
+		King king = new King(Color.WHITE);
+		place(king, 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		List<Square> rawCandidates = king.getLegalMoveDestinationSquares(board.getSquare('e', 1));
+		assertTrue(rawCandidates.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 1),
+				"King.getLegalMoveDestinationSquares should still include g1 — rook validation is the engine's responsibility");
+
+		List<Square> legalMoves = rulesEngine.getLegalMoves(stateFor(Color.WHITE), board.getSquare('e', 1));
+		assertFalse(legalMoves.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 1),
+				"RulesEngine.getLegalMoves must exclude g1 when there is no rook on h1");
+	}
 }
