@@ -3,6 +3,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KingIntegrationTest {
@@ -102,5 +103,26 @@ public class KingIntegrationTest {
 		Move move = buildMoveWithoutApplying(king, 'e', 1, 'f', 1);
 
 		assertTrue(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
+
+	/**
+	 * IT-KM-03: Cannot capture own piece.
+	 *
+	 * White king on e1 attempts to move to f1 which is occupied by a white rook.
+	 *
+	 * Boundary: RulesEngine.isLegalMove returns false when destinationPiece is
+	 * same color as the moving piece.
+	 */
+	@Test
+	void whiteKing_cannotCaptureOwnPiece_isIllegal() {
+		King king = new King(Color.WHITE);
+		king.markMoved();
+		place(king, 'e', 1);
+		place(new Rook(Color.WHITE), 'f', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move move = buildMoveWithoutApplying(king, 'e', 1, 'f', 1);
+
+		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
 	}
 }
