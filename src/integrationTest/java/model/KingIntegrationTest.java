@@ -707,4 +707,23 @@ public class KingIntegrationTest {
 
 		assertFalse(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-CS-09: King currently in check — castling disallowed.
+	 *
+	 * White king on e1, black rook on e8 puts the king in check.  Even with
+	 * an untouched rook on h1 and a clear path, castling is illegal.
+	 */
+	@Test
+	void castling_kingInCheck_isIllegal() {
+		King king = new King(Color.WHITE);
+		place(king, 'e', 1);
+		place(new Rook(Color.WHITE), 'h', 1);
+		place(new Rook(Color.BLACK), 'e', 8);
+		place(new King(Color.BLACK), 'a', 8);
+
+		Move castleMove = buildMoveWithoutApplying(king, 'e', 1, 'g', 1);
+
+		assertFalse(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.WHITE)));
+	}
 }
