@@ -497,4 +497,30 @@ class PawnIntegrationTest {
 		assertEquals(Color.WHITE, occupant.getColor(),
 				"Promoted piece must be white");
 	}
+
+	/**
+	 * IT-PR-02: promotionPiece is null on the final rank.
+	 *
+	 * A white pawn on e7 moves to e8 but the move carries no promotionPiece.
+	 * isPromotionLegal must return false — a promotion piece is mandatory when
+	 * a pawn reaches the back rank.
+	 *
+	 * <p>Boundary: the null check at RulesEngine line 395
+	 * ({@code promotionPiece == null → return false}).
+	 */
+	@Test
+	void promotion_nullPromotionPiece_isPromotionLegalReturnsFalse() {
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		whitePawn.markMoved();
+		place(whitePawn,            'e', 7);
+		place(new King(Color.WHITE), 'e', 1);
+		place(new King(Color.BLACK), 'h', 8);
+
+		Square fromSquare = board.getSquare('e', 7);
+		Square toSquare   = board.getSquare('e', 8);
+		Move move = Move.create(whitePawn, fromSquare, toSquare);
+
+		assertFalse(rulesEngine.isPromotionLegal(move, stateFor(Color.WHITE)),
+				"isPromotionLegal must return false when promotionPiece is null");
+	}
 }
