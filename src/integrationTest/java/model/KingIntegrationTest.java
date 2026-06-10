@@ -81,4 +81,26 @@ public class KingIntegrationTest {
 
 		assertTrue(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-KM-02: Single-step captures an opponent piece.
+	 *
+	 * White king on e1 captures a black rook on f1. f1 is not defended.
+	 *
+	 * Collaborators: RulesEngine.isLegalMove checks destination is not
+	 * same-color (it is black), path not blocked (king), then simulates the
+	 * move and confirms king is not in check.
+	 */
+	@Test
+	void whiteKing_capturesOpponentPiece_isLegal() {
+		King king = new King(Color.WHITE);
+		king.markMoved();
+		place(king, 'e', 1);
+		place(new Rook(Color.BLACK), 'f', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move move = buildMoveWithoutApplying(king, 'e', 1, 'f', 1);
+
+		assertTrue(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
 }
