@@ -53,4 +53,25 @@ class PawnIntegrationTest {
 
 		assertTrue(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-PM-02: Double-step from starting rank — both squares empty.
+	 *
+	 * A white pawn on e2 that has not yet moved may advance to e4 when both
+	 * e3 and e4 are empty.
+	 *
+	 * <p>Boundary: the two-square advance is only possible when hasMoved == false
+	 * and the intermediate square is clear.
+	 */
+	@Test
+	void whitePawnDoubleStep_fromStartingRank_isLegal() {
+		Pawn pawn = new Pawn(Color.WHITE);
+		place(pawn, 'e', 2);
+		place(new King(Color.WHITE), 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move move = Move.create(pawn, board.getSquare('e', 2), board.getSquare('e', 4));
+
+		assertTrue(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
 }
