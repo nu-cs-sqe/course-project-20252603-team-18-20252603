@@ -436,4 +436,28 @@ public class KingIntegrationTest {
 		assertTrue(rulesEngine.isInCheck(state, Color.WHITE));
 		assertFalse(rulesEngine.isCheckmate(state, Color.WHITE));
 	}
+
+	/**
+	 * IT-CM-04: Checking piece can be captured — not checkmate.
+	 *
+	 * White king on e1, black knight on f3 (checking), white bishop on g4 can
+	 * capture the knight.
+	 */
+	@Test
+	void isCheckmate_attackerCanBeCaptured_returnsFalse() {
+		King whiteKing = new King(Color.WHITE);
+		whiteKing.markMoved();
+		Bishop whiteBishop = new Bishop(Color.WHITE);
+		whiteBishop.markMoved();
+
+		place(whiteKing, 'e', 1);
+		place(whiteBishop, 'g', 4);
+		place(new Knight(Color.BLACK), 'f', 3);
+		place(new King(Color.BLACK), 'a', 8);
+
+		GameState state = stateFor(Color.WHITE);
+
+		assertTrue(rulesEngine.isInCheck(state, Color.WHITE));
+		assertFalse(rulesEngine.isCheckmate(state, Color.WHITE));
+	}
 }
