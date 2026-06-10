@@ -3,6 +3,8 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -124,5 +126,29 @@ public class KingIntegrationTest {
 		Move move = buildMoveWithoutApplying(king, 'e', 1, 'f', 1);
 
 		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
+
+	/**
+	 * IT-KM-04: Cannot move more than one square when not castling.
+	 *
+	 * White king on e1 (hasMoved == true); e3 is empty.  e3 lies outside the
+	 * king's one-step neighbourhood, so King.getLegalMoveDestinationSquares
+	 * never includes it, and RulesEngine.getLegalMoves therefore never offers
+	 * it as a legal destination.
+	 *
+	 */
+	@Test
+	void whiteKing_twoSquareNonCastle_notOfferedAsLegalMove() {
+		King king = new King(Color.WHITE);
+		king.markMoved();
+		place(king, 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		List<Square> legalMoves = rulesEngine.getLegalMoves(
+				stateFor(Color.WHITE), board.getSquare('e', 1));
+
+		assertFalse(legalMoves.stream()
+						.anyMatch(s -> s.getFile() == 'e' && s.getRank() == 3),
+				"e3 must not be offered — king cannot move two squares without castling");
 	}
 }

@@ -25,8 +25,8 @@
 - **IT-KM-04: Cannot move more than one square (non-castling)**
     - **State of the system**: White king on `e1` (`hasMoved == true`), `e3`
       empty.
-    - **Expected output**: `RulesEngine.isLegalMove` returns `false`.
-    - **Implemented at**: `whiteKing_twoSquareNonCastle_isIllegal`
+    - **Expected output**: `RulesEngine.getLegalMoves` does not include `e3`.
+    - **Implemented at**: `whiteKing_twoSquareNonCastle_notOfferedAsLegalMove`
 
 - **IT-KM-05: Cannot move into check**
     - **State of the system**: White king on `e1` (`hasMoved == true`), black
