@@ -162,10 +162,10 @@ public class GameModel {
 
 		moveHistory.add(move);
 
+		currentTurn = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
+
 		GameState newState = snapshot();
 		status = rulesEngine.getGameStatus(newState);
-
-		currentTurn = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
 
 	@SuppressFBWarnings(

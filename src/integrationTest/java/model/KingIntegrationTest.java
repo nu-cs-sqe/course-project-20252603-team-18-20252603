@@ -321,4 +321,42 @@ public class KingIntegrationTest {
 
 		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-CH-05: GameModel.getStatus returns CHECK after a move that delivers check.
+	 *
+	 * Setup: drive GameModel to a state where white's move places the black
+	 * king in check.  White queen on d1 moves to d8, checking the black king
+	 * on e8.
+	 *
+	 * Collaborators: GameModel.applyMove → RulesEngine.getGameStatus →
+	 * isInCheck.
+	 */
+	@Test
+	void applyMove_deliversCheck_statusIsCheck() {
+		Board board = new Board();
+		RulesEngine rulesEngine = new RulesEngine();
+		GameModel model = new GameModel(board, rulesEngine);
+
+		for (char f = 'a'; f <= 'h'; f++) {
+			for (int r = 1; r <= 8; r++) {
+				board.getSquare(f, r).setOccupant(null);
+			}
+		}
+
+		King whiteKing = new King(Color.WHITE);
+		King blackKing = new King(Color.BLACK);
+		Queen whiteQueen = new Queen(Color.WHITE);
+		whiteQueen.markMoved();
+
+		board.getSquare('e', 1).setOccupant(whiteKing);
+		board.getSquare('e', 8).setOccupant(blackKing);
+		board.getSquare('d', 1).setOccupant(whiteQueen);
+
+		// White: Qd1-d8+
+		Move queenMove = Move.create(whiteQueen, board.getSquare('d', 1), board.getSquare('d', 8));
+		model.applyMove(queenMove);
+
+		assertEquals(GameStatus.CHECK, model.getStatus());
+	}
 }
