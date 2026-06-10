@@ -93,13 +93,15 @@
 
 ### Checkmate
 
-- **IT-CM-01: Back-rank checkmate (Fool's Mate analog)**
-    - **State of the system**: White king on `g1` (cannot move: `f1`, `h1`
-      blocked by own pieces; `f2`, `g2`, `h2` covered by black queen; `g1`
-      attacked). Construct the simplest two-queen or queen+rook back-rank mate
-      via board placement rather than move sequence.
-    - **Expected output**: `RulesEngine.isCheckmate(state, WHITE)` returns
-      `true`; `GameModel.getStatus()` returns `GameStatus.CHECKMATE`.
+- **IT-CM-01: Corner checkmate — two queens and king**
+    - **State of the system**: White king on `a1`, black queen on `a3`
+      (delivers check on the a-file and covers `b2`/`b3`), black queen on
+      `c1` (covers `b1`/`b2`), black king on `c3` (covers `b2`/`b3`/`c2`/
+      `d2`/`d3`). The white king has no legal moves: `b1` is covered by
+      `Qc1`; `b2` is covered by both queens and the black king. No white
+      pieces exist to block or capture.
+    - **Expected output**: `RulesEngine.isInCheck(state, WHITE)` returns
+      `true`; `RulesEngine.isCheckmate(state, WHITE)` returns `true`.
     - **Implemented at**: `isCheckmate_backRankMate_returnsTrue`
 
 - **IT-CM-02: King in check with one escape — not checkmate**

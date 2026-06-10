@@ -359,4 +359,35 @@ public class KingIntegrationTest {
 
 		assertEquals(GameStatus.CHECK, model.getStatus());
 	}
+
+	// =========================================================================
+	// CHECKMATE
+	// =========================================================================
+
+	/**
+	 * IT-CM-01: Corner checkmate — two queens and king.
+	 *
+	 * White king on a1, black queen on a3 (delivers check on the a-file and
+	 * covers b2/b3), black queen on c1 (covers b1/b2), black king on c3
+	 * (covers b2/b3/c2/d2/d3). The white king has no legal moves: b1 is
+	 * covered by Qc1; b2 is covered by both queens and the black king.  No
+	 * white pieces exist to block or capture.
+	 *
+	 * Collaborators: RulesEngine.isCheckmate → isInCheck (true) →
+	 * getLegalMoves on all white pieces (all empty lists).
+	 */
+	@Test
+	void isCheckmate_backRankMate_returnsTrue() {
+		King whiteKing = new King(Color.WHITE);
+		whiteKing.markMoved();
+		place(whiteKing, 'a', 1);
+		place(new Queen(Color.BLACK), 'a', 3);
+		place(new Queen(Color.BLACK), 'c', 1);
+		place(new King(Color.BLACK), 'c', 3);
+
+		GameState state = stateFor(Color.WHITE);
+
+		assertTrue(rulesEngine.isInCheck(state, Color.WHITE));
+		assertTrue(rulesEngine.isCheckmate(state, Color.WHITE));
+	}
 }
