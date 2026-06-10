@@ -45,8 +45,8 @@ class PawnIntegrationTest {
 	 * the Move, then restores the board to its original state.
 	 */
 	private Move buildMoveWithoutApplying(Piece piece,
-	                                      char fromFile, int fromRank,
-	                                      char toFile,   int toRank) {
+											char fromFile, int fromRank,
+											char toFile,   int toRank) {
 		Square fromSquare = board.getSquare(fromFile, fromRank);
 		Square toSquare   = board.getSquare(toFile,   toRank);
 
@@ -522,5 +522,31 @@ class PawnIntegrationTest {
 
 		assertFalse(rulesEngine.isPromotionLegal(move, stateFor(Color.WHITE)),
 				"isPromotionLegal must return false when promotionPiece is null");
+	}
+
+	/**
+	 * IT-PR-03: Promotion to King is forbidden.
+	 *
+	 * A white pawn on e7 moves to e8 with promotionPiece = King.
+	 * isPromotionLegal must return false.
+	 *
+	 * <p>Boundary: the King/Pawn exclusion check at RulesEngine line 397
+	 * ({@code promotionPiece.getType() == PieceType.KING → return false}).
+	 */
+	@Test
+	void promotion_toKing_isPromotionLegalReturnsFalse() {
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		whitePawn.markMoved();
+		place(whitePawn,            'e', 7);
+		place(new King(Color.WHITE), 'e', 1);
+		place(new King(Color.BLACK), 'h', 8);
+
+		Square fromSquare = board.getSquare('e', 7);
+		Square toSquare   = board.getSquare('e', 8);
+		Move move = Move.create(whitePawn, fromSquare, toSquare);
+		move.setPromotionPiece(new King(Color.WHITE));
+
+		assertFalse(rulesEngine.isPromotionLegal(move, stateFor(Color.WHITE)),
+				"isPromotionLegal must return false when promotionPiece is a King");
 	}
 }
