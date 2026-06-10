@@ -356,4 +356,42 @@ class PawnIntegrationTest {
 		assertSame(blackPawn, board.getSquare('e', 3).getOccupant(),
 				"Black pawn must occupy e3 after en passant");
 	}
+
+	/**
+	 * IT-EP-03: Opportunity expired — en passant window has closed.
+	 *
+	 * Setup: black pawn is on d5, white pawn is on e5, but the most recent
+	 * move recorded is a white king step rather than the black pawn's double
+	 * advance.
+	 *
+	 * <p>isEnpassantLegal checks gameState.getLastMove().  When the last move
+	 * is not a pawn double-step by the opponent, the method returns false at the
+	 * previousPiece.getType() != PAWN check (line 460 of RulesEngine).
+	 */
+	@Test
+	void enPassant_opportunityExpired_isIllegal() {
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		whitePawn.markMoved();
+		Pawn blackPawn = new Pawn(Color.BLACK);
+		blackPawn.markMoved();
+		King whiteKing = new King(Color.WHITE);
+		whiteKing.markMoved();
+
+		place(whitePawn, 'e', 5);
+		place(blackPawn, 'd', 5);
+		place(whiteKing, 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move kingMove = buildMoveWithoutApplying(whiteKing, 'e', 1, 'd', 1);
+
+		GameState state = stateFor(Color.WHITE, kingMove);
+
+		Square fromSquare = board.getSquare('e', 5);
+		Square toSquare   = board.getSquare('d', 6);
+		Move enPassantAttempt = Move.create(whitePawn, fromSquare, toSquare);
+		enPassantAttempt.setEnPassant(true);
+
+		assertFalse(rulesEngine.isEnpassantLegal(enPassantAttempt, state),
+				"En passant must be illegal when the last move was not a pawn double-step");
+	}
 }
