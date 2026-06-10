@@ -394,4 +394,51 @@ class PawnIntegrationTest {
 		assertFalse(rulesEngine.isEnpassantLegal(enPassantAttempt, state),
 				"En passant must be illegal when the last move was not a pawn double-step");
 	}
+
+	/**
+	 * IT-EP-04: En passant would expose own king — discovered check.
+	 *
+	 * Setup:
+	 * <pre>
+	 *   a5: black rook    (pins the entire 5th rank)
+	 *   d5: white pawn    (the capturing pawn)
+	 *   c5: black pawn    (would-be en passant target; just double-stepped c7→c5)
+	 *   e5: white king
+	 *   e8: black king
+	 * </pre>
+	 *
+	 * Executing dxc6 en passant would remove both the white pawn from d5 and
+	 * the black pawn from c5, leaving the white king on e5 with a clear line
+	 * to the black rook on a5 (b5 is empty; c5 and d5 would be vacated).
+	 *
+	 * <p>isEnpassantLegal's final guard temporarily clears the pawn squares,
+	 * calls isInCheck, and must return false when the king is exposed.
+	 */
+	@Test
+	void enPassant_wouldExposeOwnKing_isIllegal() {
+		King whiteKing = new King(Color.WHITE);
+		whiteKing.markMoved();
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		whitePawn.markMoved();
+		Pawn blackPawn = new Pawn(Color.BLACK);
+		blackPawn.markMoved();
+
+		place(whiteKing, 'e', 5);
+		place(whitePawn, 'd', 5);
+		place(blackPawn, 'c', 5);
+		place(new Rook(Color.BLACK), 'a', 5);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move blackDoubleStep = buildMoveWithoutApplying(blackPawn, 'c', 7, 'c', 5);
+
+		GameState state = stateFor(Color.WHITE, blackDoubleStep);
+
+		Square fromSquare = board.getSquare('d', 5);
+		Square toSquare   = board.getSquare('c', 6);
+		Move enPassantAttempt = Move.create(whitePawn, fromSquare, toSquare);
+		enPassantAttempt.setEnPassant(true);
+
+		assertFalse(rulesEngine.isEnpassantLegal(enPassantAttempt, state),
+				"En passant that exposes the king to the rook on a5 must be illegal");
+	}
 }
