@@ -591,4 +591,23 @@ public class KingIntegrationTest {
 		assertNull(board.getSquare('e', 1).getOccupant(), "e1 must be empty");
 		assertNull(board.getSquare('a', 1).getOccupant(), "a1 must be empty");
 	}
+
+	/**
+	 * IT-CS-03: Valid black kingside castling.
+	 *
+	 * Black king e8 (hasMoved == false), black rook h8 (hasMoved == false),
+	 * f8 and g8 empty, none of e8/f8/g8 attacked.
+	 */
+	@Test
+	void castling_blackKingside_isLegal() {
+		King king = new King(Color.BLACK);
+		place(king, 'e', 8);
+		place(new Rook(Color.BLACK), 'h', 8);
+		place(new King(Color.WHITE), 'e', 1);
+
+		Move castleMove = buildMoveWithoutApplying(king, 'e', 8, 'g', 8);
+		castleMove.setCastle(true);
+
+		assertTrue(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.BLACK)));
+	}
 }
