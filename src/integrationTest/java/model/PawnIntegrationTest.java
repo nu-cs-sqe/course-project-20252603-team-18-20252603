@@ -285,7 +285,7 @@ class PawnIntegrationTest {
 		GameState state = stateFor(Color.WHITE, blackDoubleStep);
 
 		Square fromSquare = board.getSquare('e', 5);
-		Square toSquare   = board.getSquare('d', 6);
+		Square toSquare = board.getSquare('d', 6);
 		Move enPassantMove = Move.create(whitePawn, fromSquare, toSquare);
 		enPassantMove.setEnPassant(true);
 
@@ -338,7 +338,7 @@ class PawnIntegrationTest {
 		GameState state = stateFor(Color.BLACK, whiteDoubleStep);
 
 		Square fromSquare = board.getSquare('d', 4);
-		Square toSquare   = board.getSquare('e', 3);
+		Square toSquare = board.getSquare('e', 3);
 		Move enPassantMove = Move.create(blackPawn, fromSquare, toSquare);
 		enPassantMove.setEnPassant(true);
 
@@ -387,7 +387,7 @@ class PawnIntegrationTest {
 		GameState state = stateFor(Color.WHITE, kingMove);
 
 		Square fromSquare = board.getSquare('e', 5);
-		Square toSquare   = board.getSquare('d', 6);
+		Square toSquare = board.getSquare('d', 6);
 		Move enPassantAttempt = Move.create(whitePawn, fromSquare, toSquare);
 		enPassantAttempt.setEnPassant(true);
 
@@ -434,11 +434,67 @@ class PawnIntegrationTest {
 		GameState state = stateFor(Color.WHITE, blackDoubleStep);
 
 		Square fromSquare = board.getSquare('d', 5);
-		Square toSquare   = board.getSquare('c', 6);
+		Square toSquare = board.getSquare('c', 6);
 		Move enPassantAttempt = Move.create(whitePawn, fromSquare, toSquare);
 		enPassantAttempt.setEnPassant(true);
 
 		assertFalse(rulesEngine.isEnpassantLegal(enPassantAttempt, state),
 				"En passant that exposes the king to the rook on a5 must be illegal");
+	}
+
+	// =========================================================================
+	// PROMOTION
+	// =========================================================================
+
+	/**
+	 * IT-PR-01: Pawn reaches final rank — board state correct after promotion.
+	 *
+	 * A white pawn on e7 advances to e8 with promotionPiece = Queen.
+	 *
+	 * <p>Assertions after simulating applyMove's promotion board-swap
+	 * (movePiece → removePiece → placePiece):
+	 * <ul>
+	 *   <li>e7 is empty (pawn departed).</li>
+	 *   <li>e8 is occupied by a white Queen.</li>
+	 * </ul>
+	 *
+	 * <p>Collaborators exercised: RulesEngine.isPromotionLegal (approves the
+	 * move), then Board.movePiece / removePiece / placePiece (the swap logic
+	 * mirrored from GameModel.applyMove).
+	 */
+	@Test
+	void promotion_whitePawnReachesFinalRank_replacedByQueen() {
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		whitePawn.markMoved();
+		place(whitePawn, 'e', 7);
+		place(new King(Color.WHITE), 'e', 1);
+		place(new King(Color.BLACK), 'h', 8);
+
+		Square fromSquare = board.getSquare('e', 7);
+		Square toSquare = board.getSquare('e', 8);
+
+		Queen promotionQueen = new Queen(Color.WHITE);
+		Move promotionMove = Move.create(whitePawn, fromSquare, toSquare);
+		promotionMove.setPromotionPiece(promotionQueen);
+
+		GameState state = stateFor(Color.WHITE);
+		assertTrue(rulesEngine.isPromotionLegal(promotionMove, state),
+				"Promotion to queen must be considered legal");
+
+		// Simulate GameModel.applyMove's promotion branch:
+		board.movePiece(fromSquare, toSquare);
+		board.removePiece(toSquare);
+		board.placePiece(promotionQueen, toSquare);
+
+		assertNull(board.getSquare('e', 7).getOccupant(),
+				"e7 must be empty after promotion");
+
+		Piece occupant = board.getSquare('e', 8).getOccupant();
+		assertNotNull(occupant,
+				"e8 must be occupied by the promoted piece");
+		assertEquals(PieceType.QUEEN, occupant.getType(),
+				"Promoted piece must be a queen");
+		assertEquals(Color.WHITE, occupant.getColor(),
+				"Promoted piece must be white");
 	}
 }
