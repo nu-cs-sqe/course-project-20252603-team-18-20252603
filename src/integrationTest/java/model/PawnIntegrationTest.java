@@ -303,4 +303,57 @@ class PawnIntegrationTest {
 		assertSame(whitePawn, board.getSquare('d', 6).getOccupant(),
 				"White pawn must occupy d6 after en passant");
 	}
+
+	/**
+	 * IT-EP-02: Happy path — black captures white en passant.
+	 *
+	 * Setup: white pawn just double-stepped from e2 to e4; black pawn is on d4.
+	 * Black plays dxe3 en passant.
+	 *
+	 * <p>Assertions after simulating applyMove's board mutations:
+	 * <ul>
+	 *   <li>Black pawn occupies e3.</li>
+	 *   <li>d4 is empty.</li>
+	 *   <li>e4 is empty (captured white pawn removed).</li>
+	 * </ul>
+	 *
+	 * <p>Mirrors IT-EP-01 for the black side.  Direction-dependent rank
+	 * calculations in isEnpassantLegal differ: enPassantTargetRank == 3 for
+	 * black, and the GameState has currentTurn == BLACK.
+	 */
+	@Test
+	void enPassant_blackCapturesWhite_boardStateCorrectAfterMove() {
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		whitePawn.markMoved();
+		Pawn blackPawn = new Pawn(Color.BLACK);
+		blackPawn.markMoved();
+
+		place(whitePawn, 'e', 4);
+		place(blackPawn, 'd', 4);
+		place(new King(Color.WHITE), 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move whiteDoubleStep = buildMoveWithoutApplying(whitePawn, 'e', 2, 'e', 4);
+
+		GameState state = stateFor(Color.BLACK, whiteDoubleStep);
+
+		Square fromSquare = board.getSquare('d', 4);
+		Square toSquare   = board.getSquare('e', 3);
+		Move enPassantMove = Move.create(blackPawn, fromSquare, toSquare);
+		enPassantMove.setEnPassant(true);
+
+		assertTrue(rulesEngine.isEnpassantLegal(enPassantMove, state),
+				"En passant should be legal for black in this position");
+
+		// Simulate applyMove board mutations for black's en passant:
+		board.movePiece(fromSquare, toSquare);
+		board.getSquare('e', 4).setOccupant(null);
+
+		assertNull(board.getSquare('d', 4).getOccupant(),
+				"d4 must be empty after black pawn departs");
+		assertNull(board.getSquare('e', 4).getOccupant(),
+				"e4 must be empty — captured white pawn must be removed");
+		assertSame(blackPawn, board.getSquare('e', 3).getOccupant(),
+				"Black pawn must occupy e3 after en passant");
+	}
 }
