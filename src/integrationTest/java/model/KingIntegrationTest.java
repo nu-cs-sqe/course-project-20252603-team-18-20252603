@@ -633,4 +633,26 @@ public class KingIntegrationTest {
 		assertFalse(legalMoves.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 1),
 				"getLegalMoves must not include g1 when the path is blocked");
 	}
+
+	/**
+	 * IT-CS-05: Queenside path blocked — piece on d1.
+	 */
+	@Test
+	void castling_queensidePathBlocked_isIllegal() {
+		King king = new King(Color.WHITE);
+		place(king, 'e', 1);
+		place(new Queen(Color.WHITE), 'd', 1);    // blocker
+		place(new Rook(Color.WHITE), 'a', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move castleMove = buildMoveWithoutApplying(king, 'e', 1, 'c', 1);
+
+		GameState state = stateFor(Color.WHITE);
+
+		assertFalse(rulesEngine.isCastlingLegal(castleMove, state));
+
+		List<Square> legalMoves = rulesEngine.getLegalMoves(state, board.getSquare('e', 1));
+		assertFalse(legalMoves.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 1),
+				"getLegalMoves must not include c1 when the path is blocked");
+	}
 }
