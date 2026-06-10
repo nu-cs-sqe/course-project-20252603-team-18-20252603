@@ -691,4 +691,20 @@ public class KingIntegrationTest {
 
 		assertFalse(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-CS-08: Rook absent from the board — castling disallowed.
+	 *
+	 * h1 is empty; isCastlingLegal must find no rook and return false.
+	 */
+	@Test
+	void castling_rookMissing_isIllegal() {
+		King king = new King(Color.WHITE);
+		place(king, 'e', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move castleMove = buildMoveWithoutApplying(king, 'e', 1, 'g', 1);
+
+		assertFalse(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.WHITE)));
+	}
 }
