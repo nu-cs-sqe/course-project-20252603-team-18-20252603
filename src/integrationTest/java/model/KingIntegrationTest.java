@@ -412,4 +412,28 @@ public class KingIntegrationTest {
 		assertTrue(rulesEngine.isInCheck(state, Color.WHITE));
 		assertFalse(rulesEngine.isCheckmate(state, Color.WHITE));
 	}
+
+	/**
+	 * IT-CM-03: Check can be blocked — not checkmate.
+	 *
+	 * White king on e1 attacked by black rook on e8.  White rook on a4 can
+	 * interpose on e4.
+	 */
+	@Test
+	void isCheckmate_checkCanBeBlocked_returnsFalse() {
+		King whiteKing = new King(Color.WHITE);
+		whiteKing.markMoved();
+		Rook whiteRook = new Rook(Color.WHITE);
+		whiteRook.markMoved();
+
+		place(whiteKing, 'e', 1);
+		place(whiteRook, 'a', 4);
+		place(new Rook(Color.BLACK), 'e', 8);
+		place(new King(Color.BLACK), 'a', 8);
+
+		GameState state = stateFor(Color.WHITE);
+
+		assertTrue(rulesEngine.isInCheck(state, Color.WHITE));
+		assertFalse(rulesEngine.isCheckmate(state, Color.WHITE));
+	}
 }
