@@ -115,6 +115,7 @@ public class GameModel {
 		}
 
 		board.movePiece(move.getFrom(), move.getTo());
+		move.getPiece().markMoved();
 
 		Piece captured = move.getCapturedPiece();
 		if (captured != null) {

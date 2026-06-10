@@ -3,6 +3,8 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PawnIntegrationTest {
@@ -95,5 +97,49 @@ class PawnIntegrationTest {
 		Move move = Move.create(pawn, board.getSquare('e', 3), board.getSquare('e', 5));
 
 		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
+
+	/**
+	 * IT-PM-04: Double-step unavailable after pawn has already moved via applyMove.
+	 *
+	 * Drives a white pawn from e2 to e3 through GameModel.applyMove, then
+	 * asserts that e5 is not offered as a legal destination on white's next turn.
+	 *
+	 * Collaborators: GameModel.applyMove → Board.movePiece → (missing markMoved())
+	 * → Pawn.getLegalMoveDestinationSquares → RulesEngine.getLegalMoves.
+	 */
+	@Test
+	void whitePawn_afterMovingViaApplyMove_cannotDoubleStep() {
+		Board board = new Board();
+		RulesEngine rulesEngine = new RulesEngine();
+		GameModel model = new GameModel(board, rulesEngine);
+
+		for (char f = 'a'; f <= 'h'; f++) {
+			for (int r = 1; r <= 8; r++) {
+				board.getSquare(f, r).setOccupant(null);
+			}
+		}
+
+		Pawn whitePawn = new Pawn(Color.WHITE);
+		board.getSquare('e', 2).setOccupant(whitePawn);
+		board.getSquare('e', 1).setOccupant(new King(Color.WHITE));
+		board.getSquare('e', 8).setOccupant(new King(Color.BLACK));
+
+		// Turn 1 — white moves pawn e2→e3.
+		Move firstMove = Move.create(whitePawn, board.getSquare('e', 2), board.getSquare('e', 3));
+		model.applyMove(firstMove);
+
+		// Turn 2 — give black a dummy king move so it's white's turn again.
+		King blackKing = (King) board.getSquare('e', 8).getOccupant();
+		Move blackKingMove = Move.create(blackKing, board.getSquare('e', 8), board.getSquare('d', 8));
+		model.applyMove(blackKingMove);
+
+		// e5 must NOT appear in the legal moves.
+		List<Square> legalMoves = model.getLegalMoves(board.getSquare('e', 3));
+
+		assertFalse(
+				legalMoves.stream().anyMatch(s -> s.getFile() == 'e' && s.getRank() == 5),
+				"Pawn must not be able to double-step after already moving via applyMove"
+		);
 	}
 }
