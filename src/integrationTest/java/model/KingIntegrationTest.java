@@ -261,4 +261,21 @@ public class KingIntegrationTest {
 
 		assertTrue(rulesEngine.isInCheck(stateFor(Color.WHITE), Color.WHITE));
 	}
+
+	/**
+	 * IT-CH-02: King in check by knight.
+	 *
+	 * White king on e1, black knight on f3.  Knights jump over pieces — no
+	 * path-clear check is needed.
+	 *
+	 * Collaborators: isSquareAttacked isLShape branch.
+	 */
+	@Test
+	void isInCheck_kingAttackedByKnight_returnsTrue() {
+		place(new King(Color.WHITE), 'e', 1);
+		place(new Knight(Color.BLACK), 'f', 3);
+		place(new King(Color.BLACK), 'a', 8);
+
+		assertTrue(rulesEngine.isInCheck(stateFor(Color.WHITE), Color.WHITE));
+	}
 }
