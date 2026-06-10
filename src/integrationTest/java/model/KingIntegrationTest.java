@@ -240,4 +240,25 @@ public class KingIntegrationTest {
 		assertFalse(moves.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 1),
 				"g1 must not be a legal destination — king has already moved");
 	}
+
+	// =========================================================================
+	// CHECK DETECTION
+	// =========================================================================
+
+	/**
+	 * IT-CH-01: King in check by rook.
+	 *
+	 * White king on e1, black rook on e8, clear file between them.
+	 *
+	 * Collaborators: RulesEngine.isInCheck → isSquareAttacked finds the rook
+	 * via the isStraight check with an unblocked path.
+	 */
+	@Test
+	void isInCheck_kingAttackedByRook_returnsTrue() {
+		place(new King(Color.WHITE), 'e', 1);
+		place(new Rook(Color.BLACK), 'e', 8);
+		place(new King(Color.BLACK), 'a', 8);
+
+		assertTrue(rulesEngine.isInCheck(stateFor(Color.WHITE), Color.WHITE));
+	}
 }
