@@ -8,6 +8,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,13 +32,13 @@ public class CapturedPiecesView {
 		panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setBorder(BorderFactory.createTitledBorder(localization.text("captured.title")));
-		whitePieces = new JLabel(localization.format("captured.color", localization.text("color.white"),
-				localization.text("captured.none")));
-		blackPieces = new JLabel(localization.format("captured.color", localization.text("color.black"),
-				localization.text("captured.none")));
+		whitePieces = new JLabel(buildHtml(localization.text("color.white"), localization.text("captured.none")));
+		blackPieces = new JLabel(buildHtml(localization.text("color.black"), localization.text("captured.none")));
 		Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 22);
 		whitePieces.setFont(font);
 		blackPieces.setFont(font);
+		whitePieces.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+		blackPieces.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 		panel.add(whitePieces);
 		panel.add(blackPieces);
 	}
@@ -52,8 +53,13 @@ public class CapturedPiecesView {
 
 	public void update(List<Piece> white, List<Piece> black) {
 		panel.setBorder(BorderFactory.createTitledBorder(localization.text("captured.title")));
-		whitePieces.setText(localization.format("captured.color", localization.text("color.white"), pieceList(white)));
-		blackPieces.setText(localization.format("captured.color", localization.text("color.black"), pieceList(black)));
+		whitePieces.setText(buildHtml(localization.text("color.white"), pieceList(white)));
+		blackPieces.setText(buildHtml(localization.text("color.black"), pieceList(black)));
+	}
+
+	private String buildHtml(String color, String pieces) {
+		String raw = localization.format("captured.color", color, pieces);
+		return "<html>" + raw + "</html>";
 	}
 
 	private String pieceList(List<Piece> pieces) {

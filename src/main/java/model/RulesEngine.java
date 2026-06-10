@@ -95,6 +95,9 @@ public class RulesEngine {
 			return false;
 		}
 
+		if (move.getClass() == Move.class) {
+			move.setCapturedPiece(capturedPiece);
+		}
 		return true;
 	}
 
@@ -416,7 +419,12 @@ public class RulesEngine {
 		fromBoardSquare.setOccupant(sourcePiece);
 		toBoardSquare.setOccupant(capturedPiece);
 
-		return !kingInCheck;
+		if (kingInCheck) {
+			return false;
+		}
+
+		move.setCapturedPiece(capturedPiece);
+		return true;
 	}
 
 	protected boolean isEnpassantLegal(Move move, GameState gameState) {
@@ -529,7 +537,12 @@ public class RulesEngine {
 		capturedPawnSquare.setOccupant(capturedPiece);
 		toBoardSquare.setOccupant(null);
 
-		return !kingInCheck;
+		if (kingInCheck) {
+			return false;
+		}
+
+		move.setCapturedPiece(capturedPiece);
+		return true;
 	}
 
 	public GameStatus getGameStatus(GameState gameState) {
