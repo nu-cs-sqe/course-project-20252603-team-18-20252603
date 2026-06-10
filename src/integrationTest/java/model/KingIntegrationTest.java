@@ -151,4 +151,26 @@ public class KingIntegrationTest {
 						.anyMatch(s -> s.getFile() == 'e' && s.getRank() == 3),
 				"e3 must not be offered — king cannot move two squares without castling");
 	}
+
+	/**
+	 * IT-KM-05: Cannot move into check.
+	 *
+	 * White king on e1 (hasMoved == true) attempts Ke1-f1; black rook on f8
+	 * controls the entire f-file, so f1 is attacked.
+	 *
+	 * Collaborators: RulesEngine.isLegalMove temporarily places the king on f1,
+	 * calls isInCheck, which calls isSquareAttacked and finds the black rook.
+	 */
+	@Test
+	void whiteKing_movesIntoCheck_isIllegal() {
+		King king = new King(Color.WHITE);
+		king.markMoved();
+		place(king, 'e', 1);
+		place(new Rook(Color.BLACK), 'f', 8);
+		place(new King(Color.BLACK), 'a', 8);
+
+		Move move = buildMoveWithoutApplying(king, 'e', 1, 'f', 1);
+
+		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
 }
