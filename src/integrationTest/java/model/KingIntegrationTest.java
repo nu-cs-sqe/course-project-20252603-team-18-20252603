@@ -726,4 +726,22 @@ public class KingIntegrationTest {
 
 		assertFalse(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.WHITE)));
 	}
+
+	/**
+	 * IT-CS-10: King would pass through an attacked square (kingside) — disallowed.
+	 *
+	 * Black rook on f8 attacks f1.  King would cross f1 on its way to g1.
+	 */
+	@Test
+	void castling_kingsidePassesThroughAttackedSquare_isIllegal() {
+		King king = new King(Color.WHITE);
+		place(king, 'e', 1);
+		place(new Rook(Color.WHITE), 'h', 1);
+		place(new Rook(Color.BLACK), 'f', 8);
+		place(new King(Color.BLACK), 'a', 8);
+
+		Move castleMove = buildMoveWithoutApplying(king, 'e', 1, 'g', 1);
+
+		assertFalse(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.WHITE)));
+	}
 }
