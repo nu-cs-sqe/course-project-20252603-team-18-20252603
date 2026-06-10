@@ -655,4 +655,23 @@ public class KingIntegrationTest {
 		assertFalse(legalMoves.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 1),
 				"getLegalMoves must not include c1 when the path is blocked");
 	}
+
+	/**
+	 * IT-CS-06: King has previously moved — castling disallowed.
+	 *
+	 * Even if the king is back on e1, hasMoved == true is enough to disqualify
+	 * castling.
+	 */
+	@Test
+	void castling_kingHasMoved_isIllegal() {
+		King king = new King(Color.WHITE);
+		king.markMoved();
+		place(king, 'e', 1);
+		place(new Rook(Color.WHITE), 'h', 1);
+		place(new King(Color.BLACK), 'e', 8);
+
+		Move castleMove = buildMoveWithoutApplying(king, 'e', 1, 'g', 1);
+
+		assertFalse(rulesEngine.isCastlingLegal(castleMove, stateFor(Color.WHITE)));
+	}
 }
