@@ -297,4 +297,28 @@ public class KingIntegrationTest {
 
 		assertFalse(rulesEngine.isInCheck(stateFor(Color.WHITE), Color.WHITE));
 	}
+
+	/**
+	 * IT-CH-04: Pinned piece — moving it exposes own king (discovered check).
+	 *
+	 * White king on e1, white rook on e4, black rook on e8.  White attempts to
+	 * move the rook from e4 to a4, which removes the blocker and exposes the
+	 * white king to the black rook.
+	 *
+	 * Collaborators: RulesEngine.isLegalMove simulates the move, calls
+	 * isInCheck, and finds the king in check.
+	 */
+	@Test
+	void pinnedPiece_movementExposesKing_isIllegal() {
+		Rook whiteRook = new Rook(Color.WHITE);
+		whiteRook.markMoved();
+		place(new King(Color.WHITE), 'e', 1);
+		place(whiteRook, 'e', 4);
+		place(new Rook(Color.BLACK), 'e', 8);
+		place(new King(Color.BLACK), 'a', 8);
+
+		Move move = buildMoveWithoutApplying(whiteRook, 'e', 4, 'a', 4);
+
+		assertFalse(rulesEngine.isLegalMove(move, stateFor(Color.WHITE)));
+	}
 }
