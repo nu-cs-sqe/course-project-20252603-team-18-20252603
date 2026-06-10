@@ -55,7 +55,7 @@ public class GameModelTest {
 	 * Caller must replay and verify piece and move themselves.
 	 */
 	private void expectLegalMove(Move move, Piece piece, Color color, Piece capturedPiece, GameStatus resultStatus) {
-		expect(move.getPiece()).andReturn(piece);
+		expect(move.getPiece()).andReturn(piece).anyTimes();
 		expect(piece.getColor()).andReturn(color);
 		expect(move.getFrom()).andReturn(EasyMock.createMock(Square.class));
 		expect(move.getTo()).andReturn(EasyMock.createMock(Square.class));
@@ -447,7 +447,9 @@ public class GameModelTest {
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		expect(whitePiece.getColor()).andReturn(Color.WHITE);
 		Move move = EasyMock.createMock(Move.class);
-		expect(move.getPiece()).andReturn(whitePiece);
+		expect(move.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(move.getFrom()).andReturn(from);
 		expect(move.getTo()).andReturn(to);
 		expect(move.isCastle()).andReturn(false);
@@ -485,7 +487,9 @@ public class GameModelTest {
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		expect(whitePiece.getColor()).andReturn(Color.WHITE);
 		Move move = EasyMock.createMock(Move.class);
-		expect(move.getPiece()).andReturn(whitePiece);
+		expect(move.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(move.getFrom()).andReturn(from);
 		expect(move.getTo()).andReturn(to);
 		expect(move.getCapturedPiece()).andReturn(null).anyTimes();
@@ -523,7 +527,9 @@ public class GameModelTest {
 
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Move move = EasyMock.createMock(Move.class);
-		expect(move.getPiece()).andReturn(whitePiece);
+		expect(move.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(whitePiece.getColor()).andReturn(Color.WHITE);
 		expect(move.getFrom()).andReturn(EasyMock.createMock(Square.class));
 		expect(move.getTo()).andReturn(EasyMock.createMock(Square.class));
@@ -567,7 +573,9 @@ public class GameModelTest {
 
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Move move = EasyMock.createMock(Move.class);
-		expect(move.getPiece()).andReturn(whitePiece);
+		expect(move.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(whitePiece.getColor()).andReturn(Color.WHITE);
 		expect(move.getFrom()).andReturn(EasyMock.createMock(Square.class));
 		expect(move.getTo()).andReturn(EasyMock.createMock(Square.class));
@@ -605,7 +613,9 @@ public class GameModelTest {
 		Piece promotionPiece = EasyMock.createMock(Piece.class);
 		Move move = EasyMock.createMock(Move.class);
 
-		expect(move.getPiece()).andReturn(whitePiece);
+		expect(move.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(whitePiece.getColor()).andReturn(Color.WHITE);
 		expect(move.getFrom()).andReturn(from).anyTimes();
 		expect(move.getTo()).andReturn(to).anyTimes();
@@ -644,7 +654,9 @@ public class GameModelTest {
 		Piece whitePawn = EasyMock.createMock(Piece.class);
 		Move move = EasyMock.createMock(Move.class);
 
-		expect(move.getPiece()).andReturn(whitePawn);
+		expect(move.getPiece()).andReturn(whitePawn).anyTimes();
+		whitePawn.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(whitePawn.getColor()).andReturn(Color.WHITE);
 		expect(move.getFrom()).andReturn(from).anyTimes();
 		expect(move.getTo()).andReturn(to).anyTimes();
@@ -686,7 +698,9 @@ public class GameModelTest {
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Move whiteMove = EasyMock.createMock(Move.class);
 
-		expect(whiteMove.getPiece()).andReturn(whitePiece);
+		expect(whiteMove.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(whitePiece.getColor()).andReturn(Color.WHITE);
 		expect(whiteMove.getFrom()).andReturn(whiteFrom).anyTimes();
 		expect(whiteMove.getTo()).andReturn(whiteTo).anyTimes();
@@ -707,7 +721,9 @@ public class GameModelTest {
 		Piece blackPawn = EasyMock.createMock(Piece.class);
 		Move blackMove = EasyMock.createMock(Move.class);
 
-		expect(blackMove.getPiece()).andReturn(blackPawn);
+		expect(blackMove.getPiece()).andReturn(blackPawn).anyTimes();
+		blackPawn.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(blackPawn.getColor()).andReturn(Color.BLACK);
 		expect(blackMove.getFrom()).andReturn(blackFrom).anyTimes();
 		expect(blackMove.getTo()).andReturn(blackTo).anyTimes();
@@ -754,7 +770,9 @@ public class GameModelTest {
 		Piece whiteKing = EasyMock.createMock(Piece.class);
 		Move move = EasyMock.createMock(Move.class);
 
-		expect(move.getPiece()).andReturn(whiteKing);
+		expect(move.getPiece()).andReturn(whiteKing).anyTimes();
+		whiteKing.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(whiteKing.getColor()).andReturn(Color.WHITE);
 		expect(move.getFrom()).andReturn(kingFrom).anyTimes();
 		expect(move.getTo()).andReturn(kingTo).anyTimes();
@@ -795,7 +813,9 @@ public class GameModelTest {
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Move whiteMove = EasyMock.createMock(Move.class);
 
-		expect(whiteMove.getPiece()).andReturn(whitePiece);
+		expect(whiteMove.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(whitePiece.getColor()).andReturn(Color.WHITE);
 		expect(whiteMove.getFrom()).andReturn(whiteFrom).anyTimes();
 		expect(whiteMove.getTo()).andReturn(whiteTo).anyTimes();
@@ -817,7 +837,9 @@ public class GameModelTest {
 		Piece blackKing = EasyMock.createMock(Piece.class);
 		Move blackCastle = EasyMock.createMock(Move.class);
 
-		expect(blackCastle.getPiece()).andReturn(blackKing);
+		expect(blackCastle.getPiece()).andReturn(blackKing).anyTimes();
+		blackKing.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(blackKing.getColor()).andReturn(Color.BLACK);
 		expect(blackCastle.getFrom()).andReturn(kingFrom).anyTimes();
 		expect(blackCastle.getTo()).andReturn(kingTo).anyTimes();
@@ -861,7 +883,9 @@ public class GameModelTest {
 
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Move move = EasyMock.createMock(Move.class);
-		expect(move.getPiece()).andReturn(whitePiece);
+		expect(move.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(whitePiece.getColor()).andReturn(Color.WHITE);
 		expect(move.getFrom()).andReturn(EasyMock.createMock(Square.class));
 		expect(move.getTo()).andReturn(EasyMock.createMock(Square.class));
@@ -906,7 +930,9 @@ public class GameModelTest {
 
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Move move = EasyMock.createMock(Move.class);
-		expect(move.getPiece()).andReturn(whitePiece);
+		expect(move.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(whitePiece.getColor()).andReturn(Color.WHITE);
 		expect(move.getFrom()).andReturn(EasyMock.createMock(Square.class));
 		expect(move.getTo()).andReturn(EasyMock.createMock(Square.class));
@@ -969,7 +995,9 @@ public class GameModelTest {
 
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Move move = EasyMock.createMock(Move.class);
-		expect(move.getPiece()).andReturn(whitePiece);
+		expect(move.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(whitePiece.getColor()).andReturn(Color.WHITE);
 		expect(move.getFrom()).andReturn(EasyMock.createMock(Square.class));
 		expect(move.getTo()).andReturn(EasyMock.createMock(Square.class));
@@ -1035,6 +1063,8 @@ public class GameModelTest {
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Piece capturedPiece = EasyMock.createMock(Piece.class);
 		Move move = EasyMock.createMock(Move.class);
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expectLegalMove(move, whitePiece, Color.WHITE, capturedPiece, GameStatus.ONGOING);
 
 		replayMocks();
@@ -1063,12 +1093,16 @@ public class GameModelTest {
 
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Move whiteMove = EasyMock.createMock(Move.class);
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expectLegalMove(whiteMove, whitePiece, Color.WHITE, null, GameStatus.ONGOING);
 
 		Piece blackPiece = EasyMock.createMock(Piece.class);
 		Piece capturedPiece = EasyMock.createMock(Piece.class);
 		Move blackMove = EasyMock.createMock(Move.class);
-		expect(blackMove.getPiece()).andReturn(blackPiece);
+		expect(blackMove.getPiece()).andReturn(blackPiece).anyTimes();
+		blackPiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(blackPiece.getColor()).andReturn(Color.BLACK);
 		expect(blackMove.getFrom()).andReturn(EasyMock.createMock(Square.class));
 		expect(blackMove.getTo()).andReturn(EasyMock.createMock(Square.class));
@@ -1109,6 +1143,8 @@ public class GameModelTest {
 
 		Piece whitePiece = EasyMock.createMock(Piece.class);
 		Move move = EasyMock.createMock(Move.class);
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expectLegalMove(move, whitePiece, Color.WHITE, null, GameStatus.ONGOING);
 
 		replayMocks();
@@ -1174,7 +1210,9 @@ public class GameModelTest {
 
 		// Black non-capturing move to flip turn back to WHITE.
 		Piece blackPiece = EasyMock.createMock(Piece.class);
-		expect(blackMove.getPiece()).andReturn(blackPiece);
+		expect(blackMove.getPiece()).andReturn(blackPiece).anyTimes();
+		blackPiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(blackPiece.getColor()).andReturn(Color.BLACK);
 		expect(blackMove.getFrom()).andReturn(EasyMock.createMock(Square.class));
 		expect(blackMove.getTo()).andReturn(EasyMock.createMock(Square.class));
@@ -1189,7 +1227,9 @@ public class GameModelTest {
 				.andReturn(GameStatus.ONGOING);
 
 		// White captures captured2.
-		expect(secondMove.getPiece()).andReturn(whitePiece);
+		expect(secondMove.getPiece()).andReturn(whitePiece).anyTimes();
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
 		expect(secondMove.getFrom()).andReturn(EasyMock.createMock(Square.class));
 		expect(secondMove.getTo()).andReturn(EasyMock.createMock(Square.class));
 		expect(secondMove.isCastle()).andReturn(false);

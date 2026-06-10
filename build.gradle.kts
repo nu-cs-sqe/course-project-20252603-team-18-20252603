@@ -21,13 +21,27 @@ repositories {
     mavenCentral()
 }
 
+// ─── Source sets ─────────────────────────────────────────────────────────────
+sourceSets {
+    create("integrationTest") {
+        java.srcDir("src/integrationTest/java")
+        compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+// ─── Dependencies ─────────────────────────────────────────────────────────────
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.easymock:easymock:5.2.0")
     compileOnly("com.github.spotbugs:spotbugs-annotations:4.9.3")
+    "integrationTestImplementation"(platform("org.junit:junit-bom:5.10.0"))
+    "integrationTestImplementation"("org.junit.jupiter:junit-jupiter")
+    "integrationTestImplementation"("org.easymock:easymock:5.2.0")
 }
 
+// ─── Java toolchain ───────────────────────────────────────────────────────────
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(11)
@@ -43,23 +57,49 @@ tasks.compileTestJava {
     options.encoding = "UTF-8"
 }
 
+tasks.named<JavaCompile>("compileIntegrationTestJava") {
+    options.encoding = "UTF-8"
+}
+
+// ─── Unit test task ───────────────────────────────────────────────────────────
 tasks.test {
     useJUnitPlatform()
     finalizedBy(tasks.jacocoTestReport)
 }
 
+// ─── Integration test task ────────────────────────────────────────────────────
+val integrationTest = tasks.register<Test>("integrationTest") {
+    description = "Runs integration tests."
+    group = "verification"
+
+    testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+    classpath       = sourceSets["integrationTest"].runtimeClasspath
+
+    useJUnitPlatform()
+
+    shouldRunAfter(tasks.test)
+}
+
+// ─── Reporting ────────────────────────────────────────────────────────────────
 tasks.jacocoTestReport {
+    executionData.setFrom(
+        fileTree(layout.buildDirectory).include(
+            "jacoco/test.exec",
+            "jacoco/integrationTest.exec"
+        )
+    )
     reports {
         xml.required.set(false)
         csv.required.set(false)
         html.required.set(true)
-
         html.outputLocation.set(
             layout.buildDirectory.dir("reports/jacoco")
         )
     }
+    dependsOn(tasks.test, integrationTest)
 }
 
+// ─── Static analysis / mutation ───────────────────────────────────────────────
 tasks.check {
     dependsOn(tasks.pitest)
 }
@@ -78,14 +118,10 @@ configure<CheckstyleExtension> {
 
 pitest {
     junit5PluginVersion.set("1.2.1")
-
     targetClasses.set(listOf("model.*", "view.*"))
     targetTests.set(listOf("model.*", "view.*"))
-
     threads.set(4)
-
     outputFormats.set(setOf("HTML"))
-
     timestampedReports.set(false)
 }
 

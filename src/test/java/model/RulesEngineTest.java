@@ -509,7 +509,7 @@ class RulesEngineTest {
 		EasyMock.expect(move.getTo()).andReturn(to);
 		EasyMock.expect(board.getSquare('e', 4)).andReturn(toBoardSquare);
 
-		EasyMock.expect(pawn.getType()).andReturn(PieceType.PAWN);
+		EasyMock.expect(pawn.getType()).andReturn(PieceType.PAWN).anyTimes();
 		EasyMock.expect(pawn.hasMoved()).andReturn(true);
 
 		EasyMock.replay(rulesEngine, move, gameState, board, pawn);

@@ -115,6 +115,7 @@ public class GameModel {
 		}
 
 		board.movePiece(move.getFrom(), move.getTo());
+		move.getPiece().markMoved();
 
 		Piece captured = move.getCapturedPiece();
 		if (captured != null) {
@@ -161,10 +162,10 @@ public class GameModel {
 
 		moveHistory.add(move);
 
+		currentTurn = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
+
 		GameState newState = snapshot();
 		status = rulesEngine.getGameStatus(newState);
-
-		currentTurn = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
 
 	@SuppressFBWarnings(
