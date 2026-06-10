@@ -197,4 +197,47 @@ public class KingIntegrationTest {
 			assertTrue(s.getRank() >= 1 && s.getRank() <= 8);
 		}
 	}
+
+	/**
+	 * IT-KM-07: King move via applyMove sets hasMoved flag — castling no longer offered.
+	 *
+	 * White king on e1 advances to e2 through GameModel.applyMove.  After a
+	 * black filler move the king is on e2. getLegalMoves must not include the
+	 * castling squares c1 or g1, confirming hasMoved == true.
+	 *
+	 * Collaborators: GameModel.applyMove → Board.movePiece → Piece.markMoved
+	 * → King.getLegalMoveDestinationSquares → RulesEngine.getLegalMoves.
+	 */
+	@Test
+	void whiteKing_afterApplyMove_hasMoved_noCastlingCandidates() {
+		Board board = new Board();
+		RulesEngine rulesEngine = new RulesEngine();
+		GameModel model = new GameModel(board, rulesEngine);
+
+		for (char f = 'a'; f <= 'h'; f++) {
+			for (int r = 1; r <= 8; r++) {
+				board.getSquare(f, r).setOccupant(null);
+			}
+		}
+
+		King whiteKing = new King(Color.WHITE);
+		board.getSquare('e', 1).setOccupant(whiteKing);
+		board.getSquare('e', 8).setOccupant(new King(Color.BLACK));
+
+		// White: Ke1-e2
+		Move whiteMove = Move.create(whiteKing, board.getSquare('e', 1), board.getSquare('e', 2));
+		model.applyMove(whiteMove);
+
+		// Black filler: Ke8-d8
+		King blackKing = (King) board.getSquare('e', 8).getOccupant();
+		Move blackMove = Move.create(blackKing, board.getSquare('e', 8), board.getSquare('d', 8));
+		model.applyMove(blackMove);
+
+		List<Square> moves = model.getLegalMoves(board.getSquare('e', 2));
+
+		assertFalse(moves.stream().anyMatch(s -> s.getFile() == 'c' && s.getRank() == 1),
+				"c1 must not be a legal destination — king has already moved");
+		assertFalse(moves.stream().anyMatch(s -> s.getFile() == 'g' && s.getRank() == 1),
+				"g1 must not be a legal destination — king has already moved");
+	}
 }
