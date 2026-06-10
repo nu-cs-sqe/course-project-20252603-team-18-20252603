@@ -1,6 +1,7 @@
 package view;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import i18n.Localization;
 import model.Bishop;
 import model.Color;
 import model.Knight;
@@ -15,9 +16,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class PromotionView {
 	private final Component parent;
+	private final Localization localization;
 
 	public PromotionView() {
-		this(null);
+		this(null, new Localization());
 	}
 
 	@SuppressFBWarnings(
@@ -25,7 +27,16 @@ public class PromotionView {
 			justification = "The dialog intentionally retains its owning Swing component."
 	)
 	public PromotionView(Component parent) {
+		this(parent, new Localization());
+	}
+
+	@SuppressFBWarnings(
+			value = "EI_EXPOSE_REP2",
+			justification = "The dialog intentionally retains its owning Swing component."
+	)
+	public PromotionView(Component parent, Localization localization) {
 		this.parent = parent;
+		this.localization = localization;
 	}
 
 	/**
@@ -39,11 +50,16 @@ public class PromotionView {
 		CompletableFuture<Piece> selection = new CompletableFuture<>();
 		Runnable showDialog = () -> {
 			Color pieceColor = Color.valueOf(color.toUpperCase());
-			String[] options = {"Queen", "Rook", "Bishop", "Knight"};
+			String[] options = {
+				localization.text("piece.queen"),
+				localization.text("piece.rook"),
+				localization.text("piece.bishop"),
+				localization.text("piece.knight")
+			};
 			int choice = JOptionPane.showOptionDialog(
 					parent,
-					"Choose a piece for pawn promotion:",
-					"Pawn Promotion",
+					localization.text("promotion.message"),
+					localization.text("promotion.title"),
 					JOptionPane.DEFAULT_OPTION,
 					JOptionPane.QUESTION_MESSAGE,
 					null,
