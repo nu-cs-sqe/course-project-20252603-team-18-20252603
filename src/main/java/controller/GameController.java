@@ -54,6 +54,14 @@ public class GameController {
 		}
 	}
 
+	public void onResign() {
+		model.resign();
+		selectedSquare = null;
+		selectedLegalMoves = null;
+		boardView.clearHighlights();
+		refreshViews();
+	}
+
 	private void handlePieceSelection(Square square) {
 		if (square.getOccupant() == null) {
 			return;

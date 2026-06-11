@@ -1238,4 +1238,31 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC32: White Resigns At Game Start
+	// -------------------------------------------------------------------------
+	@Test
+	void onResign_whiteResignsAtGameStart_resignsAndRefreshesViews() {
+		Board board = createMock(Board.class);
+
+		model.resign();
+		expectLastCall().once();
+		boardView.clearHighlights();
+		expectLastCall().once();
+		expect(model.getStatus()).andReturn(GameStatus.RESIGNED).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, board);
+
+		controller.onResign();
+
+		verify(model, boardView, notificationView, promotionView, capturedView, board);
+	}
 }

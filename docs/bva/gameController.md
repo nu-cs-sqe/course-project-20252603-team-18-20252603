@@ -286,9 +286,10 @@ BoardView emits onSquareClick
 
 ### Method under test: `GameController.onResign()`
 
-- **TC32: White Resigns At Game Start** (:x:)
+- **TC32: White Resigns At Game Start** (:white_check_mark:)
     - **State of the system**: The game is unlocked, `model.getStatus()` is `ONGOING`, and `model.getCurrentTurn()` is `WHITE`.
     - **Expected output**: `model.resign()` is called once, the model enters `RESIGNED`, Black is recorded as the winner, any selection and highlights are cleared, and `refreshViews()` is called. Model winner behavior is covered by `gameModel.md` TC38.
+    - **Implemented at**: `onResign_whiteResignsAtGameStart_resignsAndRefreshesViews`
 
 - **TC33: Black Resigns On Black's Turn** (:x:)
     - **State of the system**: White has completed a legal move, the game is unlocked, and `model.getCurrentTurn()` is `BLACK`.
