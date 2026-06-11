@@ -497,3 +497,37 @@ appended to `capturedByWhite`; if `BLACK`, to `capturedByBlack`.
 * **State of the system**: Two separate legal White capturing moves are applied (with a Black non-capturing move in between to alternate turns). Each White move returns a distinct `Piece` from `getCapturedPiece()`.
 * **Expected output**: `getCapturedPieces(Color.WHITE)` contains both pieces in the order they were captured. `getCapturedPieces(Color.BLACK)` remains empty throughout.
 * **Implemented at**: `getCapturedPieces_multipleCaptures_accumulatesInOrder`
+
+---
+
+### Method under test: `GameModel.resign()`
+
+#### TC38: White Resigns At Start
+
+* **State of the system**: A new `GameModel` is constructed. `currentTurn = WHITE`.
+* **Expected output**: Calling `resign()` sets status to `RESIGNED` and records `BLACK` as the winner.
+* **Implemented at**: `resign_whiteToMove_setsStatusResignedAndWinnerBlack`
+
+#### TC39: Black Resigns After White Move
+
+* **State of the system**: A legal White move is applied first, flipping `currentTurn` to `BLACK`.
+* **Expected output**: Calling `resign()` sets status to `RESIGNED` and records `WHITE` as the winner.
+* **Implemented at**: `resign_blackToMove_setsStatusResignedAndWinnerWhite`
+
+#### TC40: Winner Is Null Before Resignation
+
+* **State of the system**: A new `GameModel` is constructed and no resignation has occurred.
+* **Expected output**: `getWinner()` returns `null`.
+* **Implemented at**: `getWinner_atConstruction_returnsNull`
+
+#### TC41: Resign After Game Over Is Rejected
+
+* **State of the system**: The model has already reached a terminal game state such as `CHECKMATE`.
+* **Expected output**: Calling `resign()` throws `IllegalStateException`.
+* **Implemented at**: `resign_afterCheckmate_throwsIllegalStateException`
+
+#### TC42: Move After Resignation Is Rejected
+
+* **State of the system**: The current player has resigned and the model status is `RESIGNED`.
+* **Expected output**: A later call to `applyMove()` throws `IllegalStateException`.
+* **Implemented at**: `applyMove_afterResignation_throwsIllegalStateException`
