@@ -34,9 +34,14 @@ BoardView emits onSquareClick
     * Boundary: The same square as `selectedSquare` (deselection / re-click boundary); a corner square (`a1`, `a8`, `h1`, `h8`) representing the extremes of valid board coordinates.
 
 * `GameStatus` (returned by `model.getStatus()`): Drives the notification and input-locking behavior inside `refreshViews()`.
-    * Valid values: `ONGOING`, `CHECK`, `CHECKMATE`, `STALEMATE`.
+    * Valid values: `ONGOING`, `CHECK`, `CHECKMATE`, `STALEMATE`, `RESIGNED`.
     * Invalid values: `null` (would indicate a model-layer bug; the controller must not crash).
-    * Boundary: The transition from `ONGOING` → `CHECK` (check indicator must appear); `CHECK` → `ONGOING` (check indicator must be cleared); `CHECK` or `ONGOING` → `CHECKMATE` or `STALEMATE` (input must be permanently disabled).
+    * Boundary: The transition from `ONGOING` → `CHECK` (check indicator must appear); `CHECK` → `ONGOING` (check indicator must be cleared); `CHECK` or `ONGOING` → `CHECKMATE`, `STALEMATE`, or `RESIGNED` (input must be permanently disabled).
+
+* Resign action (event emitted by the resign button): Requests that the player whose turn it currently is concede the game.
+    * Valid state: `model.getStatus()` is `ONGOING` or `CHECK`.
+    * Invalid state: The game is already terminal (`CHECKMATE`, `STALEMATE`, or `RESIGNED`), or another controller operation has temporarily locked input.
+    * Boundary: Resignation on White's turn makes Black the winner; resignation on Black's turn makes White the winner. These winner boundaries are defined and tested at the model layer in `gameModel.md` TC38 and TC39.
 
 * `promotionPiece` (Piece — resolved from `PromotionView.show()`): The player's chosen promotion piece, returned asynchronously.
     * Valid values: An instantiated `Piece` of type Queen, Rook, Bishop, or Knight, with the color matching the current player.
@@ -69,6 +74,8 @@ BoardView emits onSquareClick
     * `CHECK` → `ONGOING` (check resolved) — check indicator must be cleared.
     * `CHECK` → `CHECKMATE` — game locks; all input disabled.
     * `ONGOING` → `STALEMATE` — game locks; no check indicator shown.
+    * `ONGOING` or `CHECK` → `RESIGNED` — the opponent is shown as the winner and all game input is disabled.
+    * Terminal state → resignation request — no additional state change; the model rejection boundary is covered by `gameModel.md` TC41.
 
 * Promotion Boundaries:
     * Pawn on rank `7` (White) or rank `2` (Black) moving to the final rank — promotion flow triggers.
@@ -89,6 +96,8 @@ BoardView emits onSquareClick
 * `handleMoveExecution(Square target)`: Handles the second click of a two-click move sequence. Validates that `target` is within the legal moves list, constructs a `Move`, sets any applicable special flags (`isEnPassant`, `isCastle`), calls `model.applyMove()`, clears `selectedSquare` and highlights, and calls `refreshViews()`. If the move is a promotion, delegates to `handlePromotion()` before finalizing. This is the most consequential method — the only place where game state actually changes and all five special move types must be correctly handled.
 
 * `handlePromotion(Square square)`: Pauses the move flow to collect an asynchronous promotion choice. Calls `promotionView.show(color)`, awaits the resolved `Piece`, and sets it as `promotionPiece` on the pending `Move` before finalization. Uniquely, this is the only method in the controller that must handle async execution, which creates a temporarily suspended game state while `PromotionView` is open.
+
+* `onResign()`: Handles the resign-button action. If the game is not locked, delegates the state change to `model.resign()`, clears any active selection and highlights, and calls `refreshViews()`. The model owns winner calculation and terminal-state validation, as covered by `gameModel.md` TC38–TC42.
 
 * `refreshViews()`: Synchronizes all four views with the current model state after any state-changing operation. Calls `boardView.render()`, `capturedView.update()`, `notificationView` based on `model.getStatus()`, and clears or sets check indicators as appropriate. By centralizing all view updates here, the design avoids scattered partial-update calls across the other methods. The primary risk is missing a branch — particularly forgetting to clear the check indicator when check is resolved — which produces a persistent visual bug.
 
@@ -272,3 +281,27 @@ BoardView emits onSquareClick
     - **State of the system**: No moves have been made. `model.getStatus()` returns `ONGOING`. Captured pieces lists are empty.
     - **Expected output**: `boardView.render()` is called with the standard starting board. `capturedView.update()` is called with two empty lists. `notificationView.showTurn(WHITE)` is called. No check indicator is shown.
     - **Implemented at**: `refreshViews_calledFromInit_rendersStartingState`
+
+---
+
+### Method under test: `GameController.onResign()`
+
+- **TC32: White Resigns At Game Start** (:x:)
+    - **State of the system**: The game is unlocked, `model.getStatus()` is `ONGOING`, and `model.getCurrentTurn()` is `WHITE`.
+    - **Expected output**: `model.resign()` is called once, the model enters `RESIGNED`, Black is recorded as the winner, any selection and highlights are cleared, and `refreshViews()` is called. Model winner behavior is covered by `gameModel.md` TC38.
+
+- **TC33: Black Resigns On Black's Turn** (:x:)
+    - **State of the system**: White has completed a legal move, the game is unlocked, and `model.getCurrentTurn()` is `BLACK`.
+    - **Expected output**: `model.resign()` is called once, the model enters `RESIGNED`, White is recorded as the winner, and `refreshViews()` is called. Model winner behavior is covered by `gameModel.md` TC39.
+
+- **TC34: Resign With A Piece Selected** (:x:)
+    - **State of the system**: The game is ongoing and `selectedSquare` and `selectedLegalMoves` are non-null when the resign action occurs.
+    - **Expected output**: The resignation is applied, `selectedSquare` and `selectedLegalMoves` are cleared, and `boardView.clearHighlights()` is called so stale move highlights are not left visible.
+
+- **TC35: Resign While Controller Input Is Locked** (:x:)
+    - **State of the system**: `gameLocked == true`, such as while promotion selection is pending or after a terminal game state.
+    - **Expected output**: The request is ignored. `model.resign()` and `refreshViews()` are not called, and the current state remains unchanged.
+
+- **TC36: Duplicate Resign Request After Resignation** (:x:)
+    - **State of the system**: A previous resignation has completed and `model.getStatus()` is already `RESIGNED`.
+    - **Expected output**: No second resignation is applied and the original winner remains unchanged. The model's terminal-state rejection is covered by `gameModel.md` TC41.
