@@ -1292,4 +1292,48 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView, board);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC34: Resign With A Piece Selected
+	// -------------------------------------------------------------------------
+	@Test
+	void onResign_pieceSelected_clearsSelectionAndHighlights() {
+		Board board = createMock(Board.class);
+		Piece piece = createMock(Piece.class);
+		Square selected = createMock(Square.class);
+		Square legalDestination = createMock(Square.class);
+		List<Square> legalMoves = List.of(legalDestination);
+
+		expect(selected.getOccupant()).andReturn(piece).times(2);
+		expect(piece.getColor()).andReturn(Color.WHITE).once();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).once();
+		expect(model.getLegalMoves(selected)).andReturn(legalMoves).once();
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+
+		model.resign();
+		expectLastCall().once();
+		boardView.clearHighlights();
+		expectLastCall().once();
+		expect(model.getStatus()).andReturn(GameStatus.RESIGNED).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		expect(legalDestination.getOccupant()).andReturn(null).once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				board, piece, selected, legalDestination);
+
+		controller.onSquareClick(selected);
+		controller.onResign();
+		controller.onSquareClick(legalDestination);
+
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				board, piece, selected, legalDestination);
+	}
 }
