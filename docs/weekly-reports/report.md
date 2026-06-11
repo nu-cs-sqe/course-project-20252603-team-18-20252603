@@ -64,7 +64,7 @@ N/A
 17. [done] Eshan Haq: Completed RulesEngine isCastlingLegal (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
 18. [done] Eshan Haq: Completed RulesEngine isEnpassantLegal (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/32)
 
-# Week 10 (06/02/2026 - 06/08/2026)
+# Final Week (06/02/2026 - 06/10/2026)
 **Planning and Progress Tracking**:
 1. [done] David Yim: Square Refactor to add equals (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/66)
 2. [done] David Yim: Implemented full GUI (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/66)
