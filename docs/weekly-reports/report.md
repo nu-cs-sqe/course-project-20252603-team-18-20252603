@@ -73,3 +73,7 @@ N/A
 5. [done] David Yim: Bugfix: CapturedView not displaying captured pieces (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/74)
 6. [done] David Yim: New Feature - Resign Controller BVA/Implementation (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/75)
 7. [done] David Yim: New Feature - Resign GUI (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/75)
+8. [done] Eshan Haq: Completed GameController.handleMoveExecution() (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/62/commits)
+9. [done] Eshan Haq: Fixed issues with failing tests for GameController (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/62/commits)
+10. [done] Eshan Haq: New Feature - Resign Game Model BVA/Implementation (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/75)
+11. [done] Eshan Haq: Fix missing code coverage for GameModel (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/64)
