@@ -291,9 +291,10 @@ BoardView emits onSquareClick
     - **Expected output**: `model.resign()` is called once, the model enters `RESIGNED`, Black is recorded as the winner, any selection and highlights are cleared, and `refreshViews()` is called. Model winner behavior is covered by `gameModel.md` TC38.
     - **Implemented at**: `onResign_whiteResignsAtGameStart_resignsAndRefreshesViews`
 
-- **TC33: Black Resigns On Black's Turn** (:x:)
+- **TC33: Black Resigns On Black's Turn** (:white_check_mark:)
     - **State of the system**: White has completed a legal move, the game is unlocked, and `model.getCurrentTurn()` is `BLACK`.
     - **Expected output**: `model.resign()` is called once, the model enters `RESIGNED`, White is recorded as the winner, and `refreshViews()` is called. Model winner behavior is covered by `gameModel.md` TC39.
+    - **Implemented at**: `onResign_blackResignsOnBlackTurn_resignsAndRefreshesViews`
 
 - **TC34: Resign With A Piece Selected** (:x:)
     - **State of the system**: The game is ongoing and `selectedSquare` and `selectedLegalMoves` are non-null when the resign action occurs.
