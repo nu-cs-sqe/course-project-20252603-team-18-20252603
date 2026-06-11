@@ -71,7 +71,16 @@ N/A
 3. [done] David Yim: Square Refactor to add equals (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/66)
 4. [done] David Yim: Implemented full GUI (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/66)
 5. [done] David Yim: Bugfix: promotion not working(https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/66)
-6. [done] David Yim: i18n(https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/67)
+6. [done] David Yim: i18n (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/67)
 7. [done] David Yim: Bugfix: CapturedView not displaying captured pieces (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/74)
 8. [done] David Yim: New Feature - Resign Controller BVA/Implementation (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/75)
 9. [done] David Yim: New Feature - Resign GUI (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/75)
+10. [done] Eric Fei: Completed GameController.init() (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/62)
+11. [done] Eric Fei: Completed GameController.onSquareClick() (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/62)
+12. [done] Eric Fei: Completed GameController.handlePieceSelection() (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/62)
+13. [done] Eric Fei: GameModel Refactor (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/64)
+14. [done] Eric Fei: Completed Integration Tests for Main Feature #1 (Pawn and associated movements, conditions) (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/71)
+    * Bugfix for Pawn double jumps
+15. [done] Eric Fei: Completed Integration Tests for Main Feature #2 (King and associated movements, conditions) (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/71)
+    * Bugfix for King castling despite pieces in between
+16. [done] Eric Fei: Bugfix: CapturedView overflowing captured pieces (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/74)
