@@ -54,6 +54,10 @@ public class NotificationView {
 		setMessage(localization.text("notification.stalemate"), new Color(225, 225, 225));
 	}
 
+	public void showResignation(String winner) {
+		setMessage(localization.format("notification.resigned", displayColor(winner)), new Color(255, 205, 210));
+	}
+
 	private void setMessage(String message, Color background) {
 		label.setText(message);
 		label.setBackground(background);

@@ -52,17 +52,27 @@ public final class Main {
 		boardView.setSquareClickHandler(controller::onSquareClick);
 
 		JButton languageButton = new JButton(localization.text("language.switch"));
+		JButton resignButton = new JButton(localization.text("game.resign"));
+		resignButton.addActionListener(event -> {
+			controller.onResign();
+			resignButton.setEnabled(false);
+		});
 		languageButton.addActionListener(event -> {
 			localization.toggleLocale();
 			frame.setTitle(localization.text("game.title"));
 			languageButton.setText(localization.text("language.switch"));
+			resignButton.setText(localization.text("game.resign"));
 			controller.refreshViews();
 			frame.pack();
 		});
 
+		JPanel controls = new JPanel();
+		controls.add(resignButton);
+		controls.add(languageButton);
+
 		JPanel header = new JPanel(new BorderLayout(12, 0));
 		header.add(notificationView.getComponent(), BorderLayout.CENTER);
-		header.add(languageButton, BorderLayout.EAST);
+		header.add(controls, BorderLayout.EAST);
 
 		JPanel content = new JPanel(new BorderLayout(12, 12));
 		content.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));

@@ -1254,6 +1254,9 @@ public class GameControllerTest {
 		expect(model.getBoard()).andReturn(board).once();
 		boardView.render(board);
 		expectLastCall().once();
+		expect(model.getWinner()).andReturn(Color.BLACK).once();
+		notificationView.showResignation("BLACK");
+		expectLastCall().once();
 		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
 		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
 		capturedView.update(Collections.emptyList(), Collections.emptyList());
@@ -1280,6 +1283,9 @@ public class GameControllerTest {
 		expect(model.getStatus()).andReturn(GameStatus.RESIGNED).once();
 		expect(model.getBoard()).andReturn(board).once();
 		boardView.render(board);
+		expectLastCall().once();
+		expect(model.getWinner()).andReturn(Color.WHITE).once();
+		notificationView.showResignation("WHITE");
 		expectLastCall().once();
 		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
 		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
@@ -1318,6 +1324,9 @@ public class GameControllerTest {
 		expect(model.getStatus()).andReturn(GameStatus.RESIGNED).once();
 		expect(model.getBoard()).andReturn(board).once();
 		boardView.render(board);
+		expectLastCall().once();
+		expect(model.getWinner()).andReturn(Color.BLACK).once();
+		notificationView.showResignation("BLACK");
 		expectLastCall().once();
 		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
 		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
@@ -1379,6 +1388,9 @@ public class GameControllerTest {
 		expect(model.getStatus()).andReturn(GameStatus.RESIGNED).once();
 		expect(model.getBoard()).andReturn(board).once();
 		boardView.render(board);
+		expectLastCall().once();
+		expect(model.getWinner()).andReturn(Color.BLACK).once();
+		notificationView.showResignation("BLACK");
 		expectLastCall().once();
 		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
 		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();

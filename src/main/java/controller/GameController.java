@@ -203,6 +203,7 @@ public class GameController {
 			notificationView.showStalemate();
 			gameLocked = true;
 		} else if (status == GameStatus.RESIGNED) {
+			notificationView.showResignation(model.getWinner().name());
 			gameLocked = true;
 		}
 		capturedView.update(
