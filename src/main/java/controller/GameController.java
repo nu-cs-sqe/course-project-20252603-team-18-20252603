@@ -55,6 +55,10 @@ public class GameController {
 	}
 
 	public void onResign() {
+		if (gameLocked) {
+			return;
+		}
+
 		model.resign();
 		selectedSquare = null;
 		selectedLegalMoves = null;

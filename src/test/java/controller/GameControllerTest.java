@@ -1336,4 +1336,35 @@ public class GameControllerTest {
 		verify(model, boardView, notificationView, promotionView, capturedView,
 				board, piece, selected, legalDestination);
 	}
+
+	// -------------------------------------------------------------------------
+	// TC35: Resign While Controller Input Is Locked
+	// -------------------------------------------------------------------------
+	@Test
+	void onResign_promotionPending_ignoresRequest() {
+		Piece pawn = createMock(Piece.class);
+		Square from = createMock(Square.class);
+		Square target = createMock(Square.class);
+		List<Square> legalMoves = List.of(target);
+		java.util.concurrent.CompletableFuture<Piece> pendingPromotion =
+				new java.util.concurrent.CompletableFuture<>();
+
+		expect(from.getOccupant()).andReturn(pawn).anyTimes();
+		expect(pawn.getColor()).andReturn(Color.WHITE).once();
+		expect(model.getCurrentTurn()).andReturn(Color.WHITE).times(2);
+		expect(model.getLegalMoves(from)).andReturn(legalMoves).once();
+		boardView.highlightSquares(legalMoves);
+		expectLastCall().once();
+		expect(promotionView.show("WHITE")).andReturn(pendingPromotion).once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, target);
+
+		controller.onSquareClick(from);
+		controller.handlePromotion(target);
+		controller.onResign();
+
+		verify(model, boardView, notificationView, promotionView, capturedView,
+				pawn, from, target);
+	}
 }
