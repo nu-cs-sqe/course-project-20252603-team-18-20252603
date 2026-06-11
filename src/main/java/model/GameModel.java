@@ -13,6 +13,7 @@ public class GameModel {
 	private final List<Move> moveHistory;
 	private Color currentTurn;
 	private GameStatus status;
+	private Color winner;
 	private final List<Piece> capturedByWhite;
 	private final List<Piece> capturedByBlack;
 
@@ -22,6 +23,7 @@ public class GameModel {
 		this.moveHistory = new ArrayList<>();
 		this.currentTurn = Color.WHITE;
 		this.status = GameStatus.ONGOING;
+		this.winner = null;
 		this.capturedByWhite = new ArrayList<>();
 		this.capturedByBlack = new ArrayList<>();
 		placeStartingPieces();
@@ -101,7 +103,8 @@ public class GameModel {
 	}
 
 	public void applyMove(Move move) {
-		if (status == GameStatus.CHECKMATE || status == GameStatus.STALEMATE) {
+		if (status == GameStatus.CHECKMATE || status == GameStatus.STALEMATE
+				|| status == GameStatus.RESIGNED) {
 			throw new IllegalStateException("Game is already over");
 		}
 		if (move == null) {
@@ -198,5 +201,19 @@ public class GameModel {
 
 	public GameStatus getStatus() {
 		return status;
+	}
+
+	public void resign() {
+		if (status == GameStatus.CHECKMATE || status == GameStatus.STALEMATE
+				|| status == GameStatus.RESIGNED) {
+			throw new IllegalStateException("Game is already over");
+		}
+
+		winner = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
+		status = GameStatus.RESIGNED;
+	}
+
+	public Color getWinner() {
+		return winner;
 	}
 }

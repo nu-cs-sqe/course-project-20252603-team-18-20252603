@@ -54,6 +54,18 @@ public class GameController {
 		}
 	}
 
+	public void onResign() {
+		if (gameLocked) {
+			return;
+		}
+
+		model.resign();
+		selectedSquare = null;
+		selectedLegalMoves = null;
+		boardView.clearHighlights();
+		refreshViews();
+	}
+
 	private void handlePieceSelection(Square square) {
 		if (square.getOccupant() == null) {
 			return;
@@ -189,6 +201,9 @@ public class GameController {
 			gameLocked = true;
 		} else if (status == GameStatus.STALEMATE) {
 			notificationView.showStalemate();
+			gameLocked = true;
+		} else if (status == GameStatus.RESIGNED) {
+			notificationView.showResignation(model.getWinner().name());
 			gameLocked = true;
 		}
 		capturedView.update(

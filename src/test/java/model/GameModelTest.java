@@ -1264,4 +1264,98 @@ public class GameModelTest {
 		verify(whitePiece, blackPiece, captured1, captured2,
 				firstMove, blackMove, secondMove);
 	}
+
+	// =========================================================================
+	// TC38: White resigns at start
+	// =========================================================================
+	@Test
+	void resign_whiteToMove_setsStatusResignedAndWinnerBlack() {
+		GameModel model = modelWithMocks();
+		replayMocks();
+
+		model.resign();
+
+		assertEquals(GameStatus.RESIGNED, model.getStatus());
+		assertEquals(Color.BLACK, model.getWinner());
+
+		verifyMocks();
+	}
+
+	// =========================================================================
+	// TC39: Black resigns after White move
+	// =========================================================================
+	@Test
+	void resign_blackToMove_setsStatusResignedAndWinnerWhite() {
+		GameModel model = modelWithMocks();
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Move whiteMove = EasyMock.createMock(Move.class);
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
+		expectLegalMove(whiteMove, whitePiece, Color.WHITE, null, GameStatus.ONGOING);
+
+		replayMocks();
+		replay(whitePiece, whiteMove);
+
+		model.applyMove(whiteMove);
+		model.resign();
+
+		assertEquals(GameStatus.RESIGNED, model.getStatus());
+		assertEquals(Color.WHITE, model.getWinner());
+
+		verifyMocks();
+		verify(whitePiece, whiteMove);
+	}
+
+	// =========================================================================
+	// TC40: Winner is null before resignation
+	// =========================================================================
+	@Test
+	void getWinner_atConstruction_returnsNull() {
+		GameModel model = modelWithMocks();
+		replayMocks();
+
+		assertNull(model.getWinner());
+
+		verifyMocks();
+	}
+
+	// =========================================================================
+	// TC41: Resign after CHECKMATE is rejected
+	// =========================================================================
+	@Test
+	void resign_afterCheckmate_throwsIllegalStateException() {
+		GameModel model = modelWithMocks();
+
+		Piece whitePiece = EasyMock.createMock(Piece.class);
+		Move move = EasyMock.createMock(Move.class);
+		whitePiece.markMoved();
+		EasyMock.expectLastCall().anyTimes();
+		expectLegalMove(move, whitePiece, Color.WHITE, null, GameStatus.CHECKMATE);
+
+		replayMocks();
+		replay(whitePiece, move);
+
+		model.applyMove(move);
+
+		assertThrows(IllegalStateException.class, model::resign);
+
+		verifyMocks();
+		verify(whitePiece, move);
+	}
+
+	// =========================================================================
+	// TC42: Move after resignation is rejected
+	// =========================================================================
+	@Test
+	void applyMove_afterResignation_throwsIllegalStateException() {
+		GameModel model = modelWithMocks();
+		replayMocks();
+
+		model.resign();
+
+		assertThrows(IllegalStateException.class, () -> model.applyMove(null));
+
+		verifyMocks();
+	}
 }

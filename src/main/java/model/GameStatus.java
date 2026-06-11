@@ -4,5 +4,6 @@ public enum GameStatus {
 	ONGOING,
 	CHECK,
 	CHECKMATE,
-	STALEMATE
+	STALEMATE,
+	RESIGNED
 }
