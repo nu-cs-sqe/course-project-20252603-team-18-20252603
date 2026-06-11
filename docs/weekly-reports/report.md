@@ -88,3 +88,5 @@ N/A
 19. [done] Eric Fei: Completed Integration Tests for Main Feature #2 (King and associated movements, conditions) (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/71)
     * Bugfix for King castling despite pieces in between
 20. [done] Eric Fei: Bugfix: CapturedView overflowing captured pieces (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/74)
+21. [done] Eric Fei: Refactor GameModel.applyMove() for code quality (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/79)
+22. [done] Eric Fei: Refactor RulesEngine.isNormalPawnMoveLegal() for code quality (https://github.com/nu-cs-sqe/course-project-20252603-team-18-20252603/pull/79)
