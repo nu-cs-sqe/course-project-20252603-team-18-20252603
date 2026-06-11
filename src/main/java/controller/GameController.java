@@ -202,6 +202,8 @@ public class GameController {
 		} else if (status == GameStatus.STALEMATE) {
 			notificationView.showStalemate();
 			gameLocked = true;
+		} else if (status == GameStatus.RESIGNED) {
+			gameLocked = true;
 		}
 		capturedView.update(
 				model.getCapturedPieces(Color.WHITE),

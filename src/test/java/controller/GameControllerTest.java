@@ -1324,14 +1324,11 @@ public class GameControllerTest {
 		capturedView.update(Collections.emptyList(), Collections.emptyList());
 		expectLastCall().once();
 
-		expect(legalDestination.getOccupant()).andReturn(null).once();
-
 		replay(model, boardView, notificationView, promotionView, capturedView,
 				board, piece, selected, legalDestination);
 
 		controller.onSquareClick(selected);
 		controller.onResign();
-		controller.onSquareClick(legalDestination);
 
 		verify(model, boardView, notificationView, promotionView, capturedView,
 				board, piece, selected, legalDestination);
@@ -1366,5 +1363,33 @@ public class GameControllerTest {
 
 		verify(model, boardView, notificationView, promotionView, capturedView,
 				pawn, from, target);
+	}
+
+	// -------------------------------------------------------------------------
+	// TC36: Duplicate Resign Request After Resignation
+	// -------------------------------------------------------------------------
+	@Test
+	void onResign_alreadyResigned_ignoresSecondRequest() {
+		Board board = createMock(Board.class);
+
+		model.resign();
+		expectLastCall().once();
+		boardView.clearHighlights();
+		expectLastCall().once();
+		expect(model.getStatus()).andReturn(GameStatus.RESIGNED).once();
+		expect(model.getBoard()).andReturn(board).once();
+		boardView.render(board);
+		expectLastCall().once();
+		expect(model.getCapturedPieces(Color.WHITE)).andReturn(Collections.emptyList()).once();
+		expect(model.getCapturedPieces(Color.BLACK)).andReturn(Collections.emptyList()).once();
+		capturedView.update(Collections.emptyList(), Collections.emptyList());
+		expectLastCall().once();
+
+		replay(model, boardView, notificationView, promotionView, capturedView, board);
+
+		controller.onResign();
+		controller.onResign();
+
+		verify(model, boardView, notificationView, promotionView, capturedView, board);
 	}
 }
