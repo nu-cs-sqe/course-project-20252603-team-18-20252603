@@ -103,6 +103,31 @@ public class GameModel {
 	}
 
 	public void applyMove(Move move) {
+		validateMove(move);
+
+		board.movePiece(move.getFrom(), move.getTo());
+		move.getPiece().markMoved();
+
+		trackCapturedPiece(move);
+
+		if (move.getPromotionPiece() != null) {
+			applyPromotion(move);
+		}
+		if (move.isEnPassant()) {
+			applyEnPassantCapture(move);
+		}
+		if (move.isCastle()) {
+			applyCastlingRookMove(move);
+		}
+
+		moveHistory.add(move);
+
+		currentTurn = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
+
+		status = rulesEngine.getGameStatus(snapshot());
+	}
+
+	private void validateMove(Move move) {
 		if (status == GameStatus.CHECKMATE || status == GameStatus.STALEMATE
 				|| status == GameStatus.RESIGNED) {
 			throw new IllegalStateException("Game is already over");
@@ -116,59 +141,56 @@ public class GameModel {
 		if (!rulesEngine.isLegalMove(move, snapshot())) {
 			throw new IllegalArgumentException("Illegal move");
 		}
+	}
 
-		board.movePiece(move.getFrom(), move.getTo());
-		move.getPiece().markMoved();
-
+	private void trackCapturedPiece(Move move) {
 		Piece captured = move.getCapturedPiece();
-		if (captured != null) {
-			if (currentTurn == Color.WHITE) {
-				capturedByWhite.add(captured);
-			} else {
-				capturedByBlack.add(captured);
-			}
+		if (captured == null) {
+			return;
 		}
-
-		if (move.getPromotionPiece() != null) {
-			Square to = move.getTo();
-			Piece promotionPiece = move.getPromotionPiece();
-			board.removePiece(to);
-			board.placePiece(promotionPiece, to);
+		if (currentTurn == Color.WHITE) {
+			capturedByWhite.add(captured);
+		} else {
+			capturedByBlack.add(captured);
 		}
+	}
 
-		if (move.isEnPassant()) {
-			int captureRank = (currentTurn == Color.WHITE) ? move.getTo().getRank() - 1 : move.getTo().getRank() + 1;
-			Square captureSquare = board.getSquare(move.getTo().getFile(), captureRank);
-			captureSquare.setOccupant(null);
+	private void applyPromotion(Move move) {
+		Square to = move.getTo();
+		board.removePiece(to);
+		board.placePiece(move.getPromotionPiece(), to);
+	}
+
+	private void applyEnPassantCapture(Move move) {
+		int captureRank = (currentTurn == Color.WHITE)
+				? move.getTo().getRank() - 1
+				: move.getTo().getRank() + 1;
+		Square captureSquare = board.getSquare(move.getTo().getFile(), captureRank);
+		captureSquare.setOccupant(null);
+	}
+
+	private void applyCastlingRookMove(Move move) {
+		final char KINGSIDE_TARGET_FILE  = 'g';
+		final char QUEENSIDE_TARGET_FILE = 'c';
+		final char KINGSIDE_ROOK_FROM = 'h';
+		final char KINGSIDE_ROOK_TO = 'f';
+		final char QUEENSIDE_ROOK_FROM = 'a';
+		final char QUEENSIDE_ROOK_TO = 'd';
+		final int  WHITE_HOME_RANK = 1;
+		final int  BLACK_HOME_RANK = 8;
+
+		int homeRank = (currentTurn == Color.WHITE) ? WHITE_HOME_RANK : BLACK_HOME_RANK;
+		char toFile = move.getTo().getFile();
+
+		if (toFile == KINGSIDE_TARGET_FILE) {
+			board.movePiece(
+					board.getSquare(KINGSIDE_ROOK_FROM, homeRank),
+					board.getSquare(KINGSIDE_ROOK_TO,   homeRank));
+		} else if (toFile == QUEENSIDE_TARGET_FILE) {
+			board.movePiece(
+					board.getSquare(QUEENSIDE_ROOK_FROM, homeRank),
+					board.getSquare(QUEENSIDE_ROOK_TO,   homeRank));
 		}
-
-		if (move.isCastle()) {
-			int homeRank = (currentTurn == Color.WHITE) ? 1 : 8;
-			final char KINGSIDE_TARGET_FILE = 'g';
-			final char QUEENSIDE_TARGET_FILE = 'c';
-
-			if (move.getTo().getFile() == KINGSIDE_TARGET_FILE) {  // Kingside castle
-				final char ROOK_FROM_FILE = 'h';
-				final char ROOK_TO_FILE = 'f';
-				Square rookFrom = board.getSquare(ROOK_FROM_FILE, homeRank);
-				Square rookTo = board.getSquare(ROOK_TO_FILE, homeRank);
-				board.movePiece(rookFrom, rookTo);
-			}
-			else if (move.getTo().getFile() == QUEENSIDE_TARGET_FILE) {  // Queenside castle
-				final char ROOK_FROM_FILE = 'a';
-				final char ROOK_TO_FILE = 'd';
-				Square rookFrom = board.getSquare(ROOK_FROM_FILE, homeRank);
-				Square rookTo = board.getSquare(ROOK_TO_FILE, homeRank);
-				board.movePiece(rookFrom, rookTo);
-			}
-		}
-
-		moveHistory.add(move);
-
-		currentTurn = (currentTurn == Color.WHITE) ? Color.BLACK : Color.WHITE;
-
-		GameState newState = snapshot();
-		status = rulesEngine.getGameStatus(newState);
 	}
 
 	@SuppressFBWarnings(
