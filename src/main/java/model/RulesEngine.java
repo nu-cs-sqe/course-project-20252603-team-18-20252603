@@ -157,28 +157,46 @@ public class RulesEngine {
 		boolean isTwoForward = rankDifference == direction * PAWN_INITIAL_MOVE_DISTANCE;
 
 		if (isStraightMove && isOneForward) {
-			return toBoardSquare.isEmpty();
+			return isPawnSingleStepLegal(toBoardSquare);
 		}
 
 		if (isStraightMove && isTwoForward) {
-			if (pawn.hasMoved()) {
-				return false;
-			}
-
-			Square intermediateSquare = board.getSquare(
-					from.getFile(),
-					from.getRank() + direction
-			);
-
-			return intermediateSquare.isEmpty() && toBoardSquare.isEmpty();
+			return isPawnDoubleStepLegal(pawn, from, toBoardSquare, board, direction);
 		}
 
 		if (isDiagonalMove && isOneForward) {
-			return !toBoardSquare.isEmpty()
-					&& toBoardSquare.getOccupant().getColor() != pawn.getColor();
+			return isPawnDiagonalCaptureLegal(pawn, toBoardSquare);
 		}
 
 		return false;
+	}
+
+	private boolean isPawnSingleStepLegal(Square toBoardSquare) {
+		return toBoardSquare.isEmpty();
+	}
+
+	private boolean isPawnDoubleStepLegal(
+			Piece pawn,
+			Square from,
+			Square toBoardSquare,
+			Board board,
+			int direction
+	) {
+		if (pawn.hasMoved()) {
+			return false;
+		}
+
+		Square intermediateSquare = board.getSquare(
+				from.getFile(),
+				from.getRank() + direction
+		);
+
+		return intermediateSquare.isEmpty() && toBoardSquare.isEmpty();
+	}
+
+	private boolean isPawnDiagonalCaptureLegal(Piece pawn, Square toBoardSquare) {
+		return !toBoardSquare.isEmpty()
+				&& toBoardSquare.getOccupant().getColor() != pawn.getColor();
 	}
 
 	protected boolean isInCheck(GameState gameState, Color color) {
